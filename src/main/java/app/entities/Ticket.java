@@ -1,4 +1,4 @@
-package app;
+package app.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,6 +22,16 @@ public class Ticket
     public Ticket ( String message )
     {
         this.message = message;
+    }
+
+    public long getId ()
+    {
+        return id;
+    }
+
+    public String getMessage ()
+    {
+        return message;
     }
 
     @Override

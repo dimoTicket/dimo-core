@@ -1,5 +1,6 @@
-package app;
+package app.repositories;
 
+import app.entities.Ticket;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
