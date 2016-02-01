@@ -1,0 +1,21 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ticket page</title>
+    <link rel="stylesheet" th:href="@{/style.css}"></link>
+</head>
+<body>
+<h1>All tickets</h1>
+
+<div th:unless="${#lists.isEmpty(tickets)}">
+    <dl th:each="ticket : ${tickets}">
+        <dt>
+            <span th:text="${ticket.id}">Id</span>
+            <span th:text="${ticket.message}">Message</span>
+            <span th:text="${ticket.latitude}">Lat</span>
+            <span th:text="${ticket.longitude}">Lon</span>
+        </dt>
+    </dl>
+</div>
+</body>
+</html>

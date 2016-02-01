@@ -1,13 +1,10 @@
 package app.repositories;
 
 import app.entities.Ticket;
-import org.springframework.data.repository.CrudRepository;
-
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface TicketRepository extends CrudRepository<Ticket, Long>
+public interface TicketRepository extends JpaRepository<Ticket, Long>
 {
 
-    List<Ticket> findByMessage ( String message );
 }
