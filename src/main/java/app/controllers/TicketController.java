@@ -2,6 +2,7 @@ package app.controllers;
 
 import app.entities.Ticket;
 import app.repositories.TicketRepository;
+import app.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -25,6 +25,8 @@ public class TicketController
     private static final Logger logger = LoggerFactory.getLogger( TicketController.class );
     @Autowired
     private TicketRepository ticketRepository;
+    @Autowired
+    private ImageService imageService;
 
     @RequestMapping ( value = "/{id}", method = RequestMethod.GET )
     public String getTicketMessageById ( @PathVariable ( "id" ) Long id, Model model )
@@ -35,7 +37,7 @@ public class TicketController
             model.addAttribute( "ticket", ticket );
             return "ticket";
         }
-        return "error";
+        return "error"; //// TODO: 09/02/2016 should return empty model. Frotnend should take care of showing the msg
     }
 
     @RequestMapping ( value = "/tickets", method = RequestMethod.GET )
@@ -65,26 +67,16 @@ public class TicketController
     }
 
     @RequestMapping ( value = "/api/newticket", method = RequestMethod.POST )
-    public ResponseEntity<Ticket> submitTicketRest ( @RequestBody Ticket ticket )
+    public ResponseEntity<Ticket> submitTicketRest ( @RequestBody @Valid Ticket ticket )
     {
         return new ResponseEntity<>( this.ticketRepository.save( ticket ), HttpStatus.OK );
     }
 
     @RequestMapping ( value = "/api/newticketimage", method = RequestMethod.POST )
     public ResponseEntity handleImageUpload ( @RequestParam ( name = "ticketId", required = false ) Long ticketId,
-                                              @RequestPart MultipartFile multipartFile )
+                                              @RequestPart @Valid MultipartFile multipartFile )
     {
-        File convFile = new File( //XXX);
-        try
-        {
-            multipartFile.transferTo( convFile );
-            logger.info( "path" + convFile.getAbsolutePath() );
-        } catch ( IOException e )
-        {
-            e.printStackTrace();
-        }
-
+        this.imageService.saveMultipartFile( multipartFile );
         return new ResponseEntity( HttpStatus.CREATED );
     }
 }
-

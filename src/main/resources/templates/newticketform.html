@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>New ticket page</title>
+    <title>Φόρμα καταχώρησης νέου μηνύματος</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<h1>New Ticket Form</h1>
+<h1>Φόρμα καταχώρησης νέου μηνύματος</h1>
 <form action="#" th:action="@{/newticket}" th:object="${ticket}" method="post">
     <p>Message: <input type="text" th:field="*{message}"/></p>
     <p>Latitude: <input type="number" step="0.000001" th:field="*{latitude}"/></p>

@@ -1,12 +1,36 @@
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Ticket page</title>
-    <link rel="stylesheet" th:href="@{/style.css}"></link>
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDjTX860kQg89dVAzGnRUTXAgkcLJ6JH2o&amp;sensor=false"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var latitude = [[${ticket.latitude}]];
+        var longitude = [[${ticket.longitude}]];
+        /*]]>*/
+    </script>
+    <script> function initialize() {
+        var googleFormatLatLng = new google.maps.LatLng(latitude, longitude);
+        var mapProp = {
+            center: googleFormatLatLng,
+            zoom: 17,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+        var marker = new google.maps.Marker({
+            position: googleFormatLatLng,
+            map: map,
+        });
+    }
+    google.maps.event.addDomListener(window, 'load', initialize); </script>
 </head>
+
 <body>
-<h1 th:text="'ticket id : ' + ${ticket.id}"></h1>
-<p th:text="'message : ' + ${ticket.message}"/>
-<p th:text="'Location : ' + ${ticket.coordinates}"/>
+<h1 th:text="'Μήνυμα με αριθμό : ' + ${ticket.id}"></h1>
+<div>
+    <p th:text="${ticket.message}"></p>
+</div>
+<div id="googleMap" style="width:600px;height:456px;"></div>
+
 </body>
 </html>

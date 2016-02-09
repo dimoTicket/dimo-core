@@ -1,41 +1,36 @@
 package app.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 @Entity
+@EntityListeners ( AuditingEntityListener.class )
 public class Ticket
 {
 
     @Id
     @GeneratedValue ( strategy = GenerationType.AUTO )
     private long id;
+    @NotNull
+    @Size ( max = 2000 )
     private String message;
-    private float latitude;
-    private float longitude;
+    @NotNull
+    private double latitude;
+    @NotNull
+    private double longitude;
+    @CreatedDate
+    @Temporal ( TemporalType.TIMESTAMP )
+    private Date dateTime = new Date(); //// TODO: 09/02/2016 Refactor to use Java 8 time api + specified timezone
 
     public Ticket ()
     {
-    }
-
-    public float getLatitude ()
-    {
-        return latitude;
-    }
-
-    public float getLongitude ()
-    {
-        return longitude;
-    }
-
-    public Ticket ( String message, float latitude, float longitude )
-    {
-        this.message = message;
-        this.latitude = latitude;
-        this.longitude = longitude;
     }
 
     public long getId ()
@@ -53,14 +48,29 @@ public class Ticket
         this.message = message;
     }
 
-    public void setLatitude ( float latitude )
+    public double getLatitude ()
+    {
+        return latitude;
+    }
+
+    public void setLatitude ( double latitude )
     {
         this.latitude = latitude;
     }
 
-    public void setLongitude ( float longitude )
+    public double getLongitude ()
+    {
+        return longitude;
+    }
+
+    public void setLongitude ( double longitude )
     {
         this.longitude = longitude;
+    }
+
+    public String getDateTimeAsFormattedString ()
+    {
+        return new SimpleDateFormat( "dd/MM/yyyy - HH:mm" ).format( this.dateTime );
     }
 
     @Override

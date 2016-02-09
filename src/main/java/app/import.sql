@@ -1,0 +1,1 @@
+insert into ticket(latitude, longitude, message) values (40.6436200, 22.9308600, 'Ζημιά σε δρόμο, λείπει κομμάτι απο την αριστερή λωρίδα κυκλοφορίας')
