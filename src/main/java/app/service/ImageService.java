@@ -24,13 +24,18 @@ public class ImageService
     //Using original file name as filename
     public void saveMultipartFile ( Long ticketId, MultipartFile multipartFile )
     {
+        Ticket ticket = ticketRepository.findOne( ticketId );
+        //prevents re-setting a picture
+        if ( ticket.getImageName() != null )
+        {
+            throw new IllegalArgumentException( "Image already set for ticketId=" + ticketId );
+        }
         // TODO: 09/02/2016 : save location sto .properties
         File convFile = new File( IMAGES_FOLDER + multipartFile.getOriginalFilename() );
         try
         {
             multipartFile.transferTo( convFile );
             logger.info( "saved file to path : " + convFile.getAbsolutePath() );
-            Ticket ticket = ticketRepository.findOne( ticketId );
             ticket.setImageName( multipartFile.getOriginalFilename() );
             ticketRepository.saveAndFlush( ticket );
         } catch ( IOException e )

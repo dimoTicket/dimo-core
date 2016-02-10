@@ -48,8 +48,8 @@ public class TicketController
         return "error"; //// TODO: 09/02/2016 should return empty model. Frotnend should take care of showing the msg
     }
 
-    @RequestMapping ( value = "/image/{id}", method = RequestMethod.GET )
-    public ResponseEntity<byte[]> getImage ( @PathVariable ( "id" ) Long ticketId )
+    @RequestMapping ( value = "/image", method = RequestMethod.GET )
+    public ResponseEntity<byte[]> getImage ( @RequestParam ( "id" ) Long ticketId )
     {
         byte[] imageContent = null;
         try
@@ -101,11 +101,19 @@ public class TicketController
         return new ResponseEntity<>( this.ticketRepository.save( ticket ), HttpStatus.OK );
     }
 
+    // TODO: 10/02/2016 Generate a unique "upload token" for the client to use, to avoid malicious attempts
     @RequestMapping ( value = "/api/newticketimage", method = RequestMethod.POST )
     public ResponseEntity handleImageUpload ( @RequestParam ( name = "ticketId", required = true ) Long ticketId,
                                               @RequestPart @Valid MultipartFile multipartFile )
     {
-        this.imageService.saveMultipartFile( ticketId, multipartFile );
-        return new ResponseEntity( HttpStatus.CREATED );
+        try
+        {
+            this.imageService.saveMultipartFile( ticketId, multipartFile );
+            return new ResponseEntity( HttpStatus.CREATED );
+        } catch ( IllegalArgumentException e )
+        {
+            logger.error( "Attempt to overwrite picture for ticketId : " + ticketId );
+        }
+        return new ResponseEntity( HttpStatus.BAD_REQUEST );
     }
 }

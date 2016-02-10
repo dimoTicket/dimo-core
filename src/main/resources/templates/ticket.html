@@ -30,8 +30,9 @@
 <div>
     <p th:text="${ticket.message}"></p>
 </div>
-<a th:href="@{/image/1}">
-    <img width="150px" height="150px" th:src="@{/image/1}"/>
+<!--FIXME : 2 requests for the same resource are sent here.-->
+<a th:href="@{/image(id=${ticket.id})}">
+    <img width="180px" height="180px" th:src="@{/image(id=${ticket.id})}"/>
 </a>
 <div id="googleMap" style="width:600px;height:456px;"></div>
 
