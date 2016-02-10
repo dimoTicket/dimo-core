@@ -28,9 +28,21 @@ public class Ticket
     @CreatedDate
     @Temporal ( TemporalType.TIMESTAMP )
     private Date dateTime = new Date(); //// TODO: 09/02/2016 Refactor to use Java 8 time api + specified timezone
+    @Size ( max = 250 )
+    private String imageName;
 
     public Ticket ()
     {
+    }
+
+    public String getImageName ()
+    {
+        return imageName;
+    }
+
+    public void setImageName ( String imageName )
+    {
+        this.imageName = imageName;
     }
 
     public long getId ()

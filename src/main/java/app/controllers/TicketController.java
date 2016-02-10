@@ -6,14 +6,22 @@ import app.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.validation.Valid;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 
@@ -38,6 +46,27 @@ public class TicketController
             return "ticket";
         }
         return "error"; //// TODO: 09/02/2016 should return empty model. Frotnend should take care of showing the msg
+    }
+
+    @RequestMapping ( value = "/image/{id}", method = RequestMethod.GET )
+    public ResponseEntity<byte[]> getImage ( @PathVariable ( "id" ) Long ticketId )
+    {
+        byte[] imageContent = null;
+        try
+        {
+            InputStream inputStream = new FileInputStream( this.imageService.findPictureFileOfTicketId( ticketId ) );
+            BufferedImage img = ImageIO.read( inputStream );
+            ByteArrayOutputStream bao = new ByteArrayOutputStream();
+            ImageIO.write( img, "jpg", bao );
+            imageContent = bao.toByteArray();
+        } catch ( IOException e )
+        {
+            e.printStackTrace();
+        }
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType( MediaType.IMAGE_JPEG );
+        return new ResponseEntity<>( imageContent, headers, HttpStatus.OK );
     }
 
     @RequestMapping ( value = "/tickets", method = RequestMethod.GET )
@@ -73,10 +102,10 @@ public class TicketController
     }
 
     @RequestMapping ( value = "/api/newticketimage", method = RequestMethod.POST )
-    public ResponseEntity handleImageUpload ( @RequestParam ( name = "ticketId", required = false ) Long ticketId,
+    public ResponseEntity handleImageUpload ( @RequestParam ( name = "ticketId", required = true ) Long ticketId,
                                               @RequestPart @Valid MultipartFile multipartFile )
     {
-        this.imageService.saveMultipartFile( multipartFile );
+        this.imageService.saveMultipartFile( ticketId, multipartFile );
         return new ResponseEntity( HttpStatus.CREATED );
     }
 }
