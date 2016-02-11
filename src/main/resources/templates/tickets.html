@@ -6,6 +6,8 @@
     <title>'Ολα τα μηνύματα</title>
     <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.6/css/bootstrap.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+    <script src="webjars/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <link rel="stylesheet" th:href="@{/css/style.css}" href="../../css/style.css"/>
 </head>
 <body>
@@ -32,13 +34,39 @@
                 <tbody>
                 <tr th:each="ticket : ${tickets}">
                     <td>
-                        <button th:text="${ticket.id}" type="button" class="btn btn-block btn-primary btn-md">
-                        </button>
+                        <!--Hack to allow href-->
+                        <div id="browse_app">
+                            <a class="btn btn-block bt-md btn-primary" th:href="@{${ticket.id}}"
+                               th:text="${ticket.id}"></a>
+                        </div>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#myModal">
+                        <button type="button" class="btn btn-primary btn-md" data-toggle="modal"
+                                th:attr="data-target='#picModal' + ${ticket.id}">
                             Προβολή φωτογραφίας
                         </button>
+                        <!-- Modal -->
+                        <div th:id="'picModal' + ${ticket.id}" class="modal fade" role="dialog">
+                            <div class="modal-dialog modal-lg">
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 th:text="'Φωτογραφία του μηνύματος : ' + ${ticket.id}"
+                                            class="modal-title"></h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <img th:src="@{/image(id=${ticket.id})}" class="img-responsive"/>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-block" data-dismiss="modal">
+                                            Κλείσιμο παραθύρου
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </td>
                     <td th:text="${#dates.format(ticket.dateTime, 'dd/MM/yyyy - HH:mm')}"></td>
                     <td class="success">Ανοιχτό</td>

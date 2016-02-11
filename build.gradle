@@ -36,6 +36,8 @@ dependencies {
     compile('mysql:mysql-connector-java:5.1.6')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     compile('org.webjars:bootstrap:3.3.6') //Also change refs on thymeleaf templates
+    compile('org.webjars:jquery:2.1.4') //Also change refs on thymeleaf templates
+    compile('org.webjars:jquery-ui:1.11.4') //Also change refs on thymeleaf templates
 }
 
 
