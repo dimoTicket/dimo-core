@@ -19,27 +19,34 @@
     </div>
     <div class="row">
         <div class="col-md-1"></div>
-        <div class="col-md-8">
+        <div class="col-md-7">
             <table class="table table-striped table-hover">
                 <thead>
                 <tr>
                     <th>Αριθμός</th>
-                    <th>Ημερομηνία και Ώρα</th>
                     <th>Φωτογραφία</th>
+                    <th>Ημερομηνία και Ώρα</th>
                     <th>Κατάσταση</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="ticket : ${tickets}">
-                    <td th:text="${ticket.id}"></td>
+                    <td>
+                        <button th:text="${ticket.id}" type="button" class="btn btn-block btn-primary btn-md">
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#myModal">
+                            Προβολή φωτογραφίας
+                        </button>
+                    </td>
                     <td th:text="${#dates.format(ticket.dateTime, 'dd/MM/yyyy - HH:mm')}"></td>
-                    <td>Προβολή φωτογραφίας</td>
-                    <td>Ανοιχτό</td>
+                    <td class="success">Ανοιχτό</td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <div class="col-md-3"></div>
+        <div class="col-md-4"></div>
     </div>
 </div>
 </body>
