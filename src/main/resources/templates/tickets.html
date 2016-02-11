@@ -1,27 +1,36 @@
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="el">
+
 <head>
-    <title>'Ολα τα μηνύματα</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>'Ολα τα μηνύματα</title>
+    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.6/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
     <link rel="stylesheet" th:href="@{/style.css}"/>
 </head>
 <body>
-<h1>'Ολα τα μηνύματα</h1>
-<table>
-    <thead>
-    <tr>
-        <th>Αριθμός</th>
-        <th>Ημερομηνία και Ώρα</th>
-        <th>Φωτογραφία</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="ticket : ${tickets}">
-        <td th:text="${ticket.id}"></td>
-        <td th:text="${ticket.getDateTime()}"></td>
-        <td>link gia provolh edw</td>
-    </tr>
-    </tbody>
-</table>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>'Ολα τα μηνύματα</h1>
+        </div>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Αριθμός</th>
+            <th>Ημερομηνία και Ώρα</th>
+            <th>Φωτογραφία</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="ticket : ${tickets}">
+            <td th:text="${ticket.id}"></td>
+            <td th:text="${ticket.getDateTime()}"></td>
+            <td>link gia provolh edw</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
