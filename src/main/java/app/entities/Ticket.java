@@ -6,7 +6,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -80,10 +79,20 @@ public class Ticket
         this.longitude = longitude;
     }
 
-    public String getDateTimeAsFormattedString ()
+    public Date getDateTime ()
     {
-        return new SimpleDateFormat( "dd/MM/yyyy - HH:mm" ).format( this.dateTime );
+        return dateTime;
     }
+
+    public void setDateTime ( Date dateTime )
+    {
+        this.dateTime = dateTime;
+    }
+
+//    public String getDateTimeAsFormattedString ()
+//    {
+//        return new SimpleDateFormat( "dd/MM/yyyy - HH:mm" ).format( this.dateTime );
+//    }
 
     @Override
     public String toString ()

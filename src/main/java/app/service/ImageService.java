@@ -50,7 +50,6 @@ public class ImageService
 
     public File findPictureFileOfTicketId ( Long ticketId )
     {
-        // TODO: 10/02/2016 Use deduction
         return new File( IMAGES_FOLDER + this.ticketRepository.findOne( ticketId ).getImageName() );
     }
 }

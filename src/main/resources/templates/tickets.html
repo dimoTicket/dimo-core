@@ -18,7 +18,7 @@
     <tbody>
     <tr th:each="ticket : ${tickets}">
         <td th:text="${ticket.id}"></td>
-        <td th:text="${ticket.getDateTimeAsFormattedString()}"></td>
+        <td th:text="${ticket.getDateTime()}"></td>
         <td>link gia provolh edw</td>
     </tr>
     </tbody>
