@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col-md-1"></div>
         <div class="col-md-10">
-            <h1>'Ολα τα μηνύματα</h1>
+            <h1 class="well">'Ολα τα μηνύματα</h1>
         </div>
         <div class="col-md-1"></div>
     </div>
@@ -34,7 +34,7 @@
                 <tbody>
                 <tr th:each="ticket : ${tickets}">
                     <td>
-                        <!--Hack to allow href-->
+                        <!--Fake button to allow href-->
                         <div id="browse_app">
                             <a class="btn btn-block bt-md btn-primary" th:href="@{${ticket.id}}"
                                th:text="${ticket.id}"></a>
@@ -43,7 +43,7 @@
                     <td>
                         <button type="button" class="btn btn-primary btn-md" data-toggle="modal"
                                 th:attr="data-target='#picModal' + ${ticket.id}">
-                            Προβολή φωτογραφίας
+                            <span class="glyphicon glyphicon-camera"></span> Προβολή φωτογραφίας
                         </button>
                         <!-- Modal -->
                         <div th:id="'picModal' + ${ticket.id}" class="modal fade" role="dialog">
@@ -66,9 +66,8 @@
                                 </div>
                             </div>
                         </div>
-
                     </td>
-                    <td th:text="${#dates.format(ticket.dateTime, 'dd/MM/yyyy - HH:mm')}"></td>
+                    <td class="well well-sm" th:text="${#dates.format(ticket.dateTime, 'dd/MM/yyyy - HH:mm')}"></td>
                     <td class="success">Ανοιχτό</td>
                 </tr>
                 </tbody>
