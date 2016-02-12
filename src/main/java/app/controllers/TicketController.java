@@ -61,7 +61,9 @@ public class TicketController
             imageContent = bao.toByteArray();
         } catch ( IOException e )
         {
+            logger.error( "Picture not found. Ticket id is : " + ticketId );
             e.printStackTrace();
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND );
         }
 
         final HttpHeaders headers = new HttpHeaders();
