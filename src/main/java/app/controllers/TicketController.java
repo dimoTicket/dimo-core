@@ -26,7 +26,6 @@ import java.util.List;
 
 
 @Controller
-@RequestMapping ( "/" )
 public class TicketController
 {
 
@@ -71,7 +70,7 @@ public class TicketController
         return new ResponseEntity<>( imageContent, headers, HttpStatus.OK );
     }
 
-    @RequestMapping ( value = "/tickets", method = RequestMethod.GET )
+    @RequestMapping ( value = {"/tickets", "/"}, method = RequestMethod.GET )
     public String getAllTickets ( Model model )
     {
         List<Ticket> tickets = this.ticketRepository.findAll();
