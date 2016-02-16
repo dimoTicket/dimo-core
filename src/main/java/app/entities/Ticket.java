@@ -89,10 +89,6 @@ public class Ticket
         this.dateTime = dateTime;
     }
 
-//    public String getDateTimeAsFormattedString ()
-//    {
-//        return new SimpleDateFormat( "dd/MM/yyyy - HH:mm" ).format( this.dateTime );
-//    }
 
     @Override
     public String toString ()
