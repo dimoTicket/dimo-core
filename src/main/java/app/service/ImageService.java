@@ -17,7 +17,7 @@ public class ImageService
 {
 
     private static final Logger logger = LoggerFactory.getLogger( ImageService.class );
-    private static String IMAGES_FOLDER = "C:/Users/Alexei/Desktop/temppics/"; // TODO: 10/02/2016 move to .properties
+    private static String IMAGES_FOLDER = "/home/pics/"; // TODO: 10/02/2016 move to .properties
     @Autowired
     private TicketRepository ticketRepository;
 

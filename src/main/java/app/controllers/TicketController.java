@@ -82,19 +82,19 @@ public class TicketController
         return "error";
     }
 
-    @RequestMapping ( value = "/newticket", method = RequestMethod.GET )
-    public String showTicketForm ( Model model )
-    {
-        model.addAttribute( "ticket", new Ticket() );
-        return "newticketform";
-    }
-
-    @RequestMapping ( value = "/newticket", method = RequestMethod.POST )
-    public String submitTicketForm ( @ModelAttribute Ticket ticket )
-    {
-        this.ticketRepository.save( ticket );
-        return "newticketsuccess";
-    }
+//    @RequestMapping ( value = "/newticket", method = RequestMethod.GET )
+//    public String showTicketForm ( Model model )
+//    {
+//        model.addAttribute( "ticket", new Ticket() );
+//        return "newticketform";
+//    }
+//
+//    @RequestMapping ( value = "/newticket", method = RequestMethod.POST )
+//    public String submitTicketForm ( @ModelAttribute Ticket ticket )
+//    {
+//        this.ticketRepository.save( ticket );
+//        return "newticketsuccess";
+//    }
 
     @RequestMapping ( value = "/api/newticket", method = RequestMethod.POST )
     public ResponseEntity<Ticket> submitTicketRest ( @RequestBody @Valid Ticket ticket )
