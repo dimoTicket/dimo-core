@@ -27,12 +27,6 @@ public class TicketRepositoryTests
     private TicketRepository ticketRepository;
     private Ticket ticket;
 
-    @Test
-    public void test ()
-    {
-        ticketRepository.findAll();
-    }
-
     @Before
     public void setUp ()
     {
