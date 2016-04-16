@@ -61,7 +61,6 @@ public class TicketController
         } catch ( IOException e )
         {
             logger.error( "Picture not found. Ticket id is : " + ticketId );
-            e.printStackTrace();
             return new ResponseEntity<>( HttpStatus.NOT_FOUND );
         }
 
@@ -82,12 +81,17 @@ public class TicketController
         return "error";
     }
 
-//    @RequestMapping ( value = "/newticket", method = RequestMethod.GET )
-//    public String showTicketForm ( Model model )
-//    {
-//        model.addAttribute( "ticket", new Ticket() );
-//        return "newticketform";
-//    }
+    @RequestMapping ( value = "/newticket", method = RequestMethod.GET )
+    public ResponseEntity createDummyTicket ()
+    {
+        Ticket ticket = new Ticket();
+        ticket.setMessage( "Ticket message" );
+        ticket.setLatitude( new Double( "12.345678" ) );
+        ticket.setLongitude( new Double( "12.345678" ) );
+        ticket.setImageName( "imagename.jpg" );
+
+        return new ResponseEntity<>( this.ticketRepository.save( ticket ), HttpStatus.OK );
+    }
 //
 //    @RequestMapping ( value = "/newticket", method = RequestMethod.POST )
 //    public String submitTicketForm ( @ModelAttribute Ticket ticket )
