@@ -2,7 +2,7 @@ package app.controllers;
 
 import app.entities.Ticket;
 import app.repositories.TicketRepository;
-import app.service.ImageService;
+import app.services.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +70,7 @@ public class TicketController
         return new ResponseEntity<>( imageContent, headers, HttpStatus.OK );
     }
 
-    @RequestMapping ( value = {"/tickets", "/"}, method = RequestMethod.GET )
+    @RequestMapping ( value = { "/tickets", "/" }, method = RequestMethod.GET )
     public String getAllTickets ( Model model )
     {
         List<Ticket> tickets = this.ticketRepository.findAll();

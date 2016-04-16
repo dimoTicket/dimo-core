@@ -3,7 +3,10 @@ package app.entities;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -11,12 +14,9 @@ import java.util.Date;
 
 @Entity
 @EntityListeners ( AuditingEntityListener.class )
-public class Ticket
+public class Ticket extends BaseEntity
 {
 
-    @Id
-    @GeneratedValue ( strategy = GenerationType.AUTO )
-    private long id;
     @NotNull
     @Size ( max = 2000 )
     private String message;
@@ -42,11 +42,6 @@ public class Ticket
     public void setImageName ( String imageName )
     {
         this.imageName = imageName;
-    }
-
-    public long getId ()
-    {
-        return id;
     }
 
     public String getMessage ()
@@ -89,10 +84,9 @@ public class Ticket
         this.dateTime = dateTime;
     }
 
-
     @Override
     public String toString ()
     {
-        return "ticket id : " + this.id + " message : " + this.message;
+        return "ticket id : " + super.getId() + " message : " + this.message;
     }
 }

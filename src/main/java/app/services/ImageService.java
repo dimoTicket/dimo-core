@@ -1,4 +1,4 @@
-package app.service;
+package app.services;
 
 import app.entities.Ticket;
 import app.repositories.TicketRepository;
