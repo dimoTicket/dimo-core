@@ -23,15 +23,15 @@ public class UserRepositoryTests
 
     @Autowired
     private UserRepository userRepository;
-    private User user;
+    User user;
 
     @Before
     public void setUp ()
     {
         this.user = new User();
-        user.setUsername( "pambos" );
-        user.setPassword( "pambosrawpw" );
-        user.setEmail( "pambos@pambos.gr" );
+        user.setUsername( "TestUsername" );
+        user.setPassword( "TestRawPassword" );
+        user.setEmail( "Test@JunitTest.gr" );
     }
 
     @Test
@@ -45,13 +45,13 @@ public class UserRepositoryTests
     public void saveUserAndFindByUsername ()
     {
         this.userRepository.save( this.user );
-        assertThat( this.userRepository.findByUsername( this.user.getUsername() ), is( this.user ) );
+        assertThat( this.userRepository.findByUsername( this.user.getUsername() ).get(), is( this.user ) );
     }
 
     @Test
     public void saveUserAndFindByEmail ()
     {
         this.userRepository.save( this.user );
-        assertThat( this.userRepository.findByEmail( this.user.getEmail() ), is( this.user ) );
+        assertThat( this.userRepository.findByEmail( this.user.getEmail() ).get(), is( this.user ) );
     }
 }
