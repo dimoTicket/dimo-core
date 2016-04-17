@@ -26,7 +26,7 @@ public class Ticket extends BaseEntity
     private double longitude;
     @CreatedDate
     @Temporal ( TemporalType.TIMESTAMP )
-    private Date dateTime = new Date(); //// TODO: 09/02/2016 Refactor to use Java 8 time api + specified timezone
+    private Date dateTime = new Date();
     @Size ( max = 250 )
     private String imageName;
 

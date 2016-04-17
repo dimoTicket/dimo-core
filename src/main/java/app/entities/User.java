@@ -1,5 +1,6 @@
 package app.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,7 @@ public class User extends BaseEntity implements UserDetails
     private String username;
     @NotNull
     @Size(min = 8)
+    @JsonIgnore
     private String password;
     @Email
     @NotNull
