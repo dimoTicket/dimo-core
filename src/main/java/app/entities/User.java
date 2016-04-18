@@ -7,11 +7,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.validation.constraints.Min;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collection;
-import java.util.Collections;
 
 
 @Entity
@@ -22,13 +22,19 @@ public class User extends BaseEntity implements UserDetails
     @Column ( unique = true )
     private String username;
     @NotNull
-    @Size(min = 8)
+    @Size ( min = 8 )
     @JsonIgnore
     private String password;
     @Email
     @NotNull
     @Column ( unique = true )
     private String email;
+    @ManyToMany ( fetch = FetchType.EAGER )
+    private Collection<Authority> authorities;
+
+    public User ()
+    {
+    }
 
     public void setUsername ( String username )
     {
@@ -50,10 +56,15 @@ public class User extends BaseEntity implements UserDetails
         this.email = email;
     }
 
+    public void setAuthorities ( Collection<Authority> authorities )
+    {
+        this.authorities = authorities;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities ()
     {
-        return Collections.emptyList();
+        return this.authorities;
     }
 
     @Override

@@ -3,6 +3,7 @@ package app.controllers;
 import app.entities.Ticket;
 import app.repositories.TicketRepository;
 import app.services.ImageService;
+import app.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ public class TicketController
     private TicketRepository ticketRepository;
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private UserService userService;
 
     @RequestMapping ( value = "/{id}", method = RequestMethod.GET )
     public String getTicketMessageById ( @PathVariable ( "id" ) Long id, Model model )
@@ -121,5 +124,11 @@ public class TicketController
         }
         return new ResponseEntity( HttpStatus.BAD_REQUEST );
     }
-    
+
+    @RequestMapping ( value = "/newuser" )
+    public ResponseEntity createSampleUser ()
+    {
+        this.userService.createUser( "pambos", "pambos@pambos.gr", "$2a$08$B/eWoulhcutTy9WqcteXMuiGN3LvP0KT0w5W5ItXsT4BE2vr2.Cb6" );
+        return new ResponseEntity<>( HttpStatus.ACCEPTED );
+    }
 }
