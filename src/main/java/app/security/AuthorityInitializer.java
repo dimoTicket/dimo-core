@@ -2,6 +2,7 @@ package app.security;
 
 import app.entities.Authority;
 import app.repositories.AuthorityRepository;
+import app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,20 +10,20 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 
-/**
- * Seeds the database with the authorities we are gonna be using, defined in {@link Authorities}
- */
 @Component
 public class AuthorityInitializer
 {
 
     @Autowired
     private AuthorityRepository authorityRepository;
+    @Autowired
+    private UserService userService;
 
     @PostConstruct
     private void initialize ()
     {
         this.initializeSecurityAuthorities();
+        this.seedSampleUser();
     }
 
     /**
@@ -32,7 +33,12 @@ public class AuthorityInitializer
     private void initializeSecurityAuthorities ()
     {
         Arrays.stream( Authorities.values() )
-                .filter( auth -> !this.authorityRepository.findByAuthority( auth.getSpringAuthorityRepresentation() ).isPresent() )
-                .forEach( auth -> this.authorityRepository.save( new Authority( auth.getSpringAuthorityRepresentation() ) ) );
+                .filter( auth -> !this.authorityRepository.findByAuthority( auth.toString() ).isPresent() )
+                .forEach( auth -> this.authorityRepository.save( new Authority( auth.toString() ) ) );
+    }
+
+    private void seedSampleUser ()
+    {
+        this.userService.createUser( "pambos", "pambos@pambos.gr", "12345678" );
     }
 }

@@ -15,7 +15,8 @@ public enum Authorities
         this.role = role;
     }
 
-    public String getSpringAuthorityRepresentation ()
+    @Override
+    public String toString ()
     {
         return this.role;
     }

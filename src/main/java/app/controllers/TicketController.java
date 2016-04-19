@@ -124,11 +124,4 @@ public class TicketController
         }
         return new ResponseEntity( HttpStatus.BAD_REQUEST );
     }
-
-    @RequestMapping ( value = "/newuser" )
-    public ResponseEntity createSampleUser ()
-    {
-        this.userService.createUser( "pambos", "pambos@pambos.gr", "$2a$08$B/eWoulhcutTy9WqcteXMuiGN3LvP0KT0w5W5ItXsT4BE2vr2.Cb6" );
-        return new ResponseEntity<>( HttpStatus.ACCEPTED );
-    }
 }
