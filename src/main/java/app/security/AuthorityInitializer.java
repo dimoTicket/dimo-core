@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 
 
 @Component
@@ -32,9 +31,9 @@ public class AuthorityInitializer
      */
     private void initializeSecurityAuthorities ()
     {
-        Arrays.stream( Authorities.values() )
-                .filter( auth -> !this.authorityRepository.findByAuthority( auth.toString() ).isPresent() )
-                .forEach( auth -> this.authorityRepository.save( new Authority( auth.toString() ) ) );
+        Authorities.getAllAuthorities().stream()
+                .filter( auth -> !this.authorityRepository.findByAuthorityString( auth ).isPresent() )
+                .forEach( auth -> this.authorityRepository.save( new Authority( auth ) ) );
     }
 
     private void seedSampleUser ()

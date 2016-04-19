@@ -33,7 +33,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
     {
         http.authorizeRequests()
                 .accessDecisionManager( this.getAccessDecisionManager() )
-                .antMatchers( "/*" ).hasAuthority( Authorities.USER.toString() )
+                .antMatchers( "/*" ).hasAuthority( Authorities.User )
                 .and()
                 .formLogin();
     }
@@ -65,7 +65,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 
     private RoleHierarchy produceRoleHierarchy ()
     {
-        String roleHierarchySpelString = Authorities.ADMIN + " > " + Authorities.USER;
+        String roleHierarchySpelString = Authorities.Admin + " > " + Authorities.User;
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
         roleHierarchy.setHierarchy( roleHierarchySpelString );
         return roleHierarchy;

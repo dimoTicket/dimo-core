@@ -11,27 +11,27 @@ import javax.validation.constraints.NotNull;
 public class Authority extends BaseEntity implements GrantedAuthority
 {
 
+    @NotNull
+    @Column ( unique = true )
+    private String authorityString;
+
     public Authority ()
     {
     }
 
-    public Authority ( String authority )
+    public Authority ( String authorityString )
     {
-        this.authority = authority;
+        this.authorityString = authorityString;
     }
 
-    @NotNull
-    @Column ( unique = true )
-    private String authority;
-
-    public void setAuthority ( String authority )
+    public void setAuthorityString ( String authorityString )
     {
-        this.authority = authority;
+        this.authorityString = authorityString;
     }
 
     @Override
     public String getAuthority ()
     {
-        return this.authority;
+        return this.authorityString;
     }
 }

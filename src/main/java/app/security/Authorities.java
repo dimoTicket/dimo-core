@@ -1,23 +1,22 @@
 package app.security;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+
 /**
  * Holds all the Spring authorities we are gonna be using.
  * String values are the ones that will be used directly with Spring Security.
  */
-public enum Authorities
+public class Authorities
 {
-    ADMIN( "ROLE_ADMIN" ),
-    USER( "ROLE_USER" );
-    private String role;
 
-    Authorities ( String role )
-    {
-        this.role = role;
-    }
+    public static String Admin = "ROLE_ADMIN";
+    public static String User = "ROLE_USER";
 
-    @Override
-    public String toString ()
+    public static Collection<String> getAllAuthorities ()
     {
-        return this.role;
+        return Arrays.stream( Authorities.class.getDeclaredFields() ).map( String.class::cast ).collect( Collectors.toList() );
     }
 }

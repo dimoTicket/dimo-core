@@ -35,7 +35,7 @@ public class UserService
     private Collection<Authority> returnUserLevelAuthorities ()
     {
         ArrayList<Authority> authorities = new ArrayList<>();
-        authorities.add( this.authorityRepository.findByAuthority( Authorities.USER.toString() )
+        authorities.add( this.authorityRepository.findByAuthorityString( Authorities.User )
                 .orElseThrow( () -> new RuntimeException( "User Authority could not be retrieved from the database." ) ) );
         return authorities;
     }
