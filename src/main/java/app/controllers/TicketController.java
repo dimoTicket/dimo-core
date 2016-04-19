@@ -4,8 +4,8 @@ import app.entities.Ticket;
 import app.repositories.TicketRepository;
 import app.services.ImageService;
 import app.services.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ import java.util.List;
 public class TicketController
 {
 
-    private static final Logger logger = LoggerFactory.getLogger( TicketController.class );
+    private final Log logger = LogFactory.getLog( getClass() );
     @Autowired
     private TicketRepository ticketRepository;
     @Autowired

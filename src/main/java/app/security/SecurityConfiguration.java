@@ -26,6 +26,7 @@ import java.util.List;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 {
 
+    public static PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Autowired
     private UserService userService;
 
@@ -42,9 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
     @Override
     protected void configure ( AuthenticationManagerBuilder auth ) throws Exception
     {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-
-        auth.userDetailsService( userService ).passwordEncoder( encoder );
+        auth.userDetailsService( userService ).passwordEncoder( SecurityConfiguration.passwordEncoder );
     }
 
     /**
