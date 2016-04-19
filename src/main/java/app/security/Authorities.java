@@ -17,6 +17,17 @@ public class Authorities
 
     public static Collection<String> getAllAuthorities ()
     {
-        return Arrays.stream( Authorities.class.getDeclaredFields() ).map( String.class::cast ).collect( Collectors.toList() );
+        return Arrays.stream( Authorities.class.getDeclaredFields() )
+                .map( f -> {
+                    String str = "";
+                    try
+                    {
+                        str = ( String )f.get( f.getType() );
+                    } catch ( IllegalAccessException e )
+                    {
+                        e.printStackTrace();
+                    }
+                    return str;
+                } ).collect( Collectors.toList() );
     }
 }
