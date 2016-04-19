@@ -1,9 +1,11 @@
 package app.security;
 
 import app.entities.Authority;
+import app.entities.User;
 import app.repositories.AuthorityRepository;
 import app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -38,6 +40,10 @@ public class AuthorityInitializer
 
     private void seedSampleUser ()
     {
-        this.userService.createUser( "pambos", "pambos@pambos.gr", "12345678" );
+        User user = new User();
+        user.setUsername( "pambos" );
+        user.setPassword( new BCryptPasswordEncoder().encode( "12345678" ) );
+        user.setEmail( "pambos@pambos.gr" );
+        this.userService.createUser( user );
     }
 }
