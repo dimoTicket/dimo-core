@@ -38,6 +38,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
                 .antMatchers( "/*" ).permitAll()//hasAuthority( Authorities.User )
                 .and().formLogin() // TODO: 21/4/2016 Use a custom login page
                 .and().logout().logoutSuccessUrl( "/" );
+        http.csrf().disable();
     }
 
     @Override

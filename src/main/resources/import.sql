@@ -1,1 +1,1 @@
-insert into ticket values(1,'2016-04-17 13:10:55', 'defaultimage.jpg', 40.631756, 22.951907, 'Ticket Message' );
+insert into ticket values(1,'2016-04-17 13:10:55', 'defaultimage.jpg', 40.631756, 22.951907, 'Ticket Message', 'NEW' );
