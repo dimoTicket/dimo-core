@@ -23,7 +23,7 @@ public class UserRepositoryTests
 
     @Autowired
     private UserRepository userRepository;
-    User user;
+    private User user;
 
     @Before
     public void setUp ()
