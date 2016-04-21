@@ -5,6 +5,9 @@ import app.entities.User;
 import app.repositories.AuthorityRepository;
 import app.repositories.UserRepository;
 import app.security.Authorities;
+import app.security.SecurityConfiguration;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,6 +23,7 @@ import java.util.Optional;
 public class UserService implements UserDetailsManager
 {
 
+    private final Log logger = LogFactory.getLog( getClass() );
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -30,11 +34,13 @@ public class UserService implements UserDetailsManager
     {
         User castedUser = ( User )user;
         castedUser.setAuthorities( this.returnUserLevelAuthorities() );
+        castedUser.setPassword( SecurityConfiguration.passwordEncoder.encode( castedUser.getPassword() ) );
         try
         {
             this.userRepository.save( castedUser );
         } catch ( Exception e )
         {
+            this.logger.error( e.getMessage() );
             throw e;
         }
     }

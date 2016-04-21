@@ -81,17 +81,6 @@ public class TicketController
         return "error";
     }
 
-    @RequestMapping ( value = "/newticket", method = RequestMethod.GET )
-    public ResponseEntity createDummyTicket ()
-    {
-        Ticket ticket = new Ticket();
-        ticket.setMessage( "Ticket message" );
-        ticket.setLatitude( new Double( "12.345678" ) );
-        ticket.setLongitude( new Double( "12.345678" ) );
-        ticket.setImageName( "imagename.jpg" );
-
-        return new ResponseEntity<>( this.ticketRepository.save( ticket ), HttpStatus.OK );
-    }
 //
 //    @RequestMapping ( value = "/newticket", method = RequestMethod.POST )
 //    public String submitTicketForm ( @ModelAttribute Ticket ticket )

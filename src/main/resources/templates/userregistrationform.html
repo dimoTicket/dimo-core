@@ -11,15 +11,17 @@
             <div th:replace="fragments/header :: header"></div>
         </div>
     </div>
+
     <div class="row">
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <h1>User registration form</h1>
+            <h1 class="well">User registration form</h1>
 
             <form role="form" action="#" th:action="@{/register}" th:object="${user}" method="post">
                 <div class="form-group">
                     <label for="username">Username:</label>
-                    <input type="text" class="form-control" id="username" placeholder="Enter username" th:field="*{username}"/>
+                    <input type="text" class="form-control" id="username" placeholder="Enter username"
+                           th:field="*{username}"/>
                 </div>
                 <div class="form-group">
                     <label for="email">Email:</label>
@@ -27,7 +29,8 @@
                 </div>
                 <div class="form-group">
                     <label for="pwd">Password:</label>
-                    <input type="password" class="form-control" id="pwd" placeholder="Enter password" th:field="*{password}"/>
+                    <input type="password" class="form-control" id="pwd" placeholder="Enter password"
+                           th:field="*{password}"/>
                 </div>
                 <div class="checkbox">
                     <label><input type="checkbox"> Remember me </input></label>

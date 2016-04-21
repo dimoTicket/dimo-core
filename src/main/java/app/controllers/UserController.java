@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 
@@ -31,7 +32,7 @@ public class UserController
     }
 
     @RequestMapping ( value = "/register", method = RequestMethod.POST )
-    public ResponseEntity registerUser ( @ModelAttribute User user )
+    public ResponseEntity registerUser ( @Valid @ModelAttribute User user )
     {
         try
         {
