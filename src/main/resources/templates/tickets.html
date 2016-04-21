@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
-    <title>All tickets</title>
+    <title th:text="#{page.title.tickets}"></title>
     <meta th:replace="fragments/head :: head"/>
 </head>
 <body>
@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col-md-1"></div>
         <div class="col-md-10">
-            <h1 class="well">'Ολα τα μηνύματα</h1>
+            <h1 class="well" th:text="#{h1.tickets}"></h1>
         </div>
         <div class="col-md-1"></div>
     </div>
@@ -25,10 +25,10 @@
             <table class="table table-striped table-hover">
                 <thead>
                 <tr>
-                    <th>Number</th>
-                    <th>Picture</th>
-                    <th>Date and time</th>
-                    <th>Status</th>
+                    <th th:text="#{table.th.number}"></th>
+                    <th th:text="#{table.th.picture}"></th>
+                    <th th:text="#{table.th.datetime}"></th>
+                    <th th:text="#{table.th.status}"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -43,7 +43,7 @@
                     <td>
                         <button type="button" class="btn btn-primary btn-md" data-toggle="modal"
                                 th:attr="data-target='#picModal' + ${ticket.id}">
-                            <span class="glyphicon glyphicon-camera"></span> Προβολή φωτογραφίας
+                            <span class="glyphicon glyphicon-camera"></span> <span th:text="#{button.showpic}"></span>
                         </button>
                         <!-- Modal -->
                         <div th:id="'picModal' + ${ticket.id}" class="modal fade" role="dialog">
@@ -59,16 +59,15 @@
                                         <img th:src="@{/image(id=${ticket.id})}" class="img-responsive"/>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-block" data-dismiss="modal">
-                                            Κλείσιμο παραθύρου
-                                        </button>
+                                        <button type="button" class="btn btn-block" data-dismiss="modal"
+                                                th:text="#{button.closewindow}"></button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </td>
                     <td class="well well-sm" th:text="${#dates.format(ticket.dateTime, 'dd/MM/yyyy - HH:mm')}"></td>
-                    <td class="success">Ανοιχτό</td>
+                    <td class="success" th:text="#{ticket.status.open}"></td>
                 </tr>
                 </tbody>
             </table>

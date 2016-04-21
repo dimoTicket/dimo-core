@@ -36,7 +36,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
         http.authorizeRequests()
                 .accessDecisionManager( this.getAccessDecisionManager() )
                 .antMatchers( "/*" ).permitAll()//hasAuthority( Authorities.User )
-                .and().formLogin()
+                .and().formLogin() // TODO: 21/4/2016 Use a custom login page
                 .and().logout().logoutSuccessUrl( "/" );
     }
 

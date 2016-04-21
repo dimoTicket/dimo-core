@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>User registration</title>
+    <title th:text="#{page.title.register}"></title>
     <meta th:replace="fragments/head :: head"/>
 </head>
 <body>
@@ -15,27 +15,27 @@
     <div class="row">
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <h1 class="well">User registration form</h1>
+            <h1 class="well" th:text="#{h1.register}"></h1>
 
             <form role="form" action="#" th:action="@{/register}" th:object="${user}" method="post">
                 <div class="form-group">
-                    <label for="username">Username:</label>
+                    <label for="username" th:text="#{label.username}"></label>
                     <input type="text" class="form-control" id="username" placeholder="Enter username"
                            th:field="*{username}"/>
                 </div>
                 <div class="form-group">
-                    <label for="email">Email:</label>
+                    <label for="email" th:text="#{label.email}"></label>
                     <input type="email" class="form-control" id="email" placeholder="Enter email" th:field="*{email}"/>
                 </div>
                 <div class="form-group">
-                    <label for="pwd">Password:</label>
+                    <label for="pwd" th:text="#{label.password}"></label>
                     <input type="password" class="form-control" id="pwd" placeholder="Enter password"
                            th:field="*{password}"/>
                 </div>
                 <div class="checkbox">
-                    <label><input type="checkbox"> Remember me </input></label>
+                    <label><input type="checkbox" th:text="#{label.rememberme}"/> </label>
                 </div>
-                <button type="submit" class="btn btn-default">Submit</button>
+                <button type="submit" class="btn btn-default" th:text="#{button.submit}"></button>
             </form>
 
         </div>
@@ -44,8 +44,3 @@
 </div>
 </body>
 </html>
-
-<!--<p>Username: <input type="text" th:field="*{username}"/></p>-->
-<!--<p>Password: <input type="password" th:field="*{password}"/></p>-->
-<!--<p><input type="submit" value="Submit"/> <input type="reset" value="Reset"/></p>-->
-<!--</form>-->
