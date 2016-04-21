@@ -1,5 +1,6 @@
 package app.entities;
 
+import app.security.SecurityConfiguration;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.security.core.GrantedAuthority;
@@ -41,9 +42,13 @@ public class User extends BaseEntity implements UserDetails
         this.username = username;
     }
 
+    /**
+     * Also encrypts the password
+     * @param password RawPassword
+     */
     public void setPassword ( String password )
     {
-        this.password = password;
+        this.password = SecurityConfiguration.passwordEncoder.encode( password );
     }
 
     public String getEmail ()

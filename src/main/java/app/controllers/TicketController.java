@@ -3,7 +3,6 @@ package app.controllers;
 import app.entities.Ticket;
 import app.repositories.TicketRepository;
 import app.services.ImageService;
-import app.services.UserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +34,6 @@ public class TicketController
     private TicketRepository ticketRepository;
     @Autowired
     private ImageService imageService;
-    @Autowired
-    private UserService userService;
 
     @RequestMapping ( value = "/{id}", method = RequestMethod.GET )
     public String getTicketMessageById ( @PathVariable ( "id" ) Long id, Model model )

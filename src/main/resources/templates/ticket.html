@@ -1,59 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="el">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title th:text="'Προβολή μηνύματος : ' + ${ticket.id}"></title>
-    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.6/css/bootstrap.min.css"
-          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
-    <script src="webjars/jquery/2.1.4/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" th:href="@{/css/style.css}" href="../../css/style.css"/>
-    <script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;language=el"></script>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        var latitude = [[${ticket.latitude}]];
-        var longitude = [[${ticket.longitude}]];
-        /*]]>*/
-    </script>
-    <script>
-        $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-    </script>
-    <script> function initialize() {
-        var googleFormatLatLng = new google.maps.LatLng(latitude, longitude);
-        var mapProp = {
-            center: googleFormatLatLng,
-            zoom: 16,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
-        var geocoder = new google.maps.Geocoder;
-        var marker = new google.maps.Marker({
-            position: googleFormatLatLng,
-            map: map,
-        });
-        var infowindow = new google.maps.InfoWindow;
+    <title th:text="'Ticket preview : ' + ${ticket.id}"></title>
+    <meta th:replace="fragments/head :: head"/>
+    <meta th:replace="fragments/maps :: maps"/>
 
-        geocoder.geocode({'location': googleFormatLatLng}, function (results, status) {
-            if (status === google.maps.GeocoderStatus.OK) {
-                if (results[0]) {
-                    infowindow.setContent(results[0].formatted_address);
-                    infowindow.open(map, marker);
-                } else {
-                    window.alert('Αποτυχία εύρεσης διεύθηνσης');
-                }
-            } else {
-                window.alert('Αποτυχία εύρεσης διεύθηνσης. Αιτία : ' + status);
-            }
-        });
-    }
-    google.maps.event.addDomListener(window, 'load', initialize); </script>
 </head>
 
 <body>
 <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div th:replace="fragments/header :: header"></div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-1">
             <ul class="nav nav-pills nav-stacked pager" data-spy="affix" data-offset-top="0">
@@ -62,7 +23,7 @@
             </ul>
         </div>
         <div class="col-md-10">
-            <h1 class="well" th:text="'Μήνυμα με αριθμό : ' + ${ticket.id}"></h1>
+            <h1 class="well" th:text="'Ticket number  : ' + ${ticket.id}"></h1>
         </div>
         <div class="col-md-1"></div>
     </div>
@@ -71,7 +32,7 @@
         <div class="col-md-1"></div>
         <div class="col-md-8">
             <div class="panel panel-default">
-                <div class="panel-heading">Κείμενο μηνύματος</div>
+                <div class="panel-heading">Ticket message</div>
                 <div class="panel-body" th:text="${ticket.message}"></div>
             </div>
         </div>
@@ -82,15 +43,15 @@
         <div class="col-md-1"></div>
         <div class="col-md-6">
             <div class="panel panel-default">
-                <div class="panel-heading">Τοποθεσία φωτογράφισης</div>
+                <div class="panel-heading">Picture location</div>
                 <div id="googleMap" class="panel-body" style="height:470px;"></div>
             </div>
         </div>
         <div class="col-md-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Φωτογραφία</div>
+                <div class="panel-heading">Picture</div>
                 <a th:href="@{/image(id=${ticket.id})}" data-toggle="tooltip" data-placement="bottom"
-                   title="Προβολή πλήρους μεγέθους">
+                   title="Show full size">
                     <img class="img-responsive" th:src="@{/image(id=${ticket.id})}"/>
                 </a>
             </div>

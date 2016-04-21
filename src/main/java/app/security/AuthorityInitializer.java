@@ -41,7 +41,7 @@ public class AuthorityInitializer
     {
         User user = new User();
         user.setUsername( "pambos" );
-        user.setPassword( SecurityConfiguration.passwordEncoder.encode( "12345678" ) );
+        user.setPassword( "12345678" );
         user.setEmail( "pambos@pambos.gr" );
         this.userService.createUser( user );
     }

@@ -30,7 +30,13 @@ public class UserService implements UserDetailsManager
     {
         User castedUser = ( User )user;
         castedUser.setAuthorities( this.returnUserLevelAuthorities() );
-        this.userRepository.save( castedUser );
+        try
+        {
+            this.userRepository.save( castedUser );
+        } catch ( Exception e )
+        {
+            throw e;
+        }
     }
 
     @Override

@@ -35,9 +35,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
     {
         http.authorizeRequests()
                 .accessDecisionManager( this.getAccessDecisionManager() )
-                .antMatchers( "/*" ).hasAuthority( Authorities.User )
-                .and()
-                .formLogin();
+                .antMatchers( "/*" ).permitAll()//hasAuthority( Authorities.User )
+                .and().formLogin()
+                .and().logout().logoutSuccessUrl( "/" );
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
         WebExpressionVoter webExpressionVoter = new WebExpressionVoter();
         webExpressionVoter.setExpressionHandler( expressionHandler );
 
-        List<AccessDecisionVoter<? extends Object>> voters = new ArrayList<>();
+        List<AccessDecisionVoter<?>> voters = new ArrayList<>();
 
         voters.add( webExpressionVoter );
         return new AffirmativeBased( voters );
@@ -66,6 +66,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 
     private RoleHierarchy produceRoleHierarchy ()
     {
+        //All admins will also have user authorities.
         String roleHierarchySpelString = Authorities.Admin + " > " + Authorities.User;
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
         roleHierarchy.setHierarchy( roleHierarchySpelString );

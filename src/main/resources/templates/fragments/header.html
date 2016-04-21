@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      lang="en">
+<head>
+    <!--Js code to submit logout post form-->
+    <script type="text/javascript">
+        function postLogout() {
+        }
+    </script>
+
+</head>
+<body>
+<nav class="navbar navbar-inverse" th:fragment="header">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Dimo</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#">All tickets</a></li>
+        </ul>
+
+        <!--Right side-->
+        <ul sec:authorize="isAnonymous()" class="nav navbar-nav navbar-right">
+            <li><a href="#" th:href="@{/register}"> <span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+            <li><a href="#" th:href="@{/login}"> <span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        </ul>
+        <ul sec:authorize="isAuthenticated()" class="nav navbar-nav navbar-right">
+            <li>
+                <a href="#"><span class="glyphicon glyphicon-user"></span> <span sec:authentication="name"></span> </a>
+            </li>
+            <li>
+                <!--Submit dummy form to /logout to perform post logout-->
+                <form id="logoutForm" th:action="@{/logout}" method="post"></form>
+                <a href="#" onClick="document.forms['logoutForm'].submit();">
+                    <span class="glyphicon glyphicon-log-out"></span> Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:fragment="maps">
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;language=en"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var latitude = [[${ticket.latitude}]];
+        var longitude = [[${ticket.longitude}]];
+        /*]]>*/
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+    <script> function initialize() {
+        var googleFormatLatLng = new google.maps.LatLng(latitude, longitude);
+        var mapProp = {
+            center: googleFormatLatLng,
+            zoom: 16,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+        var geocoder = new google.maps.Geocoder;
+        var marker = new google.maps.Marker({
+            position: googleFormatLatLng,
+            map: map,
+        });
+        var infowindow = new google.maps.InfoWindow;
+
+        geocoder.geocode({'location': googleFormatLatLng}, function (results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                    infowindow.setContent(results[0].formatted_address);
+                    infowindow.open(map, marker);
+                } else {
+                    window.alert('Address lookup failed');
+                }
+            } else {
+                window.alert('Address lookup failed. Reason : ' + status);
+            }
+        });
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+</head>
+<body>
+</body>
+</html>
