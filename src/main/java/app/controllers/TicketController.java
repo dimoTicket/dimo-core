@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -70,12 +71,12 @@ public class TicketController
     }
 
     @RequestMapping ( value = { "/tickets", "/" }, method = RequestMethod.GET )
-    public String getAllTickets ( Model model )
+    public String getAllTickets ( Map model )
     {
         List<Ticket> tickets = this.ticketRepository.findAll();
         if ( !tickets.isEmpty() )
         {
-            model.addAttribute( "tickets", tickets );
+            model.put( "tickets", tickets );
             return "tickets";
         }
         return "error";
