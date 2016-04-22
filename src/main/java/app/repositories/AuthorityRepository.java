@@ -11,9 +11,5 @@ import java.util.Optional;
 public interface AuthorityRepository extends JpaRepository<Authority, Long>
 {
 
-    /**
-     * This method will be translated into a query by constructing it directly
-     * from the method name as there is no other query declared.
-     */
     Optional<Authority> findByAuthorityString ( String authority );
 }

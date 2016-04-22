@@ -3,8 +3,8 @@
 
 <head>
     <title th:text="#{page.title.ticket} + ' ' + ${ticket.id}"></title>
-    <meta th:replace="fragments/head :: head"/>
-    <meta th:replace="fragments/maps :: maps"/>
+    <meta th:remove="tag" th:include="fragments/head :: head"/>
+    <meta th:remove="tag" th:include="fragments/maps :: maps"/>
 </head>
 
 <body>
