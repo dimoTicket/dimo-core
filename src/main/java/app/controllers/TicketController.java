@@ -1,6 +1,7 @@
 package app.controllers;
 
 import app.entities.Ticket;
+import app.exceptions.ResourceNotFoundException;
 import app.repositories.TicketRepository;
 import app.services.ImageService;
 import org.apache.commons.logging.Log;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.imageio.ImageIO;
 import javax.validation.Valid;
@@ -22,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +48,15 @@ public class TicketController
             model.addAttribute( "ticket", ticket );
             return "ticket";
         }
-        return "error"; //// TODO: 09/02/2016 should return empty model. Frotnend should take care of showing the msg
+        return "error";
+    }
+
+    @RequestMapping ( value = "/api/{id}", method = RequestMethod.GET )
+    public ResponseEntity getTicketMessageByIdRest ( @PathVariable ( "id" ) Long id )
+    {
+        this.verifyTicket( id );
+        Ticket ticket = this.ticketRepository.findOne( id );
+        return new ResponseEntity<>( ticket, HttpStatus.OK );
     }
 
     @RequestMapping ( value = "/image", method = RequestMethod.GET )
@@ -82,18 +93,16 @@ public class TicketController
         return "error";
     }
 
-//
-//    @RequestMapping ( value = "/newticket", method = RequestMethod.POST )
-//    public String submitTicketForm ( @ModelAttribute Ticket ticket )
-//    {
-//        this.ticketRepository.save( ticket );
-//        return "newticketsuccess";
-//    }
-
     @RequestMapping ( value = "/api/newticket", method = RequestMethod.POST )
-    public ResponseEntity<Ticket> submitTicketRest ( @RequestBody @Valid Ticket ticket )
+    public ResponseEntity<Ticket> submitTicketRest ( @Valid @RequestBody Ticket ticket )
     {
-        return new ResponseEntity<>( this.ticketRepository.save( ticket ), HttpStatus.OK );
+        ticket = this.ticketRepository.save( ticket );
+        HttpHeaders httpResponseHeaders = new HttpHeaders();
+        URI newTicketUri = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path( "/api/{id}" ).buildAndExpand( ticket.getId() ).toUri();
+        httpResponseHeaders.setLocation( newTicketUri );
+        return new ResponseEntity<>( httpResponseHeaders, HttpStatus.CREATED );
     }
 
     // TODO: 10/02/2016 Generate a unique "upload token" for the client to use, to avoid malicious attempts
@@ -110,5 +119,14 @@ public class TicketController
             logger.error( "Attempt to overwrite picture for ticketId : " + ticketId );
         }
         return new ResponseEntity( HttpStatus.BAD_REQUEST );
+    }
+
+    protected void verifyTicket ( Long ticketId ) throws ResourceNotFoundException
+    {
+        Ticket ticket = this.ticketRepository.findOne( ticketId );
+        if ( ticket == null )
+        {
+            throw new ResourceNotFoundException( "Ticket with id " + ticketId + " not found" );
+        }
     }
 }

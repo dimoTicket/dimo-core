@@ -3,7 +3,7 @@
 
 <head>
     <title th:text="#{page.title.tickets}"></title>
-    <meta th:replace="fragments/head :: head"/>
+    <meta th:remove="tag" th:replace="fragments/head :: head"/>
 </head>
 <body>
 <div class="container-fluid">
@@ -68,18 +68,23 @@
                     </td>
                     <td class="well well-sm" th:text="${#dates.format(ticket.dateTime, 'dd/MM/yyyy - HH:mm')}"></td>
                     <!--Conditionals on ticket statuses-->
-                    <td class="success" th:if="${ticket.status == T(app.entities.enums.TicketStatus).NEW}" th:text="#{ticket.status.new}"></td>
-                    <td class="active" th:if="${ticket.status == T(app.entities.enums.TicketStatus).REJECTED}" th:text="#{ticket.status.rejected}"></td>
-                    <td class="info" th:if="${ticket.status == T(app.entities.enums.TicketStatus).ASSIGNED}" th:text="#{ticket.status.assigned}"></td>
-                    <td class="info" th:if="${ticket.status == T(app.entities.enums.TicketStatus).IN_PROGRESS}" th:text="#{ticket.status.inprogress}"></td>
-                    <td class="active" th:if="${ticket.status == T(app.entities.enums.TicketStatus).ABORTED}" th:text="#{ticket.status.aborted}"></td>
-                    <td class="active" th:if="${ticket.status == T(app.entities.enums.TicketStatus).DONE}" th:text="#{ticket.status.done}"></td>
+                    <td class="success" th:if="${ticket.status == T(app.entities.enums.TicketStatus).NEW}"
+                        th:text="#{ticket.status.new}"></td>
+                    <td class="active" th:if="${ticket.status == T(app.entities.enums.TicketStatus).REJECTED}"
+                        th:text="#{ticket.status.rejected}"></td>
+                    <td class="info" th:if="${ticket.status == T(app.entities.enums.TicketStatus).ASSIGNED}"
+                        th:text="#{ticket.status.assigned}"></td>
+                    <td class="info" th:if="${ticket.status == T(app.entities.enums.TicketStatus).IN_PROGRESS}"
+                        th:text="#{ticket.status.inprogress}"></td>
+                    <td class="active" th:if="${ticket.status == T(app.entities.enums.TicketStatus).ABORTED}"
+                        th:text="#{ticket.status.aborted}"></td>
+                    <td class="active" th:if="${ticket.status == T(app.entities.enums.TicketStatus).DONE}"
+                        th:text="#{ticket.status.done}"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <div class="col-md-4">
-        </div>
+        <div class="col-md-4"></div>
     </div>
 </div>
 </body>

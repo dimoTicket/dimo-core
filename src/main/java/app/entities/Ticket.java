@@ -5,6 +5,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -19,9 +21,9 @@ public class Ticket extends BaseEntity
     @Size ( max = 2000 )
     private String message;
     @NotNull
-    private double latitude;
+    private Double latitude;
     @NotNull
-    private double longitude;
+    private Double longitude;
     @CreatedDate
     @Temporal ( TemporalType.TIMESTAMP )
     private Date dateTime = new Date();
@@ -55,22 +57,22 @@ public class Ticket extends BaseEntity
         this.message = message;
     }
 
-    public double getLatitude ()
+    public Double getLatitude ()
     {
         return latitude;
     }
 
-    public void setLatitude ( double latitude )
+    public void setLatitude ( Double latitude )
     {
         this.latitude = latitude;
     }
 
-    public double getLongitude ()
+    public Double getLongitude ()
     {
         return longitude;
     }
 
-    public void setLongitude ( double longitude )
+    public void setLongitude ( Double longitude )
     {
         this.longitude = longitude;
     }

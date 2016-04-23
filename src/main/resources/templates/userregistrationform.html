@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title th:text="#{page.title.register}"></title>
-    <meta th:replace="fragments/head :: head"/>
+    <meta th:remove="tag" th:replace="fragments/head :: head"/>
 </head>
 <body>
 <div class="container-fluid">
