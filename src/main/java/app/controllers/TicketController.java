@@ -54,7 +54,7 @@ public class TicketController
     @RequestMapping ( value = "/api/{id}", method = RequestMethod.GET )
     public ResponseEntity getTicketMessageByIdRest ( @PathVariable ( "id" ) Long id )
     {
-        this.verifyTicket( id );
+        this.verifyTicketExists( id );
         Ticket ticket = this.ticketRepository.findOne( id );
         return new ResponseEntity<>( ticket, HttpStatus.OK );
     }
@@ -121,7 +121,7 @@ public class TicketController
         return new ResponseEntity( HttpStatus.BAD_REQUEST );
     }
 
-    protected void verifyTicket ( Long ticketId ) throws ResourceNotFoundException
+    protected void verifyTicketExists ( Long ticketId ) throws ResourceNotFoundException
     {
         Ticket ticket = this.ticketRepository.findOne( ticketId );
         if ( ticket == null )
