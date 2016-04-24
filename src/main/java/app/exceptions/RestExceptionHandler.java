@@ -1,5 +1,6 @@
 package app.exceptions;
 
+import app.exceptions.service.UserServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -35,6 +36,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler
         errorDetails.setTitle( "Resource not found" );
         errorDetails.setTimestamp( new Date().getTime() );
         return new ResponseEntity<>( errorDetails, HttpStatus.NOT_FOUND );
+    }
+
+    @ExceptionHandler ( UserServiceException.class )
+    public ResponseEntity handleUserServiceException ( UserServiceException ex )
+    {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails( ex.getMessage() );
+        errorDetails.setDeveloperMessage( ex.getClass().getName() );
+        errorDetails.setStatus( HttpStatus.INTERNAL_SERVER_ERROR.value() );
+        errorDetails.setTitle( "Error when validating user" );
+        errorDetails.setTimestamp( new Date().getTime() );
+        return new ResponseEntity<>( errorDetails, HttpStatus.INTERNAL_SERVER_ERROR );
     }
 
     @Override
