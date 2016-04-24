@@ -5,6 +5,7 @@ import app.entities.User;
 import app.exceptions.service.EmailAlreadyInUseException;
 import app.exceptions.service.UserServiceException;
 import app.exceptions.service.UsernameAlreadyExistsException;
+import app.exceptions.service.UsernameDoesNotExistException;
 import app.repositories.AuthorityRepository;
 import app.repositories.UserRepository;
 import app.security.Authorities;
@@ -13,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +60,7 @@ public class UserService implements UserDetailsManager
     public void deleteUser ( String username )
     {
         Optional<User> userOptional = this.userRepository.findByUsername( username );
-        User user = userOptional.orElseThrow( () -> new UsernameNotFoundException( username ) );
+        User user = userOptional.orElseThrow( () -> new UsernameDoesNotExistException( "Username " + username + " does not exist" ) );
         this.userRepository.delete( user );
     }
 
@@ -82,9 +82,10 @@ public class UserService implements UserDetailsManager
     }
 
     @Override
-    public UserDetails loadUserByUsername ( String username ) throws UsernameNotFoundException
+    public UserDetails loadUserByUsername ( String username )
     {
-        return this.userRepository.findByUsername( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
+        return this.userRepository.findByUsername( username )
+                .orElseThrow( () -> new UsernameDoesNotExistException( "Username " + username + " does not exist" ) );
     }
 
     private Collection<Authority> returnUserLevelAuthorities ()

@@ -4,6 +4,7 @@ import app.DimoApplication;
 import app.entities.User;
 import app.exceptions.service.EmailAlreadyInUseException;
 import app.exceptions.service.UsernameAlreadyExistsException;
+import app.exceptions.service.UsernameDoesNotExistException;
 import app.repositories.UserRepository;
 import app.security.Authorities;
 import app.security.SecurityConfiguration;
@@ -48,7 +49,7 @@ public class UserServiceTests
     }
 
     @Test
-    public void createUser ()
+    public void create ()
     {
         User user = new User();
         user.setUsername( "testUsername" );
@@ -69,7 +70,7 @@ public class UserServiceTests
     }
 
     @Test
-    public void usernameAlreadyExists ()
+    public void createUsernameAlreadyExists ()
     {
         User user = new User();
         user.setUsername( "testUsername" );
@@ -83,7 +84,7 @@ public class UserServiceTests
     }
 
     @Test
-    public void emailAlreadyExists ()
+    public void createEmailAlreadyExists ()
     {
         User user = new User();
         user.setUsername( "testUsername" );
@@ -94,6 +95,21 @@ public class UserServiceTests
 
         this.thrown.expect( EmailAlreadyInUseException.class );
         this.userService.createUser( user );
+    }
+
+    @Test
+    public void delete ()
+    {
+        when( this.userRepository.findByUsername( "testUsername" ) ).thenReturn( Optional.of( new User() ) );
+        this.userService.deleteUser( "testUsername" );
+    }
+
+    @Test
+    public void deleteUsernameDoesNotExist ()
+    {
+        when( this.userRepository.findByUsername( "testUsername" ) ).thenReturn( Optional.empty() );
+        this.thrown.expect( UsernameDoesNotExistException.class );
+        this.userService.deleteUser( "testUsername" );
     }
 
 }
