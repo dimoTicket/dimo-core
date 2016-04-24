@@ -2,8 +2,6 @@ package app.controllers;
 
 import app.entities.User;
 import app.services.UserService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +18,6 @@ import java.util.Map;
 public class UserController
 {
 
-    private final Log logger = LogFactory.getLog( getClass() );
     @Autowired
     private UserService userService;
 
@@ -34,13 +31,7 @@ public class UserController
     @RequestMapping ( value = "/register", method = RequestMethod.POST )
     public ResponseEntity registerUser ( @Valid @ModelAttribute User user )
     {
-        try
-        {
-            this.userService.createUser( user );
-            return new ResponseEntity( HttpStatus.OK );
-        } catch ( Exception e )
-        {
-            return new ResponseEntity( HttpStatus.INTERNAL_SERVER_ERROR );
-        }
+        this.userService.createUser( user );
+        return new ResponseEntity( HttpStatus.CREATED );
     }
 }

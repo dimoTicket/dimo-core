@@ -94,7 +94,7 @@ public class TicketController
     }
 
     @RequestMapping ( value = "/api/newticket", method = RequestMethod.POST )
-    public ResponseEntity<Ticket> submitTicketRest ( @Valid @RequestBody Ticket ticket )
+    public ResponseEntity submitTicketRest ( @Valid @RequestBody Ticket ticket )
     {
         ticket = this.ticketRepository.save( ticket );
         HttpHeaders httpResponseHeaders = new HttpHeaders();

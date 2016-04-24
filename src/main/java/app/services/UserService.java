@@ -2,6 +2,9 @@ package app.services;
 
 import app.entities.Authority;
 import app.entities.User;
+import app.exceptions.service.EmailAlreadyInUseException;
+import app.exceptions.service.UserServiceException;
+import app.exceptions.service.UsernameAlreadyExistsException;
 import app.repositories.AuthorityRepository;
 import app.repositories.UserRepository;
 import app.security.Authorities;
@@ -33,6 +36,8 @@ public class UserService implements UserDetailsManager
     public void createUser ( UserDetails user )
     {
         User castedUser = ( User )user;
+        this.verifyUser( castedUser );
+
         castedUser.setAuthorities( this.returnUserLevelAuthorities() );
         castedUser.setPassword( SecurityConfiguration.passwordEncoder.encode( castedUser.getPassword() ) );
         try
@@ -40,7 +45,7 @@ public class UserService implements UserDetailsManager
             this.userRepository.save( castedUser );
         } catch ( Exception e )
         {
-            this.logger.error( e.getMessage() );
+            logger.error( e.getMessage() );
             throw e;
         }
     }
@@ -71,6 +76,11 @@ public class UserService implements UserDetailsManager
         return this.userRepository.findByUsername( username ).isPresent();
     }
 
+    public boolean emailExists ( String email )
+    {
+        return this.userRepository.findByEmail( email ).isPresent();
+    }
+
     @Override
     public UserDetails loadUserByUsername ( String username ) throws UsernameNotFoundException
     {
@@ -83,6 +93,18 @@ public class UserService implements UserDetailsManager
         authorities.add( this.authorityRepository.findByAuthorityString( Authorities.User )
                 .orElseThrow( () -> new RuntimeException( "User Authority could not be retrieved from the database." ) ) );
         return authorities;
+    }
+
+    private void verifyUser ( User user ) throws UserServiceException
+    {
+        if ( this.userExists( user.getUsername() ) )
+        {
+            throw new UsernameAlreadyExistsException( "Username " + user.getUsername() + " already exists" );
+        }
+        if ( this.emailExists( user.getEmail() ) )
+        {
+            throw new EmailAlreadyInUseException( "Email " + user.getEmail() + " already exists" );
+        }
     }
 
 }
