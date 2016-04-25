@@ -1,7 +1,7 @@
 package app.controllers;
 
 import app.entities.Ticket;
-import app.exceptions.ResourceNotFoundException;
+import app.exceptions.controller.ResourceNotFoundException;
 import app.repositories.TicketRepository;
 import app.services.ImageService;
 import org.apache.commons.logging.Log;

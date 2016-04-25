@@ -1,4 +1,4 @@
-package app.exceptions;
+package app.exceptions.pojo;
 
 public class ValidationError
 {

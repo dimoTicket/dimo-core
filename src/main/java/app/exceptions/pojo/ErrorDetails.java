@@ -1,4 +1,4 @@
-package app.exceptions;
+package app.exceptions.pojo;
 
 import java.util.HashMap;
 import java.util.List;

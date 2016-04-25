@@ -1,5 +1,8 @@
 package app.exceptions;
 
+import app.exceptions.controller.ResourceNotFoundException;
+import app.exceptions.pojo.ErrorDetails;
+import app.exceptions.pojo.ValidationError;
 import app.exceptions.service.UserServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
