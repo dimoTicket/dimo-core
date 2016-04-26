@@ -19,9 +19,14 @@ public class TaskService
 
     public Task createTask ( Task task )
     {
+        // TODO: 26/04/2016 Throw if there's already an !active! task for the given ticket
         return this.taskRepository.save( task );
     }
 
+    public Task getById ( Long taskId )
+    {
+        return this.taskRepository.findOne( taskId );
+    }
     public List<Task> getAllTasks ()
     {
         return this.taskRepository.findAll();

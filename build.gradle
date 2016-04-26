@@ -39,9 +39,9 @@ dependencies {
     compile('org.webjars:bootstrap:3.3.6') //Also change refs on thymeleaf templates
     compile('org.webjars:jquery:2.1.4') //Also change refs on thymeleaf templates
     compile('org.webjars:jquery-ui:1.11.4') //Also change refs on thymeleaf templates
+    compile('com.h2database:h2:1.4.191')
     //Test dependencies
     testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('com.h2database:h2:1.4.191')
 }
 
 //Enables live reload of thymeleaf templates. Enable when working with thymeleaf templates.

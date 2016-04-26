@@ -12,6 +12,7 @@ import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collection;
+import java.util.Date;
 
 
 @Entity
@@ -29,11 +30,13 @@ public class User extends BaseEntity implements UserDetails
 
     @Email
     @NotNull
+    @JsonIgnore
     @Column ( unique = true )
     private String email;
 
     @ManyToMany ( fetch = FetchType.EAGER )
     @NotNull
+    @JsonIgnore
     private Collection<Authority> authorities;
 
     public User ()
@@ -84,26 +87,37 @@ public class User extends BaseEntity implements UserDetails
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired ()
     {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked ()
     {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired ()
     {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled ()
     {
         return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public Date getCreatedAt ()
+    {
+        return super.getCreatedAt();
     }
 }

@@ -2,7 +2,7 @@ package app.controllers;
 
 import app.entities.Task;
 import app.entities.enums.TicketStatus;
-import app.repositories.TaskRepository;
+import app.services.TaskService;
 import app.services.TicketService;
 import app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +26,15 @@ public class TaskController
 
     @Autowired
     private UserService userService;
-
     @Autowired
     private TicketService ticketService;
-
     @Autowired
-    private TaskRepository taskRepository;
+    private TaskService taskService;
 
     @RequestMapping ( value = "api/task/newtask", method = RequestMethod.POST )
     public ResponseEntity submitTask ( @Valid @RequestBody Task task )
     {
-        this.taskRepository.save( task );
+        this.taskService.createTask( task );
         this.ticketService.changeTicketStatus( task.getTicket(), TicketStatus.ASSIGNED );
 
         HttpHeaders httpResponseHeaders = new HttpHeaders();
@@ -50,9 +48,15 @@ public class TaskController
     @RequestMapping ( value = "/api/task/{id}", method = RequestMethod.GET )
     public ResponseEntity getTaskById ( @PathVariable ( "id" ) Long id )
     {
-//        verify task
-        Task task = this.taskRepository.findOne( id );
+        // TODO: 26/04/2016 verify task
+        Task task = this.taskService.getById( id );
         return new ResponseEntity<>( task, HttpStatus.OK );
+    }
+
+    @RequestMapping ( value = "/api/tasks" )
+    public ResponseEntity getAllTicketsJson ()
+    {
+        return new ResponseEntity<>( this.taskService.getAllTasks(), HttpStatus.OK );
     }
 
 }
