@@ -1,18 +1,22 @@
 package app.entities;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import org.springframework.data.annotation.CreatedDate;
+
+import javax.persistence.*;
+import java.util.Date;
 
 
 @MappedSuperclass
-public class BaseEntity
+class BaseEntity
 {
 
     @Id
     @GeneratedValue ( strategy = GenerationType.IDENTITY )
     protected Long id;
+
+    @CreatedDate
+    @Temporal ( TemporalType.TIMESTAMP )
+    private Date createdAt = new Date();
 
     public Long getId ()
     {
@@ -22,5 +26,15 @@ public class BaseEntity
     public void setId ( Long id )
     {
         this.id = id;
+    }
+
+    public Date getCreatedAt ()
+    {
+        return createdAt;
+    }
+
+    public void setCreatedAt ( Date createdAt )
+    {
+        this.createdAt = createdAt;
     }
 }

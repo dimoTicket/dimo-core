@@ -1,6 +1,6 @@
 package app.exceptions;
 
-import app.exceptions.controller.ResourceNotFoundException;
+import app.exceptions.service.ResourceNotFoundException;
 import app.exceptions.pojo.ErrorDetails;
 import app.exceptions.pojo.ValidationError;
 import app.exceptions.service.UserServiceException;

@@ -37,9 +37,6 @@ public class TicketRepositoryTests
         ticket.setLatitude( new Double( "12.345678" ) );
         ticket.setLongitude( new Double( "12.345678" ) );
         ticket.setImageName( "imagename.jpg" );
-        Calendar calendar = Calendar.getInstance();
-        calendar.set( 2000, 5, 5, 16, 16, 16 );
-        ticket.setDateTime( calendar.getTime() );
     }
 
     @Test
