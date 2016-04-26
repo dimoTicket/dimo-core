@@ -12,6 +12,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -34,6 +36,7 @@ public class UserRepositoryTests
         user.setUsername( "TestUsername" );
         user.setPassword( "TestRawPassword" );
         user.setEmail( "Test@JunitTest.gr" );
+        user.setAuthorities( Collections.emptyList() );
     }
 
     @Test

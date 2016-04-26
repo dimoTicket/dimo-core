@@ -41,9 +41,10 @@ dependencies {
     compile('org.webjars:jquery-ui:1.11.4') //Also change refs on thymeleaf templates
     //Test dependencies
     testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('com.h2database:h2:1.4.191')
 }
 
-//Enalbes live reload of thymeleaf templates. Enable when working with thymeleaf templates.
+//Enables live reload of thymeleaf templates. Enable when working with thymeleaf templates.
 bootRun {
     addResources = true
 }

@@ -21,15 +21,19 @@ public class User extends BaseEntity implements UserDetails
     @NotNull
     @Column ( unique = true )
     private String username;
+
     @NotNull
     @JsonIgnore
-    @Size(min = 8)
+    @Size ( min = 8 )
     private String password;
+
     @Email
     @NotNull
     @Column ( unique = true )
     private String email;
+
     @ManyToMany ( fetch = FetchType.EAGER )
+    @NotNull
     private Collection<Authority> authorities;
 
     public User ()

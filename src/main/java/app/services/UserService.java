@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -27,8 +28,10 @@ public class UserService implements UserDetailsManager
 {
 
     private final Log logger = LogFactory.getLog( getClass() );
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private AuthorityRepository authorityRepository;
 
@@ -86,6 +89,11 @@ public class UserService implements UserDetailsManager
     {
         return this.userRepository.findByUsername( username )
                 .orElseThrow( () -> new UsernameDoesNotExistException( "Username " + username + " does not exist" ) );
+    }
+
+    public List<User> getAllUsers ()
+    {
+        return this.userRepository.findAll();
     }
 
     private Collection<Authority> returnUserLevelAuthorities ()

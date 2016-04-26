@@ -13,16 +13,18 @@ import java.util.Date;
 public class Task extends BaseEntity
 {
 
-    @CreatedDate
-    @Temporal ( TemporalType.TIMESTAMP )
-    private Date createdAt = new Date();
     @OneToOne
     @NotNull
     private Ticket ticket;
+
     @ManyToMany
     @NotNull
     @Size ( min = 1 )
     private Collection<User> users;
+
+    @CreatedDate
+    @Temporal ( TemporalType.TIMESTAMP )
+    private Date createdAt = new Date();
 
     public Task ()
     {

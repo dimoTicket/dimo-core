@@ -34,12 +34,14 @@ public class TicketController
 {
 
     private final Log logger = LogFactory.getLog( getClass() );
+
     @Autowired
     private TicketRepository ticketRepository;
+
     @Autowired
     private ImageService imageService;
 
-    @RequestMapping ( value = "/{id}", method = RequestMethod.GET )
+    @RequestMapping ( value = "/ticket/{id}", method = RequestMethod.GET )
     public String getTicketMessageById ( @PathVariable ( "id" ) Long id, Model model )
     {
         Ticket ticket = this.ticketRepository.findOne( id );
@@ -51,7 +53,7 @@ public class TicketController
         return "error";
     }
 
-    @RequestMapping ( value = "/api/{id}", method = RequestMethod.GET )
+    @RequestMapping ( value = "/api/ticket/{id}", method = RequestMethod.GET )
     public ResponseEntity getTicketMessageByIdRest ( @PathVariable ( "id" ) Long id )
     {
         this.verifyTicketExists( id );
@@ -93,8 +95,8 @@ public class TicketController
         return "error";
     }
 
-    @RequestMapping ( value = "/api/newticket", method = RequestMethod.POST )
-    public ResponseEntity submitTicketRest ( @Valid @RequestBody Ticket ticket )
+    @RequestMapping ( value = "/api/ticket/newticket", method = RequestMethod.POST )
+    public ResponseEntity submitTicket ( @Valid @RequestBody Ticket ticket )
     {
         ticket = this.ticketRepository.save( ticket );
         HttpHeaders httpResponseHeaders = new HttpHeaders();
@@ -106,7 +108,7 @@ public class TicketController
     }
 
     // TODO: 10/02/2016 Generate a unique "upload token" for the client to use, to avoid malicious attempts
-    @RequestMapping ( value = "/api/newticketimage", method = RequestMethod.POST )
+    @RequestMapping ( value = "/api/ticket/newticketimage", method = RequestMethod.POST )
     public ResponseEntity handleImageUpload ( @RequestParam ( name = "ticketId", required = true ) Long ticketId,
                                               @RequestPart @Valid MultipartFile multipartFile )
     {

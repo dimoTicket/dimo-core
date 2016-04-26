@@ -34,4 +34,10 @@ public class UserController
         this.userService.createUser( user );
         return new ResponseEntity( HttpStatus.CREATED );
     }
+
+    @RequestMapping ( value = "/users" )
+    public ResponseEntity getAllUsers ()
+    {
+        return new ResponseEntity<>( this.userService.getAllUsers(), HttpStatus.OK );
+    }
 }

@@ -37,8 +37,10 @@ public class UserServiceTests
     @Autowired
     @InjectMocks
     private UserService userService;
+
     @Mock
     UserRepository userRepository;
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
