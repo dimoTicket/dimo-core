@@ -2,8 +2,8 @@ package app.services;
 
 import app.entities.Ticket;
 import app.repositories.TicketRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +16,7 @@ import java.io.IOException;
 public class ImageService
 {
 
-    private static final Logger logger = LoggerFactory.getLogger( ImageService.class );
+    private final Log logger = LogFactory.getLog( getClass() );
 
     private static String IMAGES_FOLDER = "C:/Users/Alexei/Desktop/dimopics/"; // TODO: 10/02/2016 move to .properties
 

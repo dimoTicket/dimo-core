@@ -52,9 +52,9 @@
         <div class="col-md-2">
             <div class="panel panel-default">
                 <div class="panel-heading" th:text="#{panel.picture}"></div>
-                <a th:href="@{/image(id=${ticket.id})}" data-toggle="tooltip" data-placement="bottom"
+                <a th:href="@{/image(ticketId=${ticket.id})}" data-toggle="tooltip" data-placement="bottom"
                    title="Show full size">
-                    <img class="img-responsive" th:src="@{/image(id=${ticket.id})}" alt="image"/>
+                    <img class="img-responsive" th:src="@{/image(ticketId=${ticket.id})}" alt="image"/>
                 </a>
             </div>
         </div>
