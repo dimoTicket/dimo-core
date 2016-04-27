@@ -17,7 +17,7 @@ public class TaskService
     @Autowired
     private TaskRepository taskRepository;
 
-    public Task createTask ( Task task )
+    public Task create ( Task task )
     {
         // TODO: 26/04/2016 Throw if there's already an !active! task for the given ticket
         return this.taskRepository.save( task );
@@ -27,7 +27,7 @@ public class TaskService
     {
         return this.taskRepository.findOne( taskId );
     }
-    public List<Task> getAllTasks ()
+    public List<Task> getAll ()
     {
         return this.taskRepository.findAll();
     }

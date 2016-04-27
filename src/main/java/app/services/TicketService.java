@@ -2,6 +2,7 @@ package app.services;
 
 import app.entities.Ticket;
 import app.entities.enums.TicketStatus;
+import app.exceptions.service.ResourceNotFoundException;
 import app.repositories.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,14 +17,33 @@ public class TicketService
     @Autowired
     private TicketRepository ticketRepository;
 
-    public List<Ticket> getAllTickets ()
+    public Ticket getById ( Long ticketId )
+    {
+        return this.ticketRepository.findOne( ticketId );
+    }
+
+    public Ticket create ( Ticket ticket )
+    {
+        return this.ticketRepository.save( ticket );
+    }
+
+    public List<Ticket> getAll ()
     {
         return this.ticketRepository.findAll();
     }
 
-    public Ticket changeTicketStatus ( Ticket ticket, TicketStatus status )
+    public Ticket changeStatus ( Ticket ticket, TicketStatus status )
     {
         ticket.setStatus( status );
         return this.ticketRepository.save( ticket );
+    }
+
+    public void verifyTicketExists ( Long ticketId ) throws ResourceNotFoundException
+    {
+        Ticket ticket = this.ticketRepository.findOne( ticketId );
+        if ( ticket == null )
+        {
+            throw new ResourceNotFoundException( "Ticket with id " + ticketId + " not found" );
+        }
     }
 }

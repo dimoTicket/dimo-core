@@ -4,7 +4,6 @@ import app.entities.Task;
 import app.entities.enums.TicketStatus;
 import app.services.TaskService;
 import app.services.TicketService;
-import app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,22 +24,20 @@ public class TaskController
 {
 
     @Autowired
-    private UserService userService;
-    @Autowired
     private TicketService ticketService;
+
     @Autowired
     private TaskService taskService;
 
     @RequestMapping ( value = "api/task/newtask", method = RequestMethod.POST )
     public ResponseEntity submitTask ( @Valid @RequestBody Task task )
     {
-        this.taskService.createTask( task );
-        this.ticketService.changeTicketStatus( task.getTicket(), TicketStatus.ASSIGNED );
+        this.taskService.create( task );
+        this.ticketService.changeStatus( task.getTicket(), TicketStatus.ASSIGNED );
 
         HttpHeaders httpResponseHeaders = new HttpHeaders();
-        URI newTaskUri = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path( "/api/{id}" ).buildAndExpand( task.getId() ).toUri();
+        URI newTaskUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path( "/api/task/{id}" ).buildAndExpand( task.getId() ).toUri();
         httpResponseHeaders.setLocation( newTaskUri );
         return new ResponseEntity<>( httpResponseHeaders, HttpStatus.CREATED );
     }
@@ -56,7 +53,7 @@ public class TaskController
     @RequestMapping ( value = "/api/tasks" )
     public ResponseEntity getAllTicketsJson ()
     {
-        return new ResponseEntity<>( this.taskService.getAllTasks(), HttpStatus.OK );
+        return new ResponseEntity<>( this.taskService.getAll(), HttpStatus.OK );
     }
 
 }

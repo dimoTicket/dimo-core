@@ -1,9 +1,8 @@
 package app.controllers;
 
 import app.entities.Ticket;
-import app.exceptions.service.ResourceNotFoundException;
-import app.repositories.TicketRepository;
 import app.services.ImageService;
+import app.services.TicketService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,15 +35,15 @@ public class TicketController
     private final Log logger = LogFactory.getLog( getClass() );
 
     @Autowired
-    private TicketRepository ticketRepository;
+    private TicketService ticketService;
 
     @Autowired
     private ImageService imageService;
 
     @RequestMapping ( value = "/ticket/{id}", method = RequestMethod.GET )
-    public String getTicketMessageById ( @PathVariable ( "id" ) Long id, Model model )
+    public String getTicketMessageById ( @PathVariable ( "id" ) Long ticketId, Model model )
     {
-        Ticket ticket = this.ticketRepository.findOne( id );
+        Ticket ticket = this.ticketService.getById( ticketId );
         if ( ticket != null )
         {
             model.addAttribute( "ticket", ticket );
@@ -54,15 +53,15 @@ public class TicketController
     }
 
     @RequestMapping ( value = "/api/ticket/{id}", method = RequestMethod.GET )
-    public ResponseEntity getTicketMessageByIdRest ( @PathVariable ( "id" ) Long id )
+    public ResponseEntity getTicketMessageByIdRest ( @PathVariable ( "id" ) Long ticketId )
     {
-        this.verifyTicketExists( id );
-        Ticket ticket = this.ticketRepository.findOne( id );
+        this.ticketService.verifyTicketExists( ticketId );
+        Ticket ticket = this.ticketService.getById( ticketId );
         return new ResponseEntity<>( ticket, HttpStatus.OK );
     }
 
     @RequestMapping ( value = "/image", method = RequestMethod.GET )
-    public ResponseEntity<byte[]> getImage ( @RequestParam ( "id" ) Long ticketId )
+    public ResponseEntity<byte[]> getImage ( @RequestParam ( "ticketId" ) Long ticketId )
     {
         byte[] imageContent = null;
         try
@@ -74,7 +73,7 @@ public class TicketController
             imageContent = bao.toByteArray();
         } catch ( IOException e )
         {
-            logger.error( "Picture not found. Ticket id is : " + ticketId );
+            logger.error( "Picture not found. Ticket ticketId is : " + ticketId );
             return new ResponseEntity<>( HttpStatus.NOT_FOUND );
         }
 
@@ -86,7 +85,7 @@ public class TicketController
     @RequestMapping ( value = { "/tickets", "/" }, method = RequestMethod.GET )
     public String getAllTickets ( Map model )
     {
-        List<Ticket> tickets = this.ticketRepository.findAll();
+        List<Ticket> tickets = this.ticketService.getAll();
         if ( !tickets.isEmpty() )
         {
             model.put( "tickets", tickets );
@@ -98,11 +97,11 @@ public class TicketController
     @RequestMapping ( value = "/api/ticket/newticket", method = RequestMethod.POST )
     public ResponseEntity submitTicket ( @Valid @RequestBody Ticket ticket )
     {
-        ticket = this.ticketRepository.save( ticket );
+        ticket = this.ticketService.create( ticket );
         HttpHeaders httpResponseHeaders = new HttpHeaders();
         URI newTicketUri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path( "/api/{id}" ).buildAndExpand( ticket.getId() ).toUri();
+                .path( "/api/{ticketId}" ).buildAndExpand( ticket.getId() ).toUri();
         httpResponseHeaders.setLocation( newTicketUri );
         return new ResponseEntity<>( httpResponseHeaders, HttpStatus.CREATED );
     }
@@ -123,12 +122,4 @@ public class TicketController
         return new ResponseEntity( HttpStatus.BAD_REQUEST );
     }
 
-    protected void verifyTicketExists ( Long ticketId ) throws ResourceNotFoundException
-    {
-        Ticket ticket = this.ticketRepository.findOne( ticketId );
-        if ( ticket == null )
-        {
-            throw new ResourceNotFoundException( "Ticket with id " + ticketId + " not found" );
-        }
-    }
 }
