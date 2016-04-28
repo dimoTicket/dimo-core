@@ -1,10 +1,9 @@
 package unit;
 
 import app.DimoApplication;
+import app.controllers.TicketController;
 import app.entities.Ticket;
 import app.entities.enums.TicketStatus;
-import app.exceptions.service.ResourceNotFoundException;
-import app.repositories.TicketRepository;
 import app.services.TicketService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,24 +13,33 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 
 @RunWith ( SpringJUnit4ClassRunner.class )
 @SpringApplicationConfiguration ( classes = DimoApplication.class )
-public class TicketServiceTests
+@ContextConfiguration ( classes = MockServletContext.class )
+@WebAppConfiguration
+public class TicketControllerTests
 {
 
-    @Autowired
     @InjectMocks
-    private TicketService ticketService;
+    private TicketController ticketController;
 
     @Mock
-    TicketRepository ticketRepository;
+    TicketService ticketService;
+
+    private MockMvc mockMvc;
 
     private Ticket ticket;
 
@@ -42,6 +50,7 @@ public class TicketServiceTests
     public void setup ()
     {
         MockitoAnnotations.initMocks( this );
+        mockMvc = standaloneSetup( this.ticketController ).build();
 
         ticket = new Ticket();
         ticket.setId( 1L );
@@ -53,24 +62,11 @@ public class TicketServiceTests
     }
 
     @Test
-    public void changeStatus ()
+    public void getTicketMessageByIdRest () throws Exception
     {
-        when( this.ticketRepository.save( ticket ) ).thenReturn( ticket );
-        this.ticketService.changeStatus( ticket, TicketStatus.IN_PROGRESS );
-    }
-
-    @Test
-    public void verifyTicketExists ()
-    {
-        when( this.ticketRepository.findOne( this.ticket.getId() ) ).thenReturn( this.ticket );
-        this.ticketService.verifyTicketExists( this.ticket.getId() );
-    }
-
-    @Test
-    public void verifyTicketExistsForMissingTicket ()
-    {
-        when( this.ticketRepository.findOne( this.ticket.getId() ) ).thenReturn( null );
-        this.thrown.expect( ResourceNotFoundException.class );
-        this.ticketService.verifyTicketExists( this.ticket.getId() );
+        when( ticketService.getById( this.ticket.getId() ) ).thenReturn( this.ticket );
+        mockMvc.perform( get( "/api/ticket/" + this.ticket.getId() ) )
+                .andExpect( ( status().isOk() ) );
+        // TODO: 28/4/2016 more
     }
 }

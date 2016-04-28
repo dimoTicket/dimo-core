@@ -32,10 +32,10 @@ public class TicketService
         return this.ticketRepository.findAll();
     }
 
-    public Ticket changeStatus ( Ticket ticket, TicketStatus status )
+    public void changeStatus ( Ticket ticket, TicketStatus status )
     {
         ticket.setStatus( status );
-        return this.ticketRepository.save( ticket );
+        this.ticketRepository.save( ticket );
     }
 
     public void verifyTicketExists ( Long ticketId ) throws ResourceNotFoundException
