@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -22,7 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 
@@ -35,14 +36,10 @@ public class TicketControllerTests
 
     @InjectMocks
     private TicketController ticketController;
-
     @Mock
     TicketService ticketService;
-
     private MockMvc mockMvc;
-
     private Ticket ticket;
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -66,7 +63,8 @@ public class TicketControllerTests
     {
         when( ticketService.getById( this.ticket.getId() ) ).thenReturn( this.ticket );
         mockMvc.perform( get( "/api/ticket/" + this.ticket.getId() ) )
-                .andExpect( ( status().isOk() ) );
-        // TODO: 28/4/2016 more
+                .andExpect( ( status().isOk() ) )
+                .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
+                .andExpect( ( jsonPath( "id" ).value( this.ticket.getId() ) ) );
     }
 }
