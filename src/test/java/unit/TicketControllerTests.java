@@ -4,11 +4,10 @@ import app.DimoApplication;
 import app.controllers.TicketController;
 import app.entities.Ticket;
 import app.entities.enums.TicketStatus;
+import app.exceptions.service.ResourceNotFoundException;
 import app.services.TicketService;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -36,12 +35,13 @@ public class TicketControllerTests
 
     @InjectMocks
     private TicketController ticketController;
+
     @Mock
     TicketService ticketService;
+
     private MockMvc mockMvc;
+
     private Ticket ticket;
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setup ()
@@ -59,12 +59,27 @@ public class TicketControllerTests
     }
 
     @Test
-    public void getTicketMessageByIdRest () throws Exception
+    public void getTicketByIdRest () throws Exception
     {
         when( ticketService.getById( this.ticket.getId() ) ).thenReturn( this.ticket );
         mockMvc.perform( get( "/api/ticket/" + this.ticket.getId() ) )
                 .andExpect( ( status().isOk() ) )
                 .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
-                .andExpect( ( jsonPath( "id" ).value( this.ticket.getId() ) ) );
+                .andExpect( ( jsonPath( "id" ).value( this.ticket.getId().intValue() ) ) )
+                .andExpect( ( jsonPath( "message" ).value( this.ticket.getMessage() ) ) )
+                .andExpect( ( jsonPath( "imageName" ).value( this.ticket.getImageName() ) ) )
+                .andExpect( ( jsonPath( "latitude" ).value( this.ticket.getLatitude() ) ) )
+                .andExpect( ( jsonPath( "longitude" ).value( this.ticket.getLongitude() ) ) )
+                .andExpect( ( jsonPath( "status" ).value( this.ticket.getStatus().toString() ) ) )
+        ;
+    }
+
+    @Test
+    public void getTicketByIdRestForTicketThatDoesNotExist () throws Exception
+    {
+        when( ticketService.getById( this.ticket.getId() ) ).thenThrow( new ResourceNotFoundException() );
+        mockMvc.perform( get( "/api/ticket/" + this.ticket.getId() ) )
+                .andExpect( ( status().isNotFound() ) )
+        ;
     }
 }

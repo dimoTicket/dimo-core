@@ -53,7 +53,7 @@ public class TicketController
     }
 
     @RequestMapping ( value = "/api/ticket/{id}", method = RequestMethod.GET )
-    public ResponseEntity getTicketMessageByIdRest ( @PathVariable ( "id" ) Long ticketId )
+    public ResponseEntity getTicketByIdRest ( @PathVariable ( "id" ) Long ticketId )
     {
         this.ticketService.verifyTicketExists( ticketId );
         Ticket ticket = this.ticketService.getById( ticketId );

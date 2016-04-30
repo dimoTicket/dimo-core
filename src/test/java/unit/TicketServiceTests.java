@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
 
@@ -57,6 +59,22 @@ public class TicketServiceTests
     {
         when( this.ticketRepository.save( ticket ) ).thenReturn( ticket );
         this.ticketService.changeStatus( ticket, TicketStatus.IN_PROGRESS );
+    }
+
+    @Test
+    public void getById ()
+    {
+        when( this.ticketRepository.findOne( this.ticket.getId() ) ).thenReturn( this.ticket );
+        Ticket foundTicket = this.ticketService.getById( this.ticket.getId() );
+        assertThat( foundTicket, is( this.ticket ) );
+    }
+
+    @Test
+    public void getByIdForTicketThatDoesNotExist ()
+    {
+        when( this.ticketRepository.findOne( this.ticket.getId() ) ).thenReturn( null );
+        this.thrown.expect( ResourceNotFoundException.class );
+        this.ticketService.getById( this.ticket.getId() );
     }
 
     @Test

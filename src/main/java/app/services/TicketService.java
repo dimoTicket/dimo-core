@@ -19,6 +19,7 @@ public class TicketService
 
     public Ticket getById ( Long ticketId )
     {
+        this.verifyTicketExists( ticketId );
         return this.ticketRepository.findOne( ticketId );
     }
 
