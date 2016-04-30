@@ -7,11 +7,13 @@ import app.entities.enums.TicketStatus;
 import app.exceptions.service.ResourceNotFoundException;
 import app.services.TicketService;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockServletContext;
@@ -19,6 +21,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -80,6 +85,21 @@ public class TicketControllerTests
         when( ticketService.getById( this.ticket.getId() ) ).thenThrow( new ResourceNotFoundException() );
         mockMvc.perform( get( "/api/ticket/" + this.ticket.getId() ) )
                 .andExpect( ( status().isNotFound() ) )
+        ;
+    }
+
+    @Test
+    @Ignore("Not ready. Needs a custom view resolver")
+    public void getAllTickets () throws Exception
+    {
+        Answer<List<Ticket>> answer = invocation -> {
+            List<Ticket> tickets = new ArrayList<>();
+            tickets.add( this.ticket );
+            return tickets;
+        };
+        when( ticketService.getAll() ).thenAnswer( answer );
+        mockMvc.perform( get( "/tickets" ) )
+                .andExpect( ( status().isOk() ) )
         ;
     }
 }

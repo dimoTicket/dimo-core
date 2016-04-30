@@ -86,12 +86,8 @@ public class TicketController
     public String getAllTickets ( Map model )
     {
         List<Ticket> tickets = this.ticketService.getAll();
-        if ( !tickets.isEmpty() )
-        {
-            model.put( "tickets", tickets );
-            return "tickets";
-        }
-        return "error";
+        model.put( "tickets", tickets );
+        return "tickets";
     }
 
     @RequestMapping ( value = "/api/ticket/newticket", method = RequestMethod.POST )

@@ -19,7 +19,6 @@ import static org.hamcrest.core.Is.is;
 @RunWith ( SpringJUnit4ClassRunner.class )
 @SpringApplicationConfiguration ( classes = DimoApplication.class )
 @Transactional
-@Rollback
 public class TicketRepositoryTests
 {
 
