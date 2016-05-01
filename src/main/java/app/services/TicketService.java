@@ -35,6 +35,7 @@ public class TicketService
 
     public void changeStatus ( Ticket ticket, TicketStatus status )
     {
+        this.verifyTicketExists( ticket.getId() );
         ticket.setStatus( status );
         this.ticketRepository.save( ticket );
     }

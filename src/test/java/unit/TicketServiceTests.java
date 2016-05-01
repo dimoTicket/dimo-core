@@ -58,6 +58,7 @@ public class TicketServiceTests
     public void changeStatus ()
     {
         when( this.ticketRepository.save( ticket ) ).thenReturn( ticket );
+        when( this.ticketRepository.findOne( ticket.getId() ) ).thenReturn( ticket );
         this.ticketService.changeStatus( ticket, TicketStatus.IN_PROGRESS );
     }
 

@@ -42,10 +42,9 @@ public class TaskController
         return new ResponseEntity<>( httpResponseHeaders, HttpStatus.CREATED );
     }
 
-    @RequestMapping ( value = "/api/task/{id}", method = RequestMethod.GET )
+    @RequestMapping ( value = "/api/task/{id}" )
     public ResponseEntity getTaskById ( @PathVariable ( "id" ) Long id )
     {
-        this.taskService.verifyTaskExists( id );
         Task task = this.taskService.getById( id );
         return new ResponseEntity<>( task, HttpStatus.OK );
     }
