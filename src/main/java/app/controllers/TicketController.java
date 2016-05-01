@@ -97,7 +97,7 @@ public class TicketController
         HttpHeaders httpResponseHeaders = new HttpHeaders();
         URI newTicketUri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path( "/api/{ticketId}" ).buildAndExpand( ticket.getId() ).toUri();
+                .path( "/api/ticket/{ticketId}" ).buildAndExpand( ticket.getId() ).toUri();
         httpResponseHeaders.setLocation( newTicketUri );
         return new ResponseEntity<>( httpResponseHeaders, HttpStatus.CREATED );
     }

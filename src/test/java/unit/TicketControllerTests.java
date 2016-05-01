@@ -14,8 +14,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -27,6 +29,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
@@ -43,6 +46,9 @@ public class TicketControllerTests
 
     @Mock
     TicketService ticketService;
+
+    @Autowired
+    MockHttpServletRequest mockHttpServletRequest;
 
     private MockMvc mockMvc;
 
@@ -89,7 +95,23 @@ public class TicketControllerTests
     }
 
     @Test
-    @Ignore("Not ready. Needs a custom view resolver")
+    @Ignore ( "Not ready. Needs mock request configuration" )
+    public void submitTicket () throws Exception
+    {
+        when( ticketService.create( this.ticket ) ).thenReturn( this.ticket );
+
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{" +
+                        "\"message\": \"pambos\"," +
+                        "\"latitude\": 12.131313," +
+                        "\"longitude\": 14.141414}" )
+        ).andExpect( status().isCreated() );
+
+    }
+
+    @Test
+    @Ignore ( "Not ready. Needs a custom view resolver" )
     public void getAllTickets () throws Exception
     {
         Answer<List<Ticket>> answer = invocation -> {

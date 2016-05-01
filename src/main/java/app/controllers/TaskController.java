@@ -45,13 +45,13 @@ public class TaskController
     @RequestMapping ( value = "/api/task/{id}", method = RequestMethod.GET )
     public ResponseEntity getTaskById ( @PathVariable ( "id" ) Long id )
     {
-        // TODO: 26/04/2016 verify task
+        this.taskService.verifyTaskExists( id );
         Task task = this.taskService.getById( id );
         return new ResponseEntity<>( task, HttpStatus.OK );
     }
 
     @RequestMapping ( value = "/api/tasks" )
-    public ResponseEntity getAllTicketsJson ()
+    public ResponseEntity getAllTicketsRest ()
     {
         return new ResponseEntity<>( this.taskService.getAll(), HttpStatus.OK );
     }

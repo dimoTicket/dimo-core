@@ -1,4 +1,4 @@
-package Integration;
+package integrationunit;
 
 import app.DimoApplication;
 import app.entities.Task;
@@ -15,7 +15,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 

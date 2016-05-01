@@ -27,6 +27,7 @@ public class TaskService
     {
         return this.taskRepository.findOne( taskId );
     }
+
     public List<Task> getAll ()
     {
         return this.taskRepository.findAll();
@@ -41,5 +42,14 @@ public class TaskService
     public boolean taskExistsForTicket ( Ticket ticket )
     {
         return this.taskRepository.findByTicket( ticket ).isPresent();
+    }
+
+    public void verifyTaskExists ( Long taskId ) throws ResourceNotFoundException
+    {
+        Task task = this.taskRepository.findOne( taskId );
+        if ( task == null )
+        {
+            throw new ResourceNotFoundException( "Ticket with id " + taskId + " not found" );
+        }
     }
 }
