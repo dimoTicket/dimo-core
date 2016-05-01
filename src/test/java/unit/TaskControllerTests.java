@@ -6,6 +6,7 @@ import app.entities.Task;
 import app.entities.Ticket;
 import app.entities.User;
 import app.entities.enums.TicketStatus;
+import app.exceptions.service.ResourceNotFoundException;
 import app.services.TaskService;
 import org.junit.Before;
 import org.junit.Test;
@@ -98,6 +99,33 @@ public class TaskControllerTests
                 .andExpect( ( jsonPath( "$..users[0].id" ).value( this.user.getId().intValue() ) ) )
                 .andExpect( ( jsonPath( "$..users[0].username" ).value( this.user.getUsername() ) ) )
                 .andExpect( ( jsonPath( "$..users[0].password" ).doesNotExist() ) )
+        ;
+    }
+
+    @Test
+    public void getTaskByIdRest () throws Exception
+    {
+        when( taskService.getById( this.task.getId() ) ).thenReturn( this.task );
+        mockMvc.perform( get( "/api/task/" + this.task.getId() ) )
+                .andExpect( ( status().isOk() ) )
+                .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) )
+                .andExpect( ( jsonPath( "id" ).value( this.task.getId().intValue() ) ) )
+                .andExpect( ( jsonPath( "createdAt" ).isNotEmpty() ) )
+                .andExpect( ( jsonPath( "$.ticket.id" ).value( this.ticket.getId().intValue() ) ) )
+                .andExpect( ( jsonPath( "$.ticket.message" ).value( this.ticket.getMessage() ) ) )
+                .andExpect( ( jsonPath( "$.users" ) ).isArray() )
+                .andExpect( ( jsonPath( "$.users[0].id" ).value( this.user.getId().intValue() ) ) )
+                .andExpect( ( jsonPath( "$.users[0].username" ).value( this.user.getUsername() ) ) )
+                .andExpect( ( jsonPath( "$.users[0].password" ).doesNotExist() ) )
+        ;
+    }
+
+    @Test
+    public void getTaskByIdRestForTaskThatDoesNotExist () throws Exception
+    {
+        when( taskService.getById( this.task.getId() ) ).thenThrow( new ResourceNotFoundException() );
+        mockMvc.perform( get( "/api/task/" + this.task.getId() ) )
+                .andExpect( ( status().isNotFound() ) )
         ;
     }
 

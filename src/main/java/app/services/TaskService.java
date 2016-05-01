@@ -25,6 +25,7 @@ public class TaskService
 
     public Task getById ( Long taskId )
     {
+        this.verifyTaskExists( taskId );
         return this.taskRepository.findOne( taskId );
     }
 
