@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" ng-app="">
 
 <head>
     <title th:text="#{page.title.tickets}"></title>
     <meta th:remove="tag" th:replace="fragments/head :: head"/>
+    <script>
+        function fash($scope, $http) {
+            $http.get('http://127.0.0.1:8080/api/ticket/1').success(function (data) {
+                $scope.ticket = data;
+            });
+        }
+    </script>
 </head>
 <body>
 <div class="container-fluid">
@@ -80,6 +87,10 @@
                         th:text="#{ticket.status.aborted}"></td>
                     <td class="active" th:if="${ticket.status == T(app.entities.enums.TicketStatus).DONE}"
                         th:text="#{ticket.status.done}"></td>
+
+                    <td ng-controller="fash">
+                        <p>{{ticket.id}}</p>
+                    </td>
                 </tr>
                 </tbody>
             </table>
