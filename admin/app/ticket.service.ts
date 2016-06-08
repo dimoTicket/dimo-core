@@ -7,6 +7,6 @@ export class TicketService {
 
     getTickets() {
         // return Promise.resolve(TICKETS);
-        return new Promise<Ticket[]>(resolve => setTimeout(()=>resolve(TICKETS), 2000));
+        return new Promise<Ticket[]>(resolve => setTimeout(()=>resolve(TICKETS), 550));
     }
 }

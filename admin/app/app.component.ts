@@ -1,40 +1,38 @@
-import {Component, OnInit} from "@angular/core";
-import {Ticket} from "./ticket";
-import {TicketDetailComponent} from "./ticket-detail.component";
+import {Component} from "@angular/core";
+import {RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS} from "@angular/router-deprecated";
 import {TicketService} from "./ticket.service";
+import {TicketsComponent} from "./tickets.component";
+import {DashboardComponent} from "./dashboard.component";
 
 @Component({
     selector: 'my-app',
-    template: '<h1>{{title}}</h1>' +
-    '<h2>All tickets</h2>' +
-    '<ul class="tickets">' +
-    '<li *ngFor="let ticket of tickets" (click)="onSelect(ticket)">' +
-    '<span>id : {{ticket.id}}, message: {{ticket.message}}</span>' +
-    '</li>' +
-    '</ul>' +
-    '<ticket-detail [ticket]="selectedTicket"></ticket-detail>',
-    directives: [TicketDetailComponent],
-    providers: [TicketService]
+    template: `
+    <h1>{{title}}</h1>
+    <nav>
+        <a [routerLink]="['Dashboard']">Dashboard</a>
+        <a [routerLink]="['Tickets']">All Tickets</a>
+    </nav>
+    <router-outlet></router-outlet>`,
+    directives: [
+        ROUTER_DIRECTIVES],
+    providers: [
+        ROUTER_PROVIDERS,
+        TicketService
+    ]
 })
 
-export class AppComponent implements OnInit {
-    ngOnInit() {
-        this.getTickets();
-    }
+@RouteConfig([{
+    path: '/tickets',
+    name: 'Tickets',
+    component: TicketsComponent
+}, {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: DashboardComponent,
+    useAsDefault: true
+}
+])
 
-    constructor(private ticketService:TicketService) {
-    }
-
+export class AppComponent {
     title = 'Dimo Admin Panel';
-    tickets:Ticket[];
-    selectedTicket:Ticket;
-
-    onSelect(ticket:Ticket) {
-        this.selectedTicket = ticket;
-    }
-
-    getTickets() {
-        this.ticketService.getTickets().then(tickets =>
-            this.tickets = tickets);
-    }
 }
