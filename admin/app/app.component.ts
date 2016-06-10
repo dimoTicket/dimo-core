@@ -3,6 +3,7 @@ import {RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS} from "@angular/router-
 import {TicketService} from "./ticket.service";
 import {TicketsComponent} from "./tickets.component";
 import {DashboardComponent} from "./dashboard.component";
+import {TicketDetailComponent} from "./ticket-detail.component";
 
 @Component({
     selector: 'my-app',
@@ -22,14 +23,18 @@ import {DashboardComponent} from "./dashboard.component";
 })
 
 @RouteConfig([{
-    path: '/tickets',
-    name: 'Tickets',
-    component: TicketsComponent
-}, {
     path: '/dashboard',
     name: 'Dashboard',
     component: DashboardComponent,
     useAsDefault: true
+}, {
+    path: '/tickets',
+    name: 'Tickets',
+    component: TicketsComponent
+}, {
+    path: '/tickets/:id',
+    name: 'TicketDetail',
+    component: TicketDetailComponent
 }
 ])
 

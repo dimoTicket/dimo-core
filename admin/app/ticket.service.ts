@@ -7,6 +7,11 @@ export class TicketService {
 
     getTickets() {
         // return Promise.resolve(TICKETS);
-        return new Promise<Ticket[]>(resolve => setTimeout(()=>resolve(TICKETS), 550));
+        return new Promise<Ticket[]>(resolve => setTimeout(()=>resolve(TICKETS), 200));
+    }
+
+    getTicket(id:number) {
+        return this.getTickets()
+            .then(tickets => tickets.filter(ticket => ticket.id === id)[0]);
     }
 }

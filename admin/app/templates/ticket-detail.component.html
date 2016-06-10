@@ -1,0 +1,5 @@
+<div *ngIf="ticket">
+    <h2>Selected ticket id : {{ticket.id}}</h2>
+    <label>message: </label> <input [(ngModel)]="ticket.message" placeholder="message"/>
+</div>
+<button (click)="goBack()">Back</button>

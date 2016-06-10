@@ -1,0 +1,6 @@
+<h2>All tickets</h2>
+<ul class="tickets">
+    <li *ngFor="let ticket of tickets" (click)="onSelect(ticket)">
+        <span>id : {{ticket.id}}, message: {{ticket.message}}</span>
+    </li>
+</ul>
