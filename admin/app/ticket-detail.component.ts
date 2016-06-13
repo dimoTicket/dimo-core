@@ -10,7 +10,7 @@ import {Ticket} from "./ticket";
 
 export class TicketDetailComponent implements OnInit {
 
-    ticket:Ticket;
+    private ticket:Ticket;
 
     constructor(private ticketService:TicketService,
                 private routeParams:RouteParams) {

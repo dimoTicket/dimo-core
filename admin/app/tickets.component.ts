@@ -4,7 +4,6 @@ import {TicketDetailComponent} from "./ticket-detail.component";
 import {TicketService} from "./ticket.service";
 import {Router} from "@angular/router-deprecated";
 
-
 @Component({
     selector: 'my-tickets',
     templateUrl: 'app/templates/tickets.component.html',

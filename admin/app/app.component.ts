@@ -7,13 +7,7 @@ import {TicketDetailComponent} from "./ticket-detail.component";
 
 @Component({
     selector: 'my-app',
-    template: `
-    <h1>{{title}}</h1>
-    <nav>
-        <a [routerLink]="['Dashboard']">Dashboard</a>
-        <a [routerLink]="['Tickets']">All Tickets</a>
-    </nav>
-    <router-outlet></router-outlet>`,
+    templateUrl: 'app/templates/app.component.html',
     directives: [
         ROUTER_DIRECTIVES],
     providers: [
@@ -35,8 +29,7 @@ import {TicketDetailComponent} from "./ticket-detail.component";
     path: '/tickets/:id',
     name: 'TicketDetail',
     component: TicketDetailComponent
-}
-])
+}])
 
 export class AppComponent {
     title = 'Dimo Admin Panel';
