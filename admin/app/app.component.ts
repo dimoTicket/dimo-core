@@ -17,10 +17,9 @@ import {TicketDetailComponent} from "./ticket-detail.component";
 })
 
 @RouteConfig([{
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: DashboardComponent,
-    useAsDefault: true
+    path: '/',
+    name: 'Main',
+    component: DashboardComponent
 }, {
     path: '/tickets',
     name: 'Tickets',
@@ -32,5 +31,4 @@ import {TicketDetailComponent} from "./ticket-detail.component";
 }])
 
 export class AppComponent {
-    title = 'Dimo Admin Panel';
 }

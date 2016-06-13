@@ -87,10 +87,6 @@
                         th:text="#{ticket.status.aborted}"></td>
                     <td class="active" th:if="${ticket.status == T(app.entities.enums.TicketStatus).DONE}"
                         th:text="#{ticket.status.done}"></td>
-
-                    <td ng-controller="fash">
-                        <p>{{ticket.id}}</p>
-                    </td>
                 </tr>
                 </tbody>
             </table>
