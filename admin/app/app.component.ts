@@ -4,6 +4,8 @@ import {TicketService} from "./ticket.service";
 import {TicketsComponent} from "./tickets.component";
 import {DashboardComponent} from "./dashboard.component";
 import {TicketDetailComponent} from "./ticket-detail.component";
+import './rxjs-operators';
+
 
 @Component({
     selector: 'my-app',

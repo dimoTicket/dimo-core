@@ -18,7 +18,10 @@ export class TicketDetailComponent implements OnInit {
 
     ngOnInit() {
         let id = +this.routeParams.get('id');
-        this.ticketService.getTicket(id).then(ticket => this.ticket = ticket);
+        this.ticketService.getTicket(id).subscribe(ticket => {
+            this.ticket = ticket;
+            console.log(this.ticket);
+        });
     }
 
     goBack() {

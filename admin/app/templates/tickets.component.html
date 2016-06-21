@@ -24,12 +24,12 @@
                     <a class="btn btn-block bt-md btn-primary" (click)="onSelect(ticket)">{{ticket.id}}</a>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-primary btn-md" data-toggle="modal">
+                    <button type="button" class="btn btn-primary btn-md" (click)="onSelectPicture(ticket)">
                         <span class="glyphicon glyphicon-camera"></span> <span>Show picture</span>
                     </button>
                 </td>
                 <td class="well well-sm">
-                    {{ticket.datetime}}
+                    {{ticket.datetime | date:'fullDate'}}
                 </td>
                 <td class="success">
                     {{ticket.status}}
@@ -40,9 +40,3 @@
     </div>
     <div class="col-md-1"></div>
 </div>
-
-<!--<ul class="tickets">-->
-<!--<li *ngFor="let ticket of tickets" (click)="onSelect(ticket)">-->
-<!--<span>id : {{ticket.id}}, message: {{ticket.message}}, status: {{ticket.status}}</span>-->
-<!--</li>-->
-<!--</ul>-->

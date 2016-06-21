@@ -1,7 +1,8 @@
 import {Injectable} from "@angular/core";
-import {Headers, Http} from "@angular/http";
+import {Http} from "@angular/http";
 import {Ticket} from "./ticket";
-import "rxjs/add/operator/toPromise";
+import {Observable} from "rxjs/Observable";
+
 
 @Injectable()
 export class TicketService {
@@ -11,20 +12,18 @@ export class TicketService {
     constructor(private http:Http) {
     }
 
-    getTickets():Promise<Ticket[]> {
+    getTickets():Observable<Ticket[]> {
         return this.http.get(this.ticketsUrl)
-            .toPromise()
-            .then(response => response.json().data)
+            .map(response => Ticket.fromJSONArray(response.json().data))
             .catch(this.handleError);
     }
 
-    getTicket(id:number) {
-        return this.getTickets()
-            .then(tickets => tickets.filter(ticket => ticket.id === id)[0]);
+    getTicket(id:number):Observable<Ticket> {
+        return this.getTickets().map(tickets => tickets.filter(ticket => ticket.id === id)[0]);
     }
 
     private handleError(error:any) {
         console.error('An error occurred', error);
-        return Promise.reject(error.message || error);
+        return Observable.throw(error.message || error);
     }
 }

@@ -11,6 +11,7 @@ import {Router} from "@angular/router-deprecated";
 })
 
 export class TicketsComponent implements OnInit {
+
     tickets:Ticket[];
     ticket:Ticket;
 
@@ -28,7 +29,10 @@ export class TicketsComponent implements OnInit {
     }
 
     getTickets() {
-        this.ticketService.getTickets().then(tickets =>
-            this.tickets = tickets);
+        this.ticketService.getTickets().subscribe(tickets => this.tickets = tickets);
+    }
+
+    onSelectPicture(ticket:Ticket) {
+        console.log("Show picture selected for ticket id : " + ticket.id);
     }
 }
