@@ -1,31 +1,33 @@
 import {Component, OnInit} from "@angular/core";
-import {RouteParams} from "@angular/router-deprecated";
+import {ActivatedRoute, ROUTER_DIRECTIVES, Router} from "@angular/router";
 import {TicketService} from "./ticket.service";
 import {Ticket} from "./ticket";
 
 @Component({
     selector: 'my-ticket-detail',
-    templateUrl: 'app/templates/ticket-detail.component.html'
+    templateUrl: 'app/templates/ticket-detail.component.html',
+    directives: [ROUTER_DIRECTIVES]
 })
 
 export class TicketDetailComponent implements OnInit {
 
     private ticket:Ticket;
 
-    constructor(private ticketService:TicketService,
-                private routeParams:RouteParams) {
+    constructor(private ticketService:TicketService, private route:ActivatedRoute, private router:Router) {
     }
 
     ngOnInit() {
-        let id = +this.routeParams.get('id');
-        this.ticketService.getTicket(id).subscribe(ticket => {
-            this.ticket = ticket;
-            console.log(this.ticket);
+        this.route.params.subscribe(params => {
+            let id = +params['id'];
+            this.ticketService.getTicket(id).subscribe(ticket => this.ticket = ticket);
         });
     }
 
     goBack() {
-        window.history.back();
+        this.goToTickets();
     }
 
+    goToTickets() {
+        this.router.navigate(['/tickets']);
+    }
 }

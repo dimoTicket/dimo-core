@@ -2,7 +2,7 @@ import {Component, OnInit} from "@angular/core";
 import {Ticket} from "./ticket";
 import {TicketDetailComponent} from "./ticket-detail.component";
 import {TicketService} from "./ticket.service";
-import {Router} from "@angular/router-deprecated";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'my-tickets',
@@ -24,8 +24,9 @@ export class TicketsComponent implements OnInit {
     }
 
     onSelect(ticket:Ticket) {
-        let link = ['TicketDetail', {id: ticket.id}];
-        this.router.navigate(link);
+        console.log("onSelect called with ticket id : " + ticket.id);
+        this.router.navigate(['/ticket', ticket.id])
+            .catch(err => console.error(err));
     }
 
     getTickets() {
