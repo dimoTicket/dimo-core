@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute, ROUTER_DIRECTIVES, Router} from "@angular/router";
 import {TicketService} from "./ticket.service";
-import {Ticket} from "./ticket";
+import {Ticket, TicketStatus} from "./ticket";
 
 @Component({
     selector: 'my-ticket-detail',
@@ -12,6 +12,7 @@ import {Ticket} from "./ticket";
 export class TicketDetailComponent implements OnInit {
 
     private ticket:Ticket;
+    statuses = ["s", "b"];
 
     constructor(private ticketService:TicketService, private route:ActivatedRoute, private router:Router) {
     }

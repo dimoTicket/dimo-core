@@ -44,7 +44,7 @@ export class Ticket {
 
 }
 
-enum TicketStatus{
+export enum TicketStatus{
     NEW = <any>"New",
     REJECTED = <any>"Rejected",
     ASSIGNED = <any>"Assigned",
