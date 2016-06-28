@@ -3,7 +3,7 @@
     <base href="/">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="app/stylesheets/global.css">
-    <!--<link rel="stylesheet" href="assets/css/ng2-select.css">-->
+    <link rel="stylesheet" href="node_modules/ng2-select/components/css/ng2-select.css">
 
     <title>Dimo Admin Panel</title>
     <meta charset="UTF-8">
@@ -18,7 +18,9 @@
     <!-- 2. Configure SystemJS -->
     <script src="systemjs.config.js"></script>
     <script>
-        System.import('app').catch(function(err){ console.error(err); });
+        System.import('app').catch(function (err) {
+            console.error(err);
+        });
     </script>
 </head>
 <!-- 3. Display the application -->

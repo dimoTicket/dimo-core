@@ -11,14 +11,15 @@
         'angular2-in-memory-web-api': 'node_modules/angular2-in-memory-web-api',
         'rxjs': 'node_modules/rxjs',
         'moment': 'node_modules/moment/moment.js',
-        '@angular/router': 'node_modules/@angular/router/bundles'
+        'ng2-select': 'node_modules/ng2-select'
     };
 
     // packages tells the System loader how to load when no filename and/or no extension
     var packages = {
         'app': {main: 'main', defaultExtension: 'js'},
         'rxjs': {defaultExtension: 'js'},
-        'angular2-in-memory-web-api': {main: 'index.js', defaultExtension: 'js'}
+        'angular2-in-memory-web-api': {main: 'index.js', defaultExtension: 'js'},
+        'ng2-select' : {main:'ng2-select.js', defaultExtension: 'js'}
     };
 
     var ngPackageNames = [
@@ -29,17 +30,18 @@
         'platform-browser',
         'platform-browser-dynamic',
         'router',
-        'upgrade'
+        'upgrade',
+        'forms'
     ];
 
     // Add package entries for angular packages
     ngPackageNames.forEach(function (pkgName) {
-        packages['@angular/' + pkgName] = {main: pkgName + '.umd.js', defaultExtension: 'js'};
+        packages['@angular/'+pkgName] = { main: '/bundles/' + pkgName + '.umd.js', defaultExtension: 'js' };
     });
 
     var config = {
         map: map,
-        packages: packages,
+        packages: packages
     };
 
     System.config(config);

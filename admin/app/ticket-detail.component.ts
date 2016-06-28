@@ -1,12 +1,15 @@
 import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute, ROUTER_DIRECTIVES, Router} from "@angular/router";
 import {TicketService} from "./ticket.service";
-import {Ticket, TicketStatus} from "./ticket";
+import {Ticket} from "./ticket";
+import {SELECT_DIRECTIVES} from "ng2-select";
 
 @Component({
     selector: 'my-ticket-detail',
     templateUrl: 'app/templates/ticket-detail.component.html',
-    directives: [ROUTER_DIRECTIVES]
+    directives: [
+        ROUTER_DIRECTIVES,
+        SELECT_DIRECTIVES]
 })
 
 export class TicketDetailComponent implements OnInit {
