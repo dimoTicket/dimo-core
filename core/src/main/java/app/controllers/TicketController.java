@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -25,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 
 @Controller
@@ -40,17 +38,6 @@ public class TicketController
     @Autowired
     private ImageService imageService;
 
-    @RequestMapping ( value = "/ticket/{id}", method = RequestMethod.GET )
-    public String getTicketMessageById ( @PathVariable ( "id" ) Long ticketId, Model model )
-    {
-        Ticket ticket = this.ticketService.getById( ticketId );
-        if ( ticket != null )
-        {
-            model.addAttribute( "ticket", ticket );
-            return "ticket";
-        }
-        return "error";
-    }
 
     @RequestMapping ( value = "/api/ticket/{id}", method = RequestMethod.GET )
     public ResponseEntity getTicketByIdRest ( @PathVariable ( "id" ) Long ticketId )
@@ -82,12 +69,11 @@ public class TicketController
         return new ResponseEntity<>( imageContent, headers, HttpStatus.OK );
     }
 
-    @RequestMapping ( value = { "/tickets", "/" }, method = RequestMethod.GET )
-    public String getAllTickets ( Map model )
+    @RequestMapping ( value = "/api/tickets" )
+    public ResponseEntity getTicketsRest ()
     {
         List<Ticket> tickets = this.ticketService.getAll();
-        model.put( "tickets", tickets );
-        return "tickets";
+        return new ResponseEntity<>( tickets, HttpStatus.OK );
     }
 
     @RequestMapping ( value = "/api/ticket/newticket", method = RequestMethod.POST )

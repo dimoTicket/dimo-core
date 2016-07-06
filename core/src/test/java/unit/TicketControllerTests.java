@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
@@ -27,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -86,6 +86,36 @@ public class TicketControllerTests
     }
 
     @Test
+    public void getTicketsRest () throws Exception
+    {
+        List<Ticket> tickets = new ArrayList<>();
+        tickets.add( this.ticket );
+        when( ticketService.getAll() ).thenReturn( tickets );
+        mockMvc.perform( get( "/api/tickets/" ) )
+                .andExpect( ( status().isOk() ) )
+                .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
+                .andExpect( jsonPath( "$", hasSize( 1 ) ) )
+                .andExpect( ( jsonPath( "$.[0].id" ).value( this.ticket.getId().intValue() ) ) )
+                .andExpect( ( jsonPath( "$.[0].message" ).value( this.ticket.getMessage() ) ) )
+                .andExpect( ( jsonPath( "$.[0].imageName" ).value( this.ticket.getImageName() ) ) )
+                .andExpect( ( jsonPath( "$.[0].latitude" ).value( this.ticket.getLatitude() ) ) )
+                .andExpect( ( jsonPath( "$.[0].longitude" ).value( this.ticket.getLongitude() ) ) )
+                .andExpect( ( jsonPath( "$.[0].status" ).value( this.ticket.getStatus().toString() ) ) )
+        ;
+    }
+
+    @Test
+    public void getTicketsRestWhenNoTicketsExist () throws Exception
+    {
+        when( ticketService.getAll() ).thenReturn( new ArrayList<>() );
+        mockMvc.perform( get( "/api/tickets/" ) )
+                .andExpect( ( status().isOk() ) )
+                .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
+                .andExpect( jsonPath( "$", hasSize( 0 ) ) )
+        ;
+    }
+
+    @Test
     public void getTicketByIdRestForTicketThatDoesNotExist () throws Exception
     {
         when( ticketService.getById( this.ticket.getId() ) ).thenThrow( new ResourceNotFoundException() );
@@ -99,7 +129,6 @@ public class TicketControllerTests
     public void submitTicket () throws Exception
     {
         when( ticketService.create( this.ticket ) ).thenReturn( this.ticket );
-
         mockMvc.perform( post( "/api/ticket/newticket" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
                 .content( "{" +
@@ -107,21 +136,5 @@ public class TicketControllerTests
                         "\"latitude\": 12.131313," +
                         "\"longitude\": 14.141414}" )
         ).andExpect( status().isCreated() );
-
-    }
-
-    @Test
-    @Ignore ( "Not ready. Needs a custom view resolver" )
-    public void getAllTickets () throws Exception
-    {
-        Answer<List<Ticket>> answer = invocation -> {
-            List<Ticket> tickets = new ArrayList<>();
-            tickets.add( this.ticket );
-            return tickets;
-        };
-        when( ticketService.getAll() ).thenAnswer( answer );
-        mockMvc.perform( get( "/tickets" ) )
-                .andExpect( ( status().isOk() ) )
-        ;
     }
 }

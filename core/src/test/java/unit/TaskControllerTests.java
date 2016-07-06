@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -91,6 +92,7 @@ public class TaskControllerTests
         mockMvc.perform( get( "/api/tasks" ) )
                 .andExpect( ( status().isOk() ) )
                 .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) )
+                .andExpect( jsonPath( "$", hasSize( 1 ) ) )
                 .andExpect( ( jsonPath( "$.[0].id" ).value( this.task.getId().intValue() ) ) )
                 .andExpect( ( jsonPath( "$.[0].createdAt" ).isNotEmpty() ) )
                 .andExpect( ( jsonPath( "$..ticket.id" ).value( this.ticket.getId().intValue() ) ) )
@@ -99,6 +101,21 @@ public class TaskControllerTests
                 .andExpect( ( jsonPath( "$..users[0].id" ).value( this.user.getId().intValue() ) ) )
                 .andExpect( ( jsonPath( "$..users[0].username" ).value( this.user.getUsername() ) ) )
                 .andExpect( ( jsonPath( "$..users[0].password" ).doesNotExist() ) )
+        ;
+    }
+
+    @Test
+    public void getAllTasksRestWhenNoTasksExist () throws Exception
+    {
+        Answer<List<Task>> answer = invocation -> {
+            List<Task> tasks = new ArrayList<>();
+            return tasks;
+        };
+        when( taskService.getAll() ).thenAnswer( answer );
+        mockMvc.perform( get( "/api/tasks" ) )
+                .andExpect( ( status().isOk() ) )
+                .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) )
+                .andExpect( jsonPath( "$", hasSize( 0 ) ) )
         ;
     }
 
