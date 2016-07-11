@@ -20,7 +20,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,13 +129,61 @@ public class TicketControllerTests
     {
         when( ticketService.create( any( Ticket.class ) ) ).thenReturn( this.ticket );
 
-        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post( "/api/ticket/newticket" )
+        mockMvc.perform( post( "/api/ticket/newticket" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
                 .content( "{" +
                         "\"message\": \"pambos\"," +
                         "\"latitude\": 12.131313," +
-                        "\"longitude\": 14.141414}" );
+                        "\"longitude\": 14.141414}" ) ).andExpect( status().isCreated() );
+    }
 
-        mockMvc.perform( mockHttpServletRequestBuilder ).andExpect( status().isCreated() );
+    @Test
+    public void submitTicketMalformedRequest () throws Exception
+    {
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{" +
+                        "\"malformed\": \"malformed\"," +
+                        "\"mlfmd\": 12.12," +
+                        "\"mmd\": 14.12}" ) ).andExpect( status().isBadRequest() );
+    }
+
+    @Test
+    public void submitTicketEmptyContent () throws Exception
+    {
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "" ) ).andExpect( status().isBadRequest() );
+    }
+
+    @Test
+    public void submitTicketNullLatitudeAndOrLongitude () throws Exception
+    {
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{" +
+                        "\"message\": \"pambos\"," +
+                        "\"longitude\": 14.141414}" ) ).andExpect( status().isBadRequest() );
+
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{" +
+                        "\"message\": \"pambos\"," +
+                        "\"latitude\": 14.141414}" ) ).andExpect( status().isBadRequest() );
+
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{" +
+                        "\"message\": \"pambos\"" ) ).andExpect( status().isBadRequest() );
+    }
+
+    @Test
+    public void submitTicketNullMessage () throws Exception
+    {
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{" +
+                        "\"latitude\": 12.131313," +
+                        "\"longitude\": 14.141414}" ) ).andExpect( status().isBadRequest() );
     }
 }

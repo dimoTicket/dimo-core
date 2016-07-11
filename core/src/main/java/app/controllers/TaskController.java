@@ -1,9 +1,7 @@
 package app.controllers;
 
 import app.entities.Task;
-import app.entities.enums.TicketStatus;
 import app.services.TaskService;
-import app.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,9 +20,6 @@ import java.net.URI;
 @Controller
 public class TaskController
 {
-
-    @Autowired
-    private TicketService ticketService;
 
     @Autowired
     private TaskService taskService;
