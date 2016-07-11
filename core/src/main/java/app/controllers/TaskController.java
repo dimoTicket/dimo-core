@@ -33,7 +33,6 @@ public class TaskController
     public ResponseEntity submitTask ( @Valid @RequestBody Task task )
     {
         this.taskService.create( task );
-        this.ticketService.changeStatus( task.getTicket(), TicketStatus.ASSIGNED );
 
         HttpHeaders httpResponseHeaders = new HttpHeaders();
         URI newTaskUri = ServletUriComponentsBuilder.fromCurrentContextPath()

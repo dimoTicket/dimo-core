@@ -4,6 +4,7 @@ import app.DimoApplication;
 import app.entities.Task;
 import app.entities.Ticket;
 import app.entities.User;
+import app.entities.enums.TicketStatus;
 import app.exceptions.service.BadRequestException;
 import app.exceptions.service.ResourceNotFoundException;
 import app.exceptions.service.UsernameDoesNotExistException;
@@ -19,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -32,8 +34,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @RunWith ( SpringJUnit4ClassRunner.class )
@@ -69,6 +70,12 @@ public class TaskServiceTests
         Task task = this.getMockTask();
         when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.empty() );
         when( this.userService.userExists( any( String.class ) ) ).thenReturn( true );
+        Answer<Task> saveAnswer = invocation -> {
+            task.setId( 1L );
+            return task;
+        };
+        when( this.taskRepository.save( any( Task.class ) ) ).thenAnswer( saveAnswer );
+        doNothing().when( this.ticketService ).changeStatus( any( Ticket.class ), any( TicketStatus.class ) );
 
         this.taskService.create( task );
     }

@@ -2,6 +2,7 @@ package app.services;
 
 import app.entities.Task;
 import app.entities.Ticket;
+import app.entities.enums.TicketStatus;
 import app.exceptions.service.BadRequestException;
 import app.exceptions.service.ResourceNotFoundException;
 import app.exceptions.service.UsernameDoesNotExistException;
@@ -40,8 +41,9 @@ public class TaskService
                 throw new UsernameDoesNotExistException( "Username :" + user.getUsername() + " does not exist" );
             }
         } );
-
-        return this.taskRepository.save( task );
+        task = this.taskRepository.save( task );
+        this.ticketService.changeStatus( task.getTicket(), TicketStatus.ASSIGNED );
+        return task;
     }
 
     public Task getById ( Long taskId )
