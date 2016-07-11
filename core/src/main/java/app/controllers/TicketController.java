@@ -38,6 +38,19 @@ public class TicketController
     @Autowired
     private ImageService imageService;
 
+    @RequestMapping ( value = "/api/ticket/newticket", method = RequestMethod.POST )
+    public ResponseEntity submitTicket ( @Valid @RequestBody Ticket ticket )
+    {
+        ticket = this.ticketService.create( ticket );
+
+        HttpHeaders httpResponseHeaders = new HttpHeaders();
+        URI newTicketUri = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path( "/api/ticket/{id}" ).buildAndExpand( ticket.getId() ).toUri();
+        httpResponseHeaders.setLocation( newTicketUri );
+        return new ResponseEntity<>( httpResponseHeaders, HttpStatus.CREATED );
+    }
+
     @RequestMapping ( value = "/api/ticket/{id}", method = RequestMethod.GET )
     public ResponseEntity getTicketByIdRest ( @PathVariable ( "id" ) Long ticketId )
     {
@@ -51,18 +64,6 @@ public class TicketController
     {
         List<Ticket> tickets = this.ticketService.getAll();
         return new ResponseEntity<>( tickets, HttpStatus.OK );
-    }
-
-    @RequestMapping ( value = "/api/ticket/newticket", method = RequestMethod.POST )
-    public ResponseEntity submitTicket ( @Valid @RequestBody Ticket ticket )
-    {
-        ticket = this.ticketService.create( ticket );
-        HttpHeaders httpResponseHeaders = new HttpHeaders();
-        URI newTicketUri = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path( "/api/ticket/{ticketId}" ).buildAndExpand( ticket.getId() ).toUri();
-        httpResponseHeaders.setLocation( newTicketUri );
-        return new ResponseEntity<>( httpResponseHeaders, HttpStatus.CREATED );
     }
 
     @RequestMapping ( value = "/image", method = RequestMethod.GET )

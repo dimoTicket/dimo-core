@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.3.3.RELEASE'
+        springBootVersion = '1.3.6.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -30,25 +30,15 @@ repositories {
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compile('org.thymeleaf.extras:thymeleaf-extras-springsecurity4:2.1.2.RELEASE')
     compile('org.springframework.boot:spring-boot-devtools:1.3.0.RELEASE')
     compile('org.springframework.boot:spring-boot-starter-security:1.3.3.RELEASE')
 //    compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('mysql:mysql-connector-java:5.1.6')
-    compile('org.webjars:bootstrap:3.3.6') //Also change refs on thymeleaf templates
-    compile('org.webjars:jquery:2.1.4') //Also change refs on thymeleaf templates
-    compile('org.webjars:jquery-ui:1.11.4') //Also change refs on thymeleaf templates
-    compile ('org.webjars:angularjs:2.0.0-alpha.22')
     compile('com.h2database:h2:1.4.191')
     //Test dependencies
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('com.jayway.jsonpath:json-path-assert:2.2.0')
-}
-
-//Enables live reload of thymeleaf templates. Enable when working with thymeleaf templates.
-bootRun {
-    addResources = true
 }
 
 eclipse {
