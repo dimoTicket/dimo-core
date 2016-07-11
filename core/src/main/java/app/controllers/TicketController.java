@@ -38,13 +38,31 @@ public class TicketController
     @Autowired
     private ImageService imageService;
 
-
     @RequestMapping ( value = "/api/ticket/{id}", method = RequestMethod.GET )
     public ResponseEntity getTicketByIdRest ( @PathVariable ( "id" ) Long ticketId )
     {
         this.ticketService.verifyTicketExists( ticketId );
         Ticket ticket = this.ticketService.getById( ticketId );
         return new ResponseEntity<>( ticket, HttpStatus.OK );
+    }
+
+    @RequestMapping ( value = "/api/tickets" )
+    public ResponseEntity getTicketsRest ()
+    {
+        List<Ticket> tickets = this.ticketService.getAll();
+        return new ResponseEntity<>( tickets, HttpStatus.OK );
+    }
+
+    @RequestMapping ( value = "/api/ticket/newticket", method = RequestMethod.POST )
+    public ResponseEntity submitTicket ( @Valid @RequestBody Ticket ticket )
+    {
+        ticket = this.ticketService.create( ticket );
+        HttpHeaders httpResponseHeaders = new HttpHeaders();
+        URI newTicketUri = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path( "/api/ticket/{ticketId}" ).buildAndExpand( ticket.getId() ).toUri();
+        httpResponseHeaders.setLocation( newTicketUri );
+        return new ResponseEntity<>( httpResponseHeaders, HttpStatus.CREATED );
     }
 
     @RequestMapping ( value = "/image", method = RequestMethod.GET )
@@ -67,25 +85,6 @@ public class TicketController
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType( MediaType.IMAGE_JPEG );
         return new ResponseEntity<>( imageContent, headers, HttpStatus.OK );
-    }
-
-    @RequestMapping ( value = "/api/tickets" )
-    public ResponseEntity getTicketsRest ()
-    {
-        List<Ticket> tickets = this.ticketService.getAll();
-        return new ResponseEntity<>( tickets, HttpStatus.OK );
-    }
-
-    @RequestMapping ( value = "/api/ticket/newticket", method = RequestMethod.POST )
-    public ResponseEntity submitTicket ( @Valid @RequestBody Ticket ticket )
-    {
-        ticket = this.ticketService.create( ticket );
-        HttpHeaders httpResponseHeaders = new HttpHeaders();
-        URI newTicketUri = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path( "/api/ticket/{ticketId}" ).buildAndExpand( ticket.getId() ).toUri();
-        httpResponseHeaders.setLocation( newTicketUri );
-        return new ResponseEntity<>( httpResponseHeaders, HttpStatus.CREATED );
     }
 
     // TODO: 10/02/2016 Generate a unique "upload token" for the client to use, to avoid malicious attempts

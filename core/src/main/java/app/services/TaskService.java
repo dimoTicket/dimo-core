@@ -2,7 +2,9 @@ package app.services;
 
 import app.entities.Task;
 import app.entities.Ticket;
+import app.exceptions.service.BadRequestException;
 import app.exceptions.service.ResourceNotFoundException;
+import app.exceptions.service.UsernameDoesNotExistException;
 import app.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +19,28 @@ public class TaskService
     @Autowired
     private TaskRepository taskRepository;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private TicketService ticketService;
+
     public Task create ( Task task )
     {
-        // TODO: 26/04/2016 Throw if there's already an !active! task for the given ticket
+        this.ticketService.verifyTicketExists( task.getTicket().getId() );
+
+        if ( this.taskExistsForTicket( task.getTicket() ) )
+        {
+            throw new BadRequestException( "A task already exists for ticket with id : " + task.getTicket().getId() );
+        }
+
+        task.getUsers().parallelStream().forEach( user -> {
+            if ( !this.userService.userExists( user.getUsername() ) )
+            {
+                throw new UsernameDoesNotExistException( "Username :" + user.getUsername() + " does not exist" );
+            }
+        } );
+
         return this.taskRepository.save( task );
     }
 
@@ -50,7 +71,7 @@ public class TaskService
         Task task = this.taskRepository.findOne( taskId );
         if ( task == null )
         {
-            throw new ResourceNotFoundException( "Ticket with id " + taskId + " not found" );
+            throw new ResourceNotFoundException( "Task with id " + taskId + " not found" );
         }
     }
 }

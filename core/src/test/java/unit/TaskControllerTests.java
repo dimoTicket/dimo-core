@@ -107,10 +107,7 @@ public class TaskControllerTests
     @Test
     public void getAllTasksRestWhenNoTasksExist () throws Exception
     {
-        Answer<List<Task>> answer = invocation -> {
-            List<Task> tasks = new ArrayList<>();
-            return tasks;
-        };
+        Answer<List<Task>> answer = invocation -> new ArrayList<>();
         when( taskService.getAll() ).thenAnswer( answer );
         mockMvc.perform( get( "/api/tasks" ) )
                 .andExpect( ( status().isOk() ) )
@@ -145,5 +142,7 @@ public class TaskControllerTests
                 .andExpect( ( status().isNotFound() ) )
         ;
     }
+
+    // TODO: 6/7/2016 New Task tests
 
 }

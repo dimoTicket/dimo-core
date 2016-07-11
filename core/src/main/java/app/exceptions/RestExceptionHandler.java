@@ -1,5 +1,6 @@
 package app.exceptions;
 
+import app.exceptions.service.BadRequestException;
 import app.exceptions.service.ResourceNotFoundException;
 import app.exceptions.pojo.ErrorDetails;
 import app.exceptions.pojo.ValidationError;
@@ -51,6 +52,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler
         errorDetails.setTitle( "Error when validating user" );
         errorDetails.setTimestamp( new Date().getTime() );
         return new ResponseEntity<>( errorDetails, HttpStatus.INTERNAL_SERVER_ERROR );
+    }
+
+    @ExceptionHandler ( BadRequestException.class )
+    public ResponseEntity handleBadRequestException ( BadRequestException ex )
+    {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails( ex.getMessage() );
+        errorDetails.setDeveloperMessage( ex.getClass().getName() );
+        errorDetails.setStatus( HttpStatus.BAD_REQUEST.value() );
+        errorDetails.setTitle( "Bad request" );
+        errorDetails.setTimestamp( new Date().getTime() );
+        return new ResponseEntity<>( errorDetails, HttpStatus.BAD_REQUEST );
     }
 
     @Override

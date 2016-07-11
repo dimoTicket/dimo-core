@@ -86,6 +86,15 @@ public class TicketControllerTests
     }
 
     @Test
+    public void getTicketByIdRestForTicketThatDoesNotExist () throws Exception
+    {
+        when( ticketService.getById( this.ticket.getId() ) ).thenThrow( new ResourceNotFoundException() );
+        mockMvc.perform( get( "/api/ticket/" + this.ticket.getId() ) )
+                .andExpect( ( status().isNotFound() ) )
+        ;
+    }
+
+    @Test
     public void getTicketsRest () throws Exception
     {
         List<Ticket> tickets = new ArrayList<>();
@@ -112,15 +121,6 @@ public class TicketControllerTests
                 .andExpect( ( status().isOk() ) )
                 .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
                 .andExpect( jsonPath( "$", hasSize( 0 ) ) )
-        ;
-    }
-
-    @Test
-    public void getTicketByIdRestForTicketThatDoesNotExist () throws Exception
-    {
-        when( ticketService.getById( this.ticket.getId() ) ).thenThrow( new ResourceNotFoundException() );
-        mockMvc.perform( get( "/api/ticket/" + this.ticket.getId() ) )
-                .andExpect( ( status().isNotFound() ) )
         ;
     }
 
