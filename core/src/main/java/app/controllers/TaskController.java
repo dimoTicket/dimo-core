@@ -27,7 +27,7 @@ public class TaskController
     @RequestMapping ( value = "api/task/newtask", method = RequestMethod.POST )
     public ResponseEntity submitTask ( @Valid @RequestBody Task task )
     {
-        this.taskService.create( task );
+        task = this.taskService.create( task );
 
         HttpHeaders httpResponseHeaders = new HttpHeaders();
         URI newTaskUri = ServletUriComponentsBuilder.fromCurrentContextPath()

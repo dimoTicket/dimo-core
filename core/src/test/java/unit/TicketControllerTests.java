@@ -132,9 +132,11 @@ public class TicketControllerTests
         mockMvc.perform( post( "/api/ticket/newticket" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
                 .content( "{" +
-                        "\"message\": \"pambos\"," +
+                        "\"message\": \"MockMessage\"," +
                         "\"latitude\": 12.131313," +
-                        "\"longitude\": 14.141414}" ) ).andExpect( status().isCreated() );
+                        "\"longitude\": 14.141414}" ) )
+                .andExpect( status().isCreated() )
+                .andExpect( header().string( "location", "http://localhost/api/ticket/1" ) );
     }
 
     @Test
@@ -162,19 +164,19 @@ public class TicketControllerTests
         mockMvc.perform( post( "/api/ticket/newticket" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
                 .content( "{" +
-                        "\"message\": \"pambos\"," +
+                        "\"message\": \"MockMessage\"," +
                         "\"longitude\": 14.141414}" ) ).andExpect( status().isBadRequest() );
 
         mockMvc.perform( post( "/api/ticket/newticket" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
                 .content( "{" +
-                        "\"message\": \"pambos\"," +
+                        "\"message\": \"MockMessage\"," +
                         "\"latitude\": 14.141414}" ) ).andExpect( status().isBadRequest() );
 
         mockMvc.perform( post( "/api/ticket/newticket" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
                 .content( "{" +
-                        "\"message\": \"pambos\"" ) ).andExpect( status().isBadRequest() );
+                        "\"message\": \"MockMessage\"" ) ).andExpect( status().isBadRequest() );
     }
 
     @Test

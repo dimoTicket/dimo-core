@@ -6,7 +6,10 @@ import app.entities.Task;
 import app.entities.Ticket;
 import app.entities.User;
 import app.entities.enums.TicketStatus;
+import app.exceptions.RestExceptionHandler;
+import app.exceptions.service.BadRequestException;
 import app.exceptions.service.ResourceNotFoundException;
+import app.exceptions.service.UserServiceException;
 import app.services.TaskService;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,8 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
@@ -58,7 +64,9 @@ public class TaskControllerTests
     public void setup ()
     {
         MockitoAnnotations.initMocks( this );
-        mockMvc = standaloneSetup( this.taskController ).build();
+        mockMvc = standaloneSetup( this.taskController )
+                .setControllerAdvice( new RestExceptionHandler() )
+                .build();
 
         ticket = new Ticket();
         ticket.setId( 1L );
@@ -70,7 +78,7 @@ public class TaskControllerTests
 
         user = new User();
         user.setId( 1L );
-        user.setUsername( "testname" );
+        user.setUsername( "MockName" );
         List<User> users = new ArrayList<>();
         users.add( user );
 
@@ -143,6 +151,133 @@ public class TaskControllerTests
         ;
     }
 
-    // TODO: 6/7/2016 New Task tests
+    @Test
+    public void submitTask () throws Exception
+    {
+        when( taskService.create( any( Task.class ) ) ).thenReturn( this.task );
 
+        mockMvc.perform( post( "/api/task/newtask" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"ticket\": {\"id\": 1,\n" +
+                        "  \"message\": \"Ticket Message1\",\n" +
+                        "  \"latitude\": 40.631756,\n" +
+                        "  \"longitude\": 22.951907}, \n" +
+                        "  \"users\": [\n" +
+                        "  {\n" +
+                        "    \"id\": 1,\n" +
+                        "    \"username\": \"MockName\"\n" +
+                        "  }\n" +
+                        "]\n" +
+                        "}" ) )
+                .andExpect( status().isCreated() )
+                .andExpect( header().string( "location", "http://localhost/api/task/1" ) );
+    }
+
+    @Test
+    public void submitTaskForTicketThatDoesNotExist () throws Exception
+    {
+        when( taskService.create( any( Task.class ) ) ).thenThrow( new ResourceNotFoundException() );
+
+        mockMvc.perform( post( "/api/task/newtask" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"ticket\": {\"id\": 1,\n" +
+                        "  \"message\": \"Ticket Message1\",\n" +
+                        "  \"latitude\": 40.631756,\n" +
+                        "  \"longitude\": 22.951907}, \n" +
+                        "  \"users\": [\n" +
+                        "  {\n" +
+                        "    \"id\": 1,\n" +
+                        "    \"username\": \"MockName\"\n" +
+                        "  }\n" +
+                        "]\n" +
+                        "}" ) )
+                .andExpect( status().isNotFound() );
+    }
+
+    @Test
+    public void submitTaskForTicketThatAlreadyHasATask () throws Exception
+    {
+        when( taskService.create( any( Task.class ) ) ).thenThrow( new BadRequestException() );
+
+        mockMvc.perform( post( "/api/task/newtask" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"ticket\": {\"id\": 1,\n" +
+                        "  \"message\": \"Ticket Message1\",\n" +
+                        "  \"latitude\": 40.631756,\n" +
+                        "  \"longitude\": 22.951907}, \n" +
+                        "  \"users\": [\n" +
+                        "  {\n" +
+                        "    \"id\": 1,\n" +
+                        "    \"username\": \"MockName\"\n" +
+                        "  }\n" +
+                        "]\n" +
+                        "}" ) )
+                .andExpect( status().isBadRequest() );
+    }
+
+    @Test
+    public void submitTaskWithUserThatDoesNotExist () throws Exception
+    {
+        //// FIXME: 12/7/2016 The implementation of create throws UserNameNotFoundEx which extends UserServiceEx
+        //Using UserNameNotFoundEx won't work in mockmvc but works on runtime
+        doThrow( new UserServiceException( "" ) ).when( this.taskService ).create( any( Task.class ) );
+
+        mockMvc.perform( post( "/api/task/newtask" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"ticket\": {\"id\": 1,\n" +
+                        "  \"message\": \"Ticket Message1\",\n" +
+                        "  \"latitude\": 40.631756,\n" +
+                        "  \"longitude\": 22.951907}, \n" +
+                        "  \"users\": [\n" +
+                        "  {\n" +
+                        "    \"id\": 1,\n" +
+                        "    \"username\": \"MockName\"\n" +
+                        "  }\n" +
+                        "]\n" +
+                        "}" ) )
+                .andExpect( status().isInternalServerError() );
+    }
+
+    @Test
+    public void submitTaskMalformedRequest () throws Exception
+    {
+        mockMvc.perform( post( "/api/task/newtask" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"malformed\": {\"id\": 1,\n" +
+                        "  \"message\": \"Ticket Message1\",\n" +
+                        "  \"latitude\": 40.631756,\n" +
+                        "  {\n" +
+                        "    \"id\": 1,\n" +
+                        "    \"malformed\": \"MockName\"\n" +
+                        "  }\n" +
+                        "]\n" +
+                        "}" ) )
+                .andExpect( status().isBadRequest() );
+    }
+
+    @Test
+    public void submitTaskWithoutUsers () throws Exception
+    {
+        mockMvc.perform( post( "/api/task/newtask" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{" +
+                        "\"message\": \"MockMessage\"," +
+                        "\"latitude\": 12.131313," +
+                        "\"longitude\": 14.141414}" ) )
+                .andExpect( status().isBadRequest() );
+    }
+
+    @Test
+    public void submitTaskWithEmptyUsers () throws Exception
+    {
+        mockMvc.perform( post( "/api/task/newtask" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"ticket\": {\"id\": 1,\n" +
+                        "  \"message\": \"Ticket Message1\",\n" +
+                        "  \"latitude\": 40.631756,\n" +
+                        "  \"longitude\": 22.951907}, \n" +
+                        "  \"users\": []\n" +
+                        "}" ) )
+                .andExpect( status().isBadRequest() );
+    }
 }
