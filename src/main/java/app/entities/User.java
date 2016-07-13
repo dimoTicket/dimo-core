@@ -120,4 +120,22 @@ public class User extends BaseEntity implements UserDetails
     {
         return super.getCreatedAt();
     }
+
+    @Override
+    public boolean equals ( Object o )
+    {
+        if ( this == o ) return true;
+        if ( !( o instanceof User ) ) return false;
+
+        User user = ( User )o;
+
+        return username.equals( user.username );
+
+    }
+
+    @Override
+    public int hashCode ()
+    {
+        return username.hashCode();
+    }
 }

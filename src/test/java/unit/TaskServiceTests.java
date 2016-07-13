@@ -71,7 +71,8 @@ public class TaskServiceTests
         Task task = this.getMockTask();
         when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.empty() );
         when( this.userService.userExists( any( String.class ) ) ).thenReturn( true );
-        Answer<Task> saveAnswer = invocation -> {
+        Answer<Task> saveAnswer = invocation ->
+        {
             task.setId( 1L );
             return task;
         };
@@ -159,7 +160,6 @@ public class TaskServiceTests
     public void addUsersToTask ()
     {
         Task dbTask = this.getMockTask();
-
         Task inTask = this.getMockTask();
         inTask.getUsers().clear();
         User user3 = new User();
@@ -172,6 +172,102 @@ public class TaskServiceTests
         when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
         dbTask = this.taskService.addUsersToTask( inTask );
         assertThat( dbTask.getUsers(), hasSize( 3 ) );
+        assertThat( dbTask.getUsers().toArray()[ 2 ], is( user3 ) );
+    }
+
+    @Test
+    public void addUsersToTaskMultipleInvocations ()
+    {
+        Task dbTask = this.getMockTask();
+        Task inTask = this.getMockTask();
+        inTask.getUsers().clear();
+        User user3 = new User();
+        user3.setId( 3L );
+        user3.setUsername( "MockUser3" );
+        inTask.getUsers().add( user3 );
+
+        when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
+        when( this.userService.userExists( "MockUser3" ) ).thenReturn( true );
+        when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
+        dbTask = this.taskService.addUsersToTask( inTask );
+        dbTask = this.taskService.addUsersToTask( inTask );
+        dbTask = this.taskService.addUsersToTask( inTask );
+        dbTask = this.taskService.addUsersToTask( inTask );
+        dbTask = this.taskService.addUsersToTask( inTask );
+        assertThat( dbTask.getUsers(), hasSize( 3 ) );
+        assertThat( dbTask.getUsers().toArray()[ 2 ], is( user3 ) );
+    }
+
+    @Test
+    public void addUsersToTaskEmptyUserList ()
+    {
+        Task dbTask = this.getMockTask();
+        Task inTask = this.getMockTask();
+        inTask.getUsers().clear();
+        when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
+        when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
+        dbTask = this.taskService.addUsersToTask( inTask );
+        assertThat( dbTask.getUsers(), hasSize( 2 ) );
+    }
+
+    @Test
+    public void addUsersToTaskUserDoesNotExist ()
+    {
+        Task dbTask = this.getMockTask();
+        Task inTask = this.getMockTask();
+        inTask.getUsers().clear();
+        User user3 = new User();
+        user3.setId( 3L );
+        user3.setUsername( "MockUser3" );
+        inTask.getUsers().add( user3 );
+
+        when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
+        when( this.userService.userExists( "MockUser3" ) ).thenThrow( new UsernameDoesNotExistException( "" ) );
+        thrown.expect( UsernameDoesNotExistException.class );
+        this.taskService.addUsersToTask( inTask );
+    }
+
+    @Test
+    public void addUsersToTaskSomeUsersDontExist ()
+    {
+        Task dbTask = this.getMockTask();
+        Task inTask = this.getMockTask();
+        inTask.getUsers().clear();
+        User user3 = new User();
+        user3.setId( 3L );
+        user3.setUsername( "MockUser3" );
+        User user4 = new User();
+        user4.setId( 4L );
+        user4.setUsername( "MockUser4" );
+        inTask.getUsers().add( user3 );
+        inTask.getUsers().add( user4 );
+
+        when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
+        when( this.userService.userExists( "MockUser3" ) ).thenReturn( true );
+        when( this.userService.userExists( "MockUser4" ) ).thenThrow( new UsernameDoesNotExistException( "" ) );
+        thrown.expect( UsernameDoesNotExistException.class );
+        dbTask = this.taskService.addUsersToTask( inTask );
+        assertThat( dbTask.getUsers(), hasSize( 2 ) );
+    }
+
+    @Test
+    public void addUsersToTaskUsersAlreadyAssigned ()
+    {
+        Task dbTask = this.getMockTask();
+        Task inTask = this.getMockTask();
+        User user3 = new User();
+        user3.setId( 3L );
+        user3.setUsername( "MockUser3" );
+        inTask.getUsers().add( user3 );
+
+        when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
+        when( this.userService.userExists( "MockUser" ) ).thenReturn( true );
+        when( this.userService.userExists( "MockUser2" ) ).thenReturn( true );
+        when( this.userService.userExists( "MockUser3" ) ).thenReturn( true );
+        when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
+        dbTask = this.taskService.addUsersToTask( inTask );
+        assertThat( dbTask.getUsers(), hasSize( 3 ) );
+        assertThat( dbTask.getUsers().toArray()[ 2 ], is( user3 ) );
     }
 
     private Task getMockTask ()

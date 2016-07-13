@@ -8,6 +8,8 @@ import app.exceptions.service.BadRequestException;
 import app.exceptions.service.ResourceNotFoundException;
 import app.exceptions.service.UsernameDoesNotExistException;
 import app.repositories.TaskRepository;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ import java.util.List;
 @Service
 public class TaskService
 {
+
+    private final Log logger = LogFactory.getLog( getClass() );
 
     @Autowired
     private TaskRepository taskRepository;
@@ -38,7 +42,8 @@ public class TaskService
             throw new BadRequestException( "A task already exists for ticket with id : " + task.getTicket().getId() );
         }
 
-        task.getUsers().parallelStream().forEach( user -> {
+        task.getUsers().parallelStream().forEach( user ->
+        {
             if ( !this.userService.userExists( user.getUsername() ) )
             {
                 throw new UsernameDoesNotExistException( "Username :" + user.getUsername() + " does not exist" );
@@ -54,15 +59,21 @@ public class TaskService
         Collection<User> inUsers = task.getUsers();
         Task taskFromDb = this.getById( task.getId() );
         inUsers.stream()
-                .peek( user -> {
+                .peek( user ->
+                {
                     if ( !this.userService.userExists( user.getUsername() ) )
                     {
-                        throw new UsernameNotFoundException( "Username :" + user.getUsername() + " not found in the system" );
+                        throw new UsernameDoesNotExistException( "Username :" + user.getUsername() + " not found in the system" );
                     }
                 } )
-                .forEach( ( user -> {
-                    if ( !taskFromDb.getUsers().contains( user ) ) //// TODO: 12/7/2016 doesnt work because of equals
+                .forEach( ( user ->
+                {
+                    if ( taskFromDb.getUsers().contains( user ) )
                     {
+                        logger.info( "User: " + user.getUsername() + " was already assigned to task with id: " + taskFromDb.getId() );
+                    } else
+                    {
+                        logger.info( "Adding user: " + user.getUsername() + " to task with id: " + taskFromDb.getId() );
                         taskFromDb.getUsers().add( user );
                     }
                 } ) );
