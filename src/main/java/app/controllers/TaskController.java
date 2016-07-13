@@ -56,4 +56,11 @@ public class TaskController
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
+    @RequestMapping ( value = "/api/task/{id}/removeusers", method = RequestMethod.POST )
+    public ResponseEntity removeUsersFromTask ( @PathVariable ( "id" ) Long id, @Valid @RequestBody Task task )
+    {
+        this.taskService.removeUsersFromTask( task );
+        return new ResponseEntity<>( HttpStatus.OK );
+    }
+
 }

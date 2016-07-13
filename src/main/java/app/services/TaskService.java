@@ -11,7 +11,6 @@ import app.repositories.TaskRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -82,7 +81,19 @@ public class TaskService
 
     public Task removeUsersFromTask ( Task task )
     {
-        throw new RuntimeException( "Not implemented" );
+        Collection<User> inUsers = task.getUsers();
+        Task taskFromDb = this.getById( task.getId() );
+        inUsers.forEach( ( user ->
+        {
+            if ( taskFromDb.getUsers().contains( user ) )
+            {
+                taskFromDb.getUsers().remove( user );
+            } else
+            {
+                logger.info( "User: " + user.getUsername() + " not found in task with id: " + taskFromDb.getId() );
+            }
+        } ) );
+        return this.taskRepository.save( taskFromDb );
     }
 
     public Task getById ( Long taskId )

@@ -28,6 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -207,7 +208,7 @@ public class TaskServiceTests
         when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
         when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
         dbTask = this.taskService.addUsersToTask( inTask );
-        assertThat( dbTask.getUsers(), hasSize( 2 ) );
+        assertThat( dbTask.getUsers(), hasSize( dbTask.getUsers().size() ) );
     }
 
     @Test
@@ -269,6 +270,63 @@ public class TaskServiceTests
         assertThat( dbTask.getUsers(), hasSize( 3 ) );
         assertThat( dbTask.getUsers().toArray()[ 2 ], is( user3 ) );
     }
+
+    @Test
+    public void removeUsersFromTask ()
+    {
+        Task dbTask = this.getMockTask();
+        Task inTask = this.getMockTask();
+        inTask.setUsers( inTask.getUsers().stream().limit( 1 ).collect( Collectors.toList() ) );
+
+        when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
+        when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
+        dbTask = this.taskService.removeUsersFromTask( inTask );
+        assertThat( dbTask.getUsers(), hasSize( 1 ) );
+    }
+
+    //// FIXME: 13/7/2016 Looks like javax validation doesn't work for this one. Investigate
+    @Test
+    public void removeUsersFromTaskRemoveAllUsers ()
+    {
+        Task dbTask = this.getMockTask();
+        Task inTask = this.getMockTask();
+
+        when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
+        when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
+        dbTask = this.taskService.removeUsersFromTask( inTask );
+        assertThat( dbTask.getUsers(), hasSize( 0 ) );
+    }
+
+    @Test
+    public void removeUsersFromTaskEmptyInUserList ()
+    {
+        Task dbTask = this.getMockTask();
+        Task inTask = this.getMockTask();
+        inTask.getUsers().clear();
+
+        when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
+        when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
+        dbTask = this.taskService.removeUsersFromTask( inTask );
+        assertThat( dbTask.getUsers(), hasSize( dbTask.getUsers().size() ) );
+    }
+
+    @Test
+    public void removeUsersFromTaskInvalidUser ()
+    {
+        Task dbTask = this.getMockTask();
+        Task inTask = this.getMockTask();
+        inTask.getUsers().clear();
+        User invalidUser = new User();
+        invalidUser.setId( 999L );
+        invalidUser.setUsername( "InvalidUser" );
+        inTask.getUsers().add( invalidUser );
+
+        when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
+        when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
+        dbTask = this.taskService.removeUsersFromTask( inTask );
+        assertThat( dbTask.getUsers(), hasSize( dbTask.getUsers().size() ) );
+    }
+
 
     private Task getMockTask ()
     {
