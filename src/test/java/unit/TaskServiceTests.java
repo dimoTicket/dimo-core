@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -152,6 +153,25 @@ public class TaskServiceTests
     {
         when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.empty() );
         assertThat( this.taskService.taskExistsForTicket( new Ticket() ), is( false ) );
+    }
+
+    @Test
+    public void addUsersToTask ()
+    {
+        Task dbTask = this.getMockTask();
+
+        Task inTask = this.getMockTask();
+        inTask.getUsers().clear();
+        User user3 = new User();
+        user3.setId( 3L );
+        user3.setUsername( "MockUser3" );
+        inTask.getUsers().add( user3 );
+
+        when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
+        when( this.userService.userExists( "MockUser3" ) ).thenReturn( true );
+        when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
+        dbTask = this.taskService.addUsersToTask( inTask );
+        assertThat( dbTask.getUsers(), hasSize( 3 ) );
     }
 
     private Task getMockTask ()

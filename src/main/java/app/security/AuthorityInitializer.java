@@ -43,6 +43,12 @@ public class AuthorityInitializer
         user.setUsername( "pambos" );
         user.setPassword( "12345678" );
         user.setEmail( "pambos@pambos.gr" );
+
+        User user2 = new User();
+        user2.setUsername( "pambos2" );
+        user2.setPassword( "12345678" );
+        user2.setEmail( "pambos2@pambos.gr" );
         this.userService.createUser( user );
+        this.userService.createUser( user2 );
     }
 }

@@ -21,12 +21,6 @@ public class UserController
     @Autowired
     private UserService userService;
 
-    @RequestMapping ( value = "/register" )
-    public String showRegistrationForm ( Map model )
-    {
-        model.put( "user", new User() );
-        return "userregistrationform";
-    }
 
     @RequestMapping ( value = "/register", method = RequestMethod.POST )
     public ResponseEntity registerUser ( @Valid @ModelAttribute User user )

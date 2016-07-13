@@ -49,4 +49,11 @@ public class TaskController
         return new ResponseEntity<>( this.taskService.getAll(), HttpStatus.OK );
     }
 
+    @RequestMapping ( value = "/api/task/{id}/addusers", method = RequestMethod.POST )
+    public ResponseEntity addUsersToTask ( @PathVariable ( "id" ) Long id, @Valid @RequestBody Task task )
+    {
+        this.taskService.addUsersToTask( task );
+        return new ResponseEntity<>( HttpStatus.OK );
+    }
+
 }

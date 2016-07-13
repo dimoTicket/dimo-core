@@ -2,14 +2,17 @@ package app.services;
 
 import app.entities.Task;
 import app.entities.Ticket;
+import app.entities.User;
 import app.entities.enums.TicketStatus;
 import app.exceptions.service.BadRequestException;
 import app.exceptions.service.ResourceNotFoundException;
 import app.exceptions.service.UsernameDoesNotExistException;
 import app.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -44,6 +47,31 @@ public class TaskService
         task = this.taskRepository.save( task );
         this.ticketService.changeStatus( task.getTicket(), TicketStatus.ASSIGNED );
         return task;
+    }
+
+    public Task addUsersToTask ( Task task )
+    {
+        Collection<User> inUsers = task.getUsers();
+        Task taskFromDb = this.getById( task.getId() );
+        inUsers.stream()
+                .peek( user -> {
+                    if ( !this.userService.userExists( user.getUsername() ) )
+                    {
+                        throw new UsernameNotFoundException( "Username :" + user.getUsername() + " not found in the system" );
+                    }
+                } )
+                .forEach( ( user -> {
+                    if ( !taskFromDb.getUsers().contains( user ) ) //// TODO: 12/7/2016 doesnt work because of equals
+                    {
+                        taskFromDb.getUsers().add( user );
+                    }
+                } ) );
+        return this.taskRepository.save( taskFromDb );
+    }
+
+    public Task removeUsersFromTask ( Task task )
+    {
+        throw new RuntimeException( "Not implemented" );
     }
 
     public Task getById ( Long taskId )
