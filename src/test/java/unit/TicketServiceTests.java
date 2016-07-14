@@ -59,7 +59,8 @@ public class TicketServiceTests
     {
         when( this.ticketRepository.save( ticket ) ).thenReturn( ticket );
         when( this.ticketRepository.findOne( ticket.getId() ) ).thenReturn( ticket );
-        this.ticketService.changeStatus( ticket, TicketStatus.IN_PROGRESS );
+        ticket = this.ticketService.changeStatus( ticket, TicketStatus.IN_PROGRESS );
+        assertThat( ticket.getStatus(), is( TicketStatus.IN_PROGRESS ) );
     }
 
     @Test

@@ -66,6 +66,7 @@ public class TicketController
         return new ResponseEntity<>( tickets, HttpStatus.OK );
     }
 
+    @Deprecated
     @RequestMapping ( value = "/image", method = RequestMethod.GET )
     public ResponseEntity<byte[]> getImage ( @RequestParam ( "ticketId" ) Long ticketId )
     {
@@ -89,6 +90,7 @@ public class TicketController
     }
 
     // TODO: 10/02/2016 Generate a unique "upload token" for the client to use, to avoid malicious attempts
+    @Deprecated
     @RequestMapping ( value = "/api/ticket/newticketimage", method = RequestMethod.POST )
     public ResponseEntity handleImageUpload ( @RequestParam ( name = "ticketId", required = true ) Long ticketId,
                                               @RequestPart @Valid MultipartFile multipartFile )

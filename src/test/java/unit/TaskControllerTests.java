@@ -91,7 +91,8 @@ public class TaskControllerTests
     @Test
     public void getAllTasksRest () throws Exception
     {
-        Answer<List<Task>> answer = invocation -> {
+        Answer<List<Task>> answer = invocation ->
+        {
             List<Task> tasks = new ArrayList<>();
             tasks.add( this.task );
             return tasks;
@@ -219,7 +220,7 @@ public class TaskControllerTests
     public void submitTaskWithUserThatDoesNotExist () throws Exception
     {
         //// FIXME: 12/7/2016 The implementation of create throws UserNameNotFoundEx which extends UserServiceEx
-        //Using UserNameNotFoundEx won't work in mockmvc but works on runtime
+        //// FIXME: Using UserNameNotFoundEx won't work in mockmvc but works on runtime
         doThrow( new UserServiceException( "" ) ).when( this.taskService ).create( any( Task.class ) );
 
         mockMvc.perform( post( "/api/task/newtask" )

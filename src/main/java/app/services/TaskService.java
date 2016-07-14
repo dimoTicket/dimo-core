@@ -6,7 +6,6 @@ import app.entities.User;
 import app.entities.enums.TicketStatus;
 import app.exceptions.service.BadRequestException;
 import app.exceptions.service.ResourceNotFoundException;
-import app.exceptions.service.UsernameDoesNotExistException;
 import app.repositories.TaskRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,15 +40,17 @@ public class TaskService
             throw new BadRequestException( "A task already exists for ticket with id : " + task.getTicket().getId() );
         }
 
-        task.getUsers().parallelStream().forEach( user ->
+        task.getUsers().parallelStream().forEach( inUser ->
         {
-            if ( !this.userService.userExists( user.getUsername() ) )
+            // TODO: 14/7/2016 Remove these when you refactor the api to be less verbose
+            if ( !this.userService.loadById( inUser.getId() )
+                    .getUsername().equals( inUser.getUsername() ) )
             {
-                throw new UsernameDoesNotExistException( "Username :" + user.getUsername() + " does not exist" );
+                throw new BadRequestException( "UserId " + inUser.getId() + " does not match username " + inUser.getUsername() );
             }
         } );
         task = this.taskRepository.save( task );
-        this.ticketService.changeStatus( task.getTicket(), TicketStatus.ASSIGNED );
+        this.changeTicketStatus( task, TicketStatus.ASSIGNED );
         return task;
     }
 
@@ -58,22 +59,24 @@ public class TaskService
         Collection<User> inUsers = task.getUsers();
         Task taskFromDb = this.getById( task.getId() );
         inUsers.stream()
-                .peek( user ->
+                .peek( inUser ->
                 {
-                    if ( !this.userService.userExists( user.getUsername() ) )
+                    // TODO: 14/7/2016 Remove these when you refactor the api to be less verbose
+                    if ( !this.userService.loadById( inUser.getId() )
+                            .getUsername().equals( inUser.getUsername() ) )
                     {
-                        throw new UsernameDoesNotExistException( "Username :" + user.getUsername() + " not found in the system" );
+                        throw new BadRequestException( "UserId " + inUser.getId() + " does not match username " + inUser.getUsername() );
                     }
                 } )
-                .forEach( ( user ->
+                .forEach( ( inUser ->
                 {
-                    if ( taskFromDb.getUsers().contains( user ) )
+                    if ( taskFromDb.getUsers().contains( inUser ) )
                     {
-                        logger.info( "User: " + user.getUsername() + " was already assigned to task with id: " + taskFromDb.getId() );
+                        logger.info( "User: " + inUser.getUsername() + " was already assigned to task with id: " + taskFromDb.getId() );
                     } else
                     {
-                        logger.info( "Adding user: " + user.getUsername() + " to task with id: " + taskFromDb.getId() );
-                        taskFromDb.getUsers().add( user );
+                        logger.info( "Adding user: " + inUser.getUsername() + " to task with id: " + taskFromDb.getId() );
+                        taskFromDb.getUsers().add( inUser );
                     }
                 } ) );
         return this.taskRepository.save( taskFromDb );
@@ -94,6 +97,12 @@ public class TaskService
             }
         } ) );
         return this.taskRepository.save( taskFromDb );
+    }
+
+    public Task changeTicketStatus ( Task task, TicketStatus status )
+    {
+        this.ticketService.changeStatus( task.getTicket(), status );
+        return task;
     }
 
     public Task getById ( Long taskId )

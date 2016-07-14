@@ -2,10 +2,7 @@ package app.services;
 
 import app.entities.Authority;
 import app.entities.User;
-import app.exceptions.service.EmailAlreadyInUseException;
-import app.exceptions.service.UserServiceException;
-import app.exceptions.service.UsernameAlreadyExistsException;
-import app.exceptions.service.UsernameDoesNotExistException;
+import app.exceptions.service.*;
 import app.repositories.AuthorityRepository;
 import app.repositories.UserRepository;
 import app.security.Authorities;
@@ -89,6 +86,12 @@ public class UserService implements UserDetailsManager
     {
         return this.userRepository.findByUsername( username )
                 .orElseThrow( () -> new UsernameDoesNotExistException( "Username " + username + " does not exist" ) );
+    }
+
+    public User loadById ( Long id )
+    {
+        return this.userRepository.findById( id )
+                .orElseThrow( () -> new UserIdDoesNotExistException( "User with id " + id + " does not exist" ) );
     }
 
     public List<User> getAllUsers ()
