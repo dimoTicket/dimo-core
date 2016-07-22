@@ -1,5 +1,10 @@
 package app.entities;
 
+import app.validation.TaskDependenciesDbValidation;
+import app.validation.TicketExists;
+import app.validation.UsersExist;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
@@ -12,13 +17,15 @@ import java.util.Collection;
 public class Task extends BaseEntity
 {
 
-    @OneToOne
+    @OneToOne ( cascade = CascadeType.REFRESH )
     @NotNull
+    @TicketExists ( groups = TaskDependenciesDbValidation.class )
     private Ticket ticket;
 
-    @ManyToMany
+    @ManyToMany ( cascade = CascadeType.REFRESH )
     @NotNull
     @Size ( min = 1 )
+    @UsersExist ( groups = TaskDependenciesDbValidation.class )
     private Collection<User> users;
 
     public Task ()

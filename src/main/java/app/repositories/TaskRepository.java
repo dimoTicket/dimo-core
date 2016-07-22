@@ -9,7 +9,7 @@ import java.util.Optional;
 
 
 @Repository
-public interface TaskRepository extends JpaRepository<Task, Long>
+public interface TaskRepository extends JpaRepository<Task, Long>, TaskRepositoryCustom
 {
 
     Optional<Task> findByTicket ( Ticket ticket );

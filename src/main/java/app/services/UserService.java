@@ -76,6 +76,11 @@ public class UserService implements UserDetailsManager
         return this.userRepository.findByUsername( username ).isPresent();
     }
 
+    public boolean userExists ( Long id )
+    {
+        return this.userRepository.findById( id ).isPresent();
+    }
+
     public boolean emailExists ( String email )
     {
         return this.userRepository.findByEmail( email ).isPresent();

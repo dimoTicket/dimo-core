@@ -36,8 +36,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @RunWith ( SpringJUnit4ClassRunner.class )
@@ -71,28 +70,35 @@ public class TaskServiceTests
     public void create ()
     {
         Task task = this.getMockTask();
+
         when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.empty() );
-        when( this.userService.loadById( 1L ) ).thenReturn( task.getUsers().stream()
-                .filter( u -> u.getId().equals( 1L ) ).findFirst().get() );
-        when( this.userService.loadById( 2L ) ).thenReturn( task.getUsers().stream()
-                .filter( u -> u.getId().equals( 2L ) ).findFirst().get() );
         Answer<Task> saveAnswer = invocation ->
         {
             task.setId( 1L );
             return task;
         };
-        when( this.taskRepository.save( any( Task.class ) ) ).thenAnswer( saveAnswer );
-        when( this.ticketService.changeStatus( any( Ticket.class ), any( TicketStatus.class ) ) )
-                .thenReturn( task.getTicket() );
 
-        this.taskService.create( task );
+        when( this.taskRepository.saveFlushAndRefresh( any( Task.class ) ) ).thenAnswer( saveAnswer );
+        Answer<Ticket> changeStatusAnswer = invocation ->
+        {
+            task.getTicket().setStatus( TicketStatus.ASSIGNED );
+            return task.getTicket();
+        };
+
+        when( this.ticketService.changeStatus( any( Ticket.class ), any( TicketStatus.class ) ) )
+                .thenAnswer( changeStatusAnswer );
+        when( this.userService.userExists( 1L ) ).thenReturn( true );
+        when( this.userService.userExists( 2L ) ).thenReturn( true );
+
+        Task returnTask = this.taskService.create( task );
+        assertThat( returnTask.getTicket().getStatus(), is( TicketStatus.ASSIGNED ) );
     }
 
     @Test
     public void createForTicketThatDoesNotExist ()
     {
         Task task = this.getMockTask();
-        doThrow( new ResourceNotFoundException( "" ) ).when( this.ticketService ).verifyTicketExists( any( Long.class ) );
+        doThrow( new ResourceNotFoundException() ).when( this.ticketService ).verifyTicketExists( 1L );
 
         this.thrown.expect( ResourceNotFoundException.class );
         this.taskService.create( task );
@@ -113,8 +119,9 @@ public class TaskServiceTests
     public void createWhenAllUsersDontExist ()
     {
         Task task = this.getMockTask();
+        doNothing().when( ticketService ).verifyTicketExists( 1L );
         when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.empty() );
-        when( this.userService.loadById( any( Long.class ) ) ).thenThrow( new UserIdDoesNotExistException() );
+        when( this.userService.userExists( any( Long.class ) ) ).thenReturn( false );
 
         this.thrown.expect( UserIdDoesNotExistException.class );
         this.taskService.create( task );
@@ -125,9 +132,8 @@ public class TaskServiceTests
     {
         Task task = this.getMockTask();
         when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.empty() );
-        when( this.userService.loadById( 1L ) ).thenThrow( new UserIdDoesNotExistException() );
-        when( this.userService.loadById( 2L ) ).thenReturn( task.getUsers().stream()
-                .filter( u -> u.getId().equals( 2L ) ).findFirst().get() );
+        when( this.userService.userExists( 1L ) ).thenReturn( false );
+        when( this.userService.userExists( 2L ) ).thenReturn( true );
 
         this.thrown.expect( UserIdDoesNotExistException.class );
         this.taskService.create( task );
@@ -175,7 +181,7 @@ public class TaskServiceTests
         inTask.getUsers().add( user3 );
 
         when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
-        when( this.userService.loadById( 3L ) ).thenReturn( user3 );
+        when( this.userService.userExists( 3L ) ).thenReturn( true );
         when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
         dbTask = this.taskService.addUsersToTask( inTask );
         assertThat( dbTask.getUsers(), hasSize( 3 ) );
@@ -194,7 +200,7 @@ public class TaskServiceTests
         inTask.getUsers().add( user3 );
 
         when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
-        when( this.userService.loadById( 3L ) ).thenReturn( user3 );
+        when( this.userService.userExists( 3L ) ).thenReturn( true );
         when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
         dbTask = this.taskService.addUsersToTask( inTask );
         dbTask = this.taskService.addUsersToTask( inTask );
@@ -268,11 +274,9 @@ public class TaskServiceTests
         inTask.getUsers().add( user3 );
 
         when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
-        when( this.userService.loadById( 1L ) ).thenReturn( dbTask.getUsers().stream()
-                .filter( user -> user.getId().equals( 1L ) ).findFirst().get() );
-        when( this.userService.loadById( 2L ) ).thenReturn( dbTask.getUsers().stream()
-                .filter( user -> user.getId().equals( 2L ) ).findFirst().get() );
-        when( this.userService.loadById( 3L ) ).thenReturn( user3 );
+        when( this.userService.userExists( 1L ) ).thenReturn( true );
+        when( this.userService.userExists( 2L ) ).thenReturn( true );
+        when( this.userService.userExists( 3L ) ).thenReturn( true );
         when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
         dbTask = this.taskService.addUsersToTask( inTask );
         assertThat( dbTask.getUsers(), hasSize( 3 ) );

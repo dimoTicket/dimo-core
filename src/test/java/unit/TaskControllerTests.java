@@ -11,6 +11,9 @@ import app.exceptions.service.BadRequestException;
 import app.exceptions.service.ResourceNotFoundException;
 import app.exceptions.service.UserServiceException;
 import app.services.TaskService;
+import app.services.TicketService;
+import app.services.UserService;
+import app.validation.UsersExistValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,8 +34,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -51,6 +53,15 @@ public class TaskControllerTests
 
     @Mock
     TaskService taskService;
+
+    @Mock
+    TicketService ticketService;
+
+    @Mock
+    UserService userService;
+
+    @InjectMocks
+    UsersExistValidator usersExistValidator;
 
     private MockMvc mockMvc;
 
@@ -156,17 +167,15 @@ public class TaskControllerTests
     public void submitTask () throws Exception
     {
         when( taskService.create( any( Task.class ) ) ).thenReturn( this.task );
-
+        when( userService.loadById( 1L ) ).thenReturn( user );
+        doNothing().when( ticketService ).verifyTicketExists( 1L );
+        
         mockMvc.perform( post( "/api/task/newtask" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
-                .content( "{\"ticket\": {\"id\": 1,\n" +
-                        "  \"message\": \"Ticket Message1\",\n" +
-                        "  \"latitude\": 40.631756,\n" +
-                        "  \"longitude\": 22.951907}, \n" +
+                .content( "{\"ticket\": {\"id\": 1},\n" +
                         "  \"users\": [\n" +
                         "  {\n" +
-                        "    \"id\": 1,\n" +
-                        "    \"username\": \"MockName\"\n" +
+                        "    \"id\": 1\n" +
                         "  }\n" +
                         "]\n" +
                         "}" ) )

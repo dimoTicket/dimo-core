@@ -6,6 +6,7 @@ import app.entities.User;
 import app.entities.enums.TicketStatus;
 import app.exceptions.service.BadRequestException;
 import app.exceptions.service.ResourceNotFoundException;
+import app.exceptions.service.UserIdDoesNotExistException;
 import app.repositories.TaskRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,10 +27,10 @@ public class TaskService
     private TaskRepository taskRepository;
 
     @Autowired
-    private UserService userService;
+    private TicketService ticketService;
 
     @Autowired
-    private TicketService ticketService;
+    private UserService userService;
 
     public Task create ( Task task )
     {
@@ -40,16 +41,18 @@ public class TaskService
             throw new BadRequestException( "A task already exists for ticket with id : " + task.getTicket().getId() );
         }
 
-        task.getUsers().parallelStream().forEach( inUser ->
+        task.getUsers().forEach( user ->
         {
-            // TODO: 14/7/2016 Remove these when you refactor the api to be less verbose
-            if ( !this.userService.loadById( inUser.getId() )
-                    .getUsername().equals( inUser.getUsername() ) )
+            if ( !userService.userExists( user.getId() ) )
             {
-                throw new BadRequestException( "UserId " + inUser.getId() + " does not match username " + inUser.getUsername() );
+                throw new UserIdDoesNotExistException( "User with id " + user.getId() + " not found" );
             }
         } );
-        task = this.taskRepository.save( task );
+
+        //Refreshing so that all associations in Task are populated from the database,
+        //since we only have the IDs
+        task = this.taskRepository.saveFlushAndRefresh( task );
+
         this.changeTicketStatus( task, TicketStatus.ASSIGNED );
         return task;
     }
@@ -58,27 +61,21 @@ public class TaskService
     {
         Collection<User> inUsers = task.getUsers();
         Task taskFromDb = this.getById( task.getId() );
-        inUsers.stream()
-                .peek( inUser ->
-                {
-                    // TODO: 14/7/2016 Remove these when you refactor the api to be less verbose
-                    if ( !this.userService.loadById( inUser.getId() )
-                            .getUsername().equals( inUser.getUsername() ) )
-                    {
-                        throw new BadRequestException( "UserId " + inUser.getId() + " does not match username " + inUser.getUsername() );
-                    }
-                } )
-                .forEach( ( inUser ->
-                {
-                    if ( taskFromDb.getUsers().contains( inUser ) )
-                    {
-                        logger.info( "User: " + inUser.getUsername() + " was already assigned to task with id: " + taskFromDb.getId() );
-                    } else
-                    {
-                        logger.info( "Adding user: " + inUser.getUsername() + " to task with id: " + taskFromDb.getId() );
-                        taskFromDb.getUsers().add( inUser );
-                    }
-                } ) );
+        inUsers.forEach( ( inUser ->
+        {
+            if ( !this.userService.userExists( inUser.getId() ) )
+            {
+                throw new UserIdDoesNotExistException( "User with id " + inUser.getId() + " not found" );
+            }
+            if ( taskFromDb.getUsers().contains( inUser ) )
+            {
+                logger.info( "User: " + inUser.getUsername() + " was already assigned to task with id: " + taskFromDb.getId() );
+            } else
+            {
+                logger.info( "Adding user: " + inUser.getUsername() + " to task with id: " + taskFromDb.getId() );
+                taskFromDb.getUsers().add( inUser );
+            }
+        } ) );
         return this.taskRepository.save( taskFromDb );
     }
 
