@@ -10,10 +10,14 @@ import app.exceptions.RestExceptionHandler;
 import app.exceptions.service.BadRequestException;
 import app.exceptions.service.ResourceNotFoundException;
 import app.exceptions.service.UserServiceException;
+import app.services.Service;
 import app.services.TaskService;
 import app.services.TicketService;
 import app.services.UserService;
+import app.validation.TestConstraintValidationFactory;
+import app.validation.TicketExistsValidator;
 import app.validation.UsersExistValidator;
+import org.hibernate.validator.HibernateValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +25,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockServletContext;
@@ -28,6 +34,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,17 +59,17 @@ public class TaskControllerTests
     @InjectMocks
     private TaskController taskController;
 
-    @Mock
-    TaskService taskService;
+    @Autowired
+    private MockServletContext servletContext;
 
     @Mock
-    TicketService ticketService;
+    private TaskService taskService;
 
     @Mock
-    UserService userService;
+    private TicketService ticketService;
 
-    @InjectMocks
-    UsersExistValidator usersExistValidator;
+    @Mock
+    private UserService userService;
 
     private MockMvc mockMvc;
 
@@ -75,28 +83,38 @@ public class TaskControllerTests
     public void setup ()
     {
         MockitoAnnotations.initMocks( this );
+        createMockTask();
+
+        LocalValidatorFactoryBean validatorFactoryBean = getCustomValidatorFactoryBean();
         mockMvc = standaloneSetup( this.taskController )
+                .setValidator( validatorFactoryBean )
                 .setControllerAdvice( new RestExceptionHandler() )
                 .build();
+    }
 
-        ticket = new Ticket();
-        ticket.setId( 1L );
-        ticket.setMessage( "Ticket message 1" );
-        ticket.setImageName( "Test image name 1" );
-        ticket.setLatitude( 12.345678 );
-        ticket.setLongitude( 25.579135 );
-        ticket.setStatus( TicketStatus.ASSIGNED );
+    private LocalValidatorFactoryBean getCustomValidatorFactoryBean ()
+    {
+        final GenericWebApplicationContext context = new GenericWebApplicationContext( servletContext );
+        final ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
 
-        user = new User();
-        user.setId( 1L );
-        user.setUsername( "MockName" );
-        List<User> users = new ArrayList<>();
-        users.add( user );
+        beanFactory.registerSingleton( TicketExistsValidator.class.getCanonicalName(), new TicketExistsValidator() );
+        beanFactory.registerSingleton( UsersExistValidator.class.getCanonicalName(), new UsersExistValidator() );
 
-        task = new Task();
-        task.setId( 1L );
-        task.setTicket( ticket );
-        task.setUsers( users );
+        context.refresh();
+
+        LocalValidatorFactoryBean validatorFactoryBean = new LocalValidatorFactoryBean();
+        validatorFactoryBean.setApplicationContext( context );
+
+        List<Service> servicesUsedByValidators = new ArrayList<>();
+        servicesUsedByValidators.add( this.ticketService );
+        servicesUsedByValidators.add( this.userService );
+        TestConstraintValidationFactory constraintFactory =
+                new TestConstraintValidationFactory( context, servicesUsedByValidators );
+
+        validatorFactoryBean.setConstraintValidatorFactory( constraintFactory );
+        validatorFactoryBean.setProviderClass( HibernateValidator.class );
+        validatorFactoryBean.afterPropertiesSet();
+        return validatorFactoryBean;
     }
 
     @Test
@@ -167,9 +185,9 @@ public class TaskControllerTests
     public void submitTask () throws Exception
     {
         when( taskService.create( any( Task.class ) ) ).thenReturn( this.task );
-        when( userService.loadById( 1L ) ).thenReturn( user );
         doNothing().when( ticketService ).verifyTicketExists( 1L );
-        
+        when( userService.loadById( 1L ) ).thenReturn( this.user );
+
         mockMvc.perform( post( "/api/task/newtask" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
                 .content( "{\"ticket\": {\"id\": 1},\n" +
@@ -190,15 +208,10 @@ public class TaskControllerTests
 
         mockMvc.perform( post( "/api/task/newtask" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
-                .content( "{\"ticket\": {\"id\": 1,\n" +
-                        "  \"message\": \"Ticket Message1\",\n" +
-                        "  \"latitude\": 40.631756,\n" +
-                        "  \"longitude\": 22.951907}, \n" +
+                .content( "{\"ticket\": {\"id\": 1}, \n" +
                         "  \"users\": [\n" +
                         "  {\n" +
-                        "    \"id\": 1,\n" +
-                        "    \"username\": \"MockName\"\n" +
-                        "  }\n" +
+                        "    \"id\": 1}\n" +
                         "]\n" +
                         "}" ) )
                 .andExpect( status().isNotFound() );
@@ -211,15 +224,10 @@ public class TaskControllerTests
 
         mockMvc.perform( post( "/api/task/newtask" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
-                .content( "{\"ticket\": {\"id\": 1,\n" +
-                        "  \"message\": \"Ticket Message1\",\n" +
-                        "  \"latitude\": 40.631756,\n" +
-                        "  \"longitude\": 22.951907}, \n" +
+                .content( "{\"ticket\": {\"id\": 1}, \n" +
                         "  \"users\": [\n" +
                         "  {\n" +
-                        "    \"id\": 1,\n" +
-                        "    \"username\": \"MockName\"\n" +
-                        "  }\n" +
+                        "    \"id\": 1}\n" +
                         "]\n" +
                         "}" ) )
                 .andExpect( status().isBadRequest() );
@@ -234,15 +242,10 @@ public class TaskControllerTests
 
         mockMvc.perform( post( "/api/task/newtask" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
-                .content( "{\"ticket\": {\"id\": 1,\n" +
-                        "  \"message\": \"Ticket Message1\",\n" +
-                        "  \"latitude\": 40.631756,\n" +
-                        "  \"longitude\": 22.951907}, \n" +
+                .content( "{\"ticket\": {\"id\": 1}, \n" +
                         "  \"users\": [\n" +
                         "  {\n" +
-                        "    \"id\": 1,\n" +
-                        "    \"username\": \"MockName\"\n" +
-                        "  }\n" +
+                        "    \"id\": 1}\n" +
                         "]\n" +
                         "}" ) )
                 .andExpect( status().isInternalServerError() );
@@ -282,12 +285,31 @@ public class TaskControllerTests
     {
         mockMvc.perform( post( "/api/task/newtask" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
-                .content( "{\"ticket\": {\"id\": 1,\n" +
-                        "  \"message\": \"Ticket Message1\",\n" +
-                        "  \"latitude\": 40.631756,\n" +
-                        "  \"longitude\": 22.951907}, \n" +
-                        "  \"users\": []\n" +
+                .content( "{\"ticket\": {\"id\": 1},\n" +
+                        " \"users\": []\n" +
                         "}" ) )
                 .andExpect( status().isBadRequest() );
+    }
+
+    private void createMockTask ()
+    {
+        ticket = new Ticket();
+        ticket.setId( 1L );
+        ticket.setMessage( "Ticket message 1" );
+        ticket.setImageName( "Test image name 1" );
+        ticket.setLatitude( 12.345678 );
+        ticket.setLongitude( 25.579135 );
+        ticket.setStatus( TicketStatus.ASSIGNED );
+
+        user = new User();
+        user.setId( 1L );
+        user.setUsername( "MockName" );
+        List<User> users = new ArrayList<>();
+        users.add( user );
+
+        task = new Task();
+        task.setId( 1L );
+        task.setTicket( ticket );
+        task.setUsers( users );
     }
 }

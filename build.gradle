@@ -39,6 +39,10 @@ dependencies {
     //Test dependencies
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('com.jayway.jsonpath:json-path-assert:2.2.0')
+    testCompile('org.hibernate:hibernate-validator-cdi:5.1.0.Final')
+    testCompile('javax.el:el-api:2.2')
+
+
 }
 
 eclipse {

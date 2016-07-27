@@ -36,4 +36,9 @@ public class TicketExistsValidator implements ConstraintValidator<TicketExists, 
         }
     }
 
+    //Used when validation gets instantiated manually during testing.
+    void setTicketService ( TicketService ticketService )
+    {
+        this.ticketService = ticketService;
+    }
 }

@@ -21,7 +21,7 @@ import java.util.Optional;
 
 
 @Service
-public class UserService implements UserDetailsManager
+public class UserService implements UserDetailsManager, app.services.Service
 {
 
     private final Log logger = LogFactory.getLog( getClass() );
@@ -31,6 +31,10 @@ public class UserService implements UserDetailsManager
 
     @Autowired
     private AuthorityRepository authorityRepository;
+
+    public UserService ()
+    {
+    }
 
     @Override
     public void createUser ( UserDetails user )

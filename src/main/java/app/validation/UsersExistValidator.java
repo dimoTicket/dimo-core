@@ -41,4 +41,10 @@ public class UsersExistValidator implements ConstraintValidator<UsersExist, Coll
         } );
     }
 
+    //Used when validation gets instantiated manually during testing.
+    void setUserService ( UserService userService )
+    {
+        this.userService = userService;
+    }
+
 }

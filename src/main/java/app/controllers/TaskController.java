@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 
@@ -31,7 +32,7 @@ public class TaskController
     }
 
     @RequestMapping ( value = "api/task/newtask", method = RequestMethod.POST )
-    public ResponseEntity submitTask ( @Validated ( value = TaskDependenciesDbValidation.class ) @RequestBody Task task )
+    public ResponseEntity submitTask ( @Valid @Validated ( value = TaskDependenciesDbValidation.class ) @RequestBody Task task )
     {
         task = this.taskService.create( task );
 

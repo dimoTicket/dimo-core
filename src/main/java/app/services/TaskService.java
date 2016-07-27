@@ -18,7 +18,7 @@ import java.util.List;
 
 
 @Service
-public class TaskService
+public class TaskService implements app.services.Service
 {
 
     private final Log logger = LogFactory.getLog( getClass() );

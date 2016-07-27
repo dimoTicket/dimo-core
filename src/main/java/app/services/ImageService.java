@@ -13,7 +13,7 @@ import java.io.IOException;
 
 
 @Service
-public class ImageService
+public class ImageService implements app.services.Service
 {
 
     private final Log logger = LogFactory.getLog( getClass() );
