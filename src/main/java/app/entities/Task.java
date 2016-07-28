@@ -1,8 +1,8 @@
 package app.entities;
 
-import app.validation.TaskDependenciesDbValidation;
-import app.validation.TicketExists;
-import app.validation.UsersExist;
+import app.validation.tags.TaskDependenciesDbValidation;
+import app.validation.annotations.TicketExists;
+import app.validation.annotations.UsersExist;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;

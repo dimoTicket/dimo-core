@@ -3,6 +3,7 @@ package app.validation;
 import app.entities.Ticket;
 import app.exceptions.service.ResourceNotFoundException;
 import app.services.TicketService;
+import app.validation.annotations.TicketExists;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;

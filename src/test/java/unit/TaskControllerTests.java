@@ -9,6 +9,7 @@ import app.entities.enums.TicketStatus;
 import app.exceptions.RestExceptionHandler;
 import app.exceptions.service.BadRequestException;
 import app.exceptions.service.ResourceNotFoundException;
+import app.exceptions.service.UserIdDoesNotExistException;
 import app.exceptions.service.UserServiceException;
 import app.services.Service;
 import app.services.TaskService;
@@ -79,6 +80,7 @@ public class TaskControllerTests
 
     private User user;
 
+    // TODO: 27/7/2016 Add/remove users from task TESTS
     @Before
     public void setup ()
     {
@@ -288,6 +290,162 @@ public class TaskControllerTests
                 .content( "{\"ticket\": {\"id\": 1},\n" +
                         " \"users\": []\n" +
                         "}" ) )
+                .andExpect( status().isBadRequest() );
+    }
+
+    //User with id 2L will be added to the task
+    @Test
+    public void addUsersToTask () throws Exception
+    {
+        //validator services mocking
+        doNothing().when( ticketService ).verifyTicketExists( 1L );
+        User newUser = new User();
+        newUser.setId( 2L );
+        newUser.setUsername( "MockName2" );
+        when( userService.loadById( 2L ) ).thenReturn( newUser );
+
+        this.task.getUsers().add( newUser );
+        when( this.taskService.addUsersToTask( this.task ) ).thenReturn( this.task );
+
+        mockMvc.perform( post( "/api/task/addusers" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"id\": 1,\n" +
+                        "    \"ticket\": {\n" +
+                        "      \"id\": 1},\n" +
+                        "  \"users\": [{\n" +
+                        "    \"id\": 2}]}" ) )
+                .andExpect( status().isOk() );
+    }
+
+    @Test
+    public void addUsersToTaskForTaskThatDoesNotExist () throws Exception
+    {
+        //validator services mocking
+        doNothing().when( ticketService ).verifyTicketExists( 1L );
+        User newUser = new User();
+        newUser.setId( 2L );
+        newUser.setUsername( "MockName2" );
+        when( userService.loadById( 2L ) ).thenReturn( newUser );
+
+        this.task.getUsers().add( newUser );
+        when( this.taskService.addUsersToTask( this.task ) ).thenThrow( new ResourceNotFoundException() );
+
+        mockMvc.perform( post( "/api/task/addusers" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"id\": 1,\n" +
+                        "    \"ticket\": {\n" +
+                        "      \"id\": 1},\n" +
+                        "  \"users\": [{\n" +
+                        "    \"id\": 2}]}" ) )
+                .andExpect( status().isNotFound() );
+    }
+
+    @Test
+    public void addUsersToTaskWhenAllGivenUsersDontExist () throws Exception
+    {
+        //validator services mocking
+        doNothing().when( ticketService ).verifyTicketExists( 1L );
+        User newUser2 = new User();
+        newUser2.setId( 2L );
+        newUser2.setUsername( "MockName2" );
+        User newUser3 = new User();
+        newUser3.setId( 3L );
+        newUser3.setUsername( "MockName3" );
+        when( userService.loadById( any( Long.class ) ) ).thenThrow( new UserIdDoesNotExistException() );
+
+        this.task.getUsers().add( newUser2 );
+        this.task.getUsers().add( newUser3 );
+        //User validation on user service level won't be invoked therefore no need to mock it.
+
+        mockMvc.perform( post( "/api/task/addusers" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"id\": 1,\n" +
+                        "    \"ticket\": {\n" +
+                        "      \"id\": 1},\n" +
+                        "  \"users\": [{\n" +
+                        "    \"id\": 2},{\n" +
+                        "    \"id\": 3}]}" ) )
+                .andExpect( status().isBadRequest() );
+    }
+
+    @Test
+    public void addUsersToTaskWhenSomeGivenUsersDontExist () throws Exception
+    {
+        //validator services mocking
+        doNothing().when( ticketService ).verifyTicketExists( 1L );
+        User newUser2 = new User();
+        newUser2.setId( 2L );
+        newUser2.setUsername( "MockName2" );
+        User newUser3 = new User();
+        newUser3.setId( 3L );
+        newUser3.setUsername( "MockName3" );
+        when( userService.loadById( 2L ) ).thenReturn( newUser2 );
+        when( userService.loadById( 3L ) ).thenThrow( new UserIdDoesNotExistException() );
+
+        this.task.getUsers().add( newUser2 );
+        this.task.getUsers().add( newUser3 );
+        //User validation on user service level won't be invoked therefore no need to mock it.
+
+        mockMvc.perform( post( "/api/task/addusers" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"id\": 1,\n" +
+                        "    \"ticket\": {\n" +
+                        "      \"id\": 1},\n" +
+                        "  \"users\": [{\n" +
+                        "    \"id\": 2},{\n" +
+                        "    \"id\": 3}]}" ) )
+                .andExpect( status().isBadRequest() );
+    }
+
+    @Test
+    public void addUsersToTaskWhenUsersAlreadyInTask () throws Exception
+    {
+        //validator services mocking
+        doNothing().when( ticketService ).verifyTicketExists( 1L );
+        User newUser2 = new User();
+        newUser2.setId( 2L );
+        newUser2.setUsername( "MockName2" );
+        User newUser3 = new User();
+        newUser3.setId( 3L );
+        newUser3.setUsername( "MockName3" );
+        when( userService.loadById( 2L ) ).thenReturn( newUser2 );
+        when( userService.loadById( 3L ) ).thenReturn( newUser3 );
+
+        this.task.getUsers().add( newUser2 );
+        this.task.getUsers().add( newUser3 );
+        when( this.taskService.addUsersToTask( this.task ) ).thenReturn( this.task );
+
+        mockMvc.perform( post( "/api/task/addusers" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"id\": 1,\n" +
+                        "    \"ticket\": {\n" +
+                        "      \"id\": 1},\n" +
+                        "  \"users\": [{\n" +
+                        "    \"id\": 2},{\n" +
+                        "    \"id\": 3}]}" ) )
+                .andExpect( status().isOk() );
+    }
+
+    @Test
+    public void addUsersToTaskEmptyGivenUserArray () throws Exception
+    {
+        mockMvc.perform( post( "/api/task/addusers" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"id\": 1,\n" +
+                        "    \"ticket\": {\n" +
+                        "      \"id\": 1},\n" +
+                        "  \"users\": []}" ) )
+                .andExpect( status().isOk() );
+    }
+
+    @Test
+    public void addUsersToTaskAbsentGivenUserArray () throws Exception
+    {
+        mockMvc.perform( post( "/api/task/addusers" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{\"id\": 1,\n" +
+                        "    \"ticket\": {\n" +
+                        "      \"id\": 1}}" ) )
                 .andExpect( status().isBadRequest() );
     }
 

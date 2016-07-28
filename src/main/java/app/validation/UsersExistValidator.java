@@ -3,6 +3,7 @@ package app.validation;
 import app.entities.User;
 import app.exceptions.service.UserIdDoesNotExistException;
 import app.services.UserService;
+import app.validation.annotations.UsersExist;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
@@ -24,8 +25,13 @@ public class UsersExistValidator implements ConstraintValidator<UsersExist, Coll
     @Override
     public boolean isValid ( Collection<User> users, ConstraintValidatorContext context )
     {
+        if ( users == null )
+        {
+            return false;
+        }
         //Checks if all given user ids are present in the database
-        return !users.parallelStream().anyMatch( user ->
+        boolean valid = false;
+        valid = !users.parallelStream().anyMatch( user ->
         {
             try
             {
@@ -39,6 +45,7 @@ public class UsersExistValidator implements ConstraintValidator<UsersExist, Coll
                 return true;
             }
         } );
+        return valid;
     }
 
     //Used when validation gets instantiated manually during testing.

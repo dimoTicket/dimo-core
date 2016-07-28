@@ -1,4 +1,4 @@
-package app.validation;
+package app.validation.tags;
 
 /**
  * Tag interface used to validate that task's contents exist in the database.

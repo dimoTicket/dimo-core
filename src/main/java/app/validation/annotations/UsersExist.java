@@ -1,4 +1,6 @@
-package app.validation;
+package app.validation.annotations;
+
+import app.validation.UsersExistValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

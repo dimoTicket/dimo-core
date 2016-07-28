@@ -2,7 +2,7 @@ package app.controllers;
 
 import app.entities.Task;
 import app.services.TaskService;
-import app.validation.TaskDependenciesDbValidation;
+import app.validation.tags.TaskDependenciesDbValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -51,23 +51,21 @@ public class TaskController
     }
 
     @RequestMapping ( value = "/api/tasks" )
-    public ResponseEntity getAllTicketsRest ()
+    public ResponseEntity getAllTasksRest ()
     {
         return new ResponseEntity<>( this.taskService.getAll(), HttpStatus.OK );
     }
 
-    @RequestMapping ( value = "/api/task/{id}/addusers", method = RequestMethod.POST )
-    public ResponseEntity addUsersToTask ( @PathVariable ( "id" ) Long id,
-                                           @Validated ( value = TaskDependenciesDbValidation.class )
+    @RequestMapping ( value = "/api/task/addusers", method = RequestMethod.POST )
+    public ResponseEntity addUsersToTask ( @Validated ( value = TaskDependenciesDbValidation.class )
                                            @RequestBody Task task )
     {
         this.taskService.addUsersToTask( task );
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
-    @RequestMapping ( value = "/api/task/{id}/removeusers", method = RequestMethod.POST )
-    public ResponseEntity removeUsersFromTask ( @PathVariable ( "id" ) Long id,
-                                                @Validated ( value = TaskDependenciesDbValidation.class )
+    @RequestMapping ( value = "/api/task/removeusers", method = RequestMethod.POST )
+    public ResponseEntity removeUsersFromTask ( @Validated ( value = TaskDependenciesDbValidation.class )
                                                 @RequestBody Task task )
     {
         this.taskService.removeUsersFromTask( task );
