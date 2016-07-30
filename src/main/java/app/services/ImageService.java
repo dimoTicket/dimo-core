@@ -1,7 +1,7 @@
 package app.services;
 
 import app.entities.Ticket;
-import app.repositories.TicketRepository;
+import app.pojo.TicketImage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,25 +21,28 @@ public class ImageService implements app.services.Service
     private static String IMAGES_FOLDER = "C:/Users/Alexei/Desktop/dimopics/"; // TODO: 10/02/2016 move to .properties
 
     @Autowired
-    private TicketRepository ticketRepository;
+    private TicketService ticketService;
 
     //Using original file name as filename
-    public void saveMultipartFile ( Long ticketId, MultipartFile multipartFile )
+    public void saveImage ( Long ticketId, MultipartFile image )
     {
-        Ticket ticket = ticketRepository.findOne( ticketId );
-        //prevents re-setting a picture
-        if ( ticket.getImageName() != null )
+        Ticket ticket = ticketService.getById( ticketId );
+        //Check if image name already exists //// TODO: 30/7/2016 More sophisticated check (maybe hashing)
+        if ( ticket.getImages().stream()
+                .anyMatch( i -> i.getImageName().equalsIgnoreCase( image.getOriginalFilename() ) ) )
         {
-            throw new IllegalArgumentException( "Image already set for ticketId=" + ticketId );
+            throw new IllegalArgumentException( "Image name " + image.getOriginalFilename()
+                    + " already present for ticketId " + ticketId );
         }
+
         // TODO: 09/02/2016 : save location sto .properties
-        File convFile = new File( IMAGES_FOLDER + multipartFile.getOriginalFilename() );
+        File convFile = new File( IMAGES_FOLDER + image.getOriginalFilename() );
         try
         {
-            multipartFile.transferTo( convFile );
+            image.transferTo( convFile );
             logger.info( "saved file to path : " + convFile.getAbsolutePath() );
-            ticket.setImageName( multipartFile.getOriginalFilename() );
-            ticketRepository.saveAndFlush( ticket );
+            ticket.getImages().add( new TicketImage( image.getOriginalFilename() ) );
+            ticketService.update( ticket );
         } catch ( IOException e )
         {
             logger.error( "Could not save file. Message : " + e.getMessage() );
@@ -48,10 +51,5 @@ public class ImageService implements app.services.Service
         {
             logger.error( "Illegal argument passed in findOne of TicketRepository" );
         }
-    }
-
-    public File findPictureFileOfTicketId ( Long ticketId )
-    {
-        return new File( IMAGES_FOLDER + this.ticketRepository.findOne( ticketId ).getImageName() );
     }
 }

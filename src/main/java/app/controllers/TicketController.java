@@ -19,7 +19,6 @@ import javax.imageio.ImageIO;
 import javax.validation.Valid;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -70,10 +69,11 @@ public class TicketController
     @RequestMapping ( value = "/image", method = RequestMethod.GET )
     public ResponseEntity<byte[]> getImage ( @RequestParam ( "ticketId" ) Long ticketId )
     {
+        // TODO: 30/7/2016 make this method work for image list
         byte[] imageContent = null;
         try
         {
-            InputStream inputStream = new FileInputStream( this.imageService.findPictureFileOfTicketId( ticketId ) );
+            InputStream inputStream = null; //XXX
             BufferedImage img = ImageIO.read( inputStream );
             ByteArrayOutputStream bao = new ByteArrayOutputStream();
             ImageIO.write( img, "jpg", bao );
@@ -89,21 +89,14 @@ public class TicketController
         return new ResponseEntity<>( imageContent, headers, HttpStatus.OK );
     }
 
-    // TODO: 10/02/2016 Generate a unique "upload token" for the client to use, to avoid malicious attempts
+    // TODO: Generate a unique "upload token" for the client to use, to avoid malicious attempts
     @Deprecated
-    @RequestMapping ( value = "/api/ticket/newticketimage", method = RequestMethod.POST )
+    @RequestMapping ( value = "/api/ticket/newimage", method = RequestMethod.POST )
     public ResponseEntity handleImageUpload ( @RequestParam ( name = "ticketId", required = true ) Long ticketId,
-                                              @RequestPart @Valid MultipartFile multipartFile )
+                                              @RequestPart @Valid MultipartFile image )
     {
-        try
-        {
-            this.imageService.saveMultipartFile( ticketId, multipartFile );
-            return new ResponseEntity( HttpStatus.CREATED );
-        } catch ( IllegalArgumentException e )
-        {
-            logger.error( "Attempt to overwrite picture for ticketId : " + ticketId );
-        }
-        return new ResponseEntity( HttpStatus.BAD_REQUEST );
+        this.imageService.saveImage( ticketId, image );
+        return new ResponseEntity( HttpStatus.CREATED );
     }
 
 }

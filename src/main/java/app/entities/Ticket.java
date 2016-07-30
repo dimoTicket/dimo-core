@@ -1,15 +1,13 @@
 package app.entities;
 
 import app.entities.enums.TicketStatus;
+import app.pojo.TicketImage;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.util.Collection;
 
 
 @Entity
@@ -31,21 +29,11 @@ public class Ticket extends BaseEntity
     @Enumerated ( EnumType.STRING )
     private TicketStatus status = TicketStatus.NEW;
 
-    @Size ( max = 250 )
-    private String imageName = "defaultimage.jpg";
+    @ElementCollection
+    private Collection<TicketImage> images;
 
     public Ticket ()
     {
-    }
-
-    public String getImageName ()
-    {
-        return imageName;
-    }
-
-    public void setImageName ( String imageName )
-    {
-        this.imageName = imageName;
     }
 
     public String getMessage ()
@@ -86,6 +74,11 @@ public class Ticket extends BaseEntity
     public void setStatus ( TicketStatus status )
     {
         this.status = status;
+    }
+
+    public Collection<TicketImage> getImages ()
+    {
+        return images;
     }
 
     @Override

@@ -28,6 +28,11 @@ public class TicketService implements app.services.Service
         return this.ticketRepository.save( ticket );
     }
 
+    public Ticket update ( Ticket ticket )
+    {
+        return this.ticketRepository.saveAndFlush( ticket );
+    }
+
     public List<Ticket> getAll ()
     {
         return this.ticketRepository.findAll();

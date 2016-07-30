@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -55,9 +54,6 @@ public class TicketControllerTests
     public void setup ()
     {
         MockitoAnnotations.initMocks( this );
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName( "www.example.com" );
-        request.setRequestURI( "/foo" );
         mockMvc = standaloneSetup( this.ticketController ).build();
 
         ticket = new Ticket();
