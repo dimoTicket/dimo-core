@@ -59,7 +59,7 @@ public class TicketControllerTests
         ticket = new Ticket();
         ticket.setId( 1L );
         ticket.setMessage( "Ticket message 1" );
-        ticket.setImageName( "Test image name 1" );
+        ticket.setImages( new ArrayList<>() );
         ticket.setLatitude( 12.345678 );
         ticket.setLongitude( 25.579135 );
         ticket.setStatus( TicketStatus.NEW );
@@ -74,7 +74,8 @@ public class TicketControllerTests
                 .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
                 .andExpect( ( jsonPath( "id" ).value( this.ticket.getId().intValue() ) ) )
                 .andExpect( ( jsonPath( "message" ).value( this.ticket.getMessage() ) ) )
-                .andExpect( ( jsonPath( "imageName" ).value( this.ticket.getImageName() ) ) )
+                .andExpect( ( jsonPath( "images" ).isArray() ) )
+                .andExpect( ( jsonPath( "images" ).isEmpty() ) )
                 .andExpect( ( jsonPath( "latitude" ).value( this.ticket.getLatitude() ) ) )
                 .andExpect( ( jsonPath( "longitude" ).value( this.ticket.getLongitude() ) ) )
                 .andExpect( ( jsonPath( "status" ).value( this.ticket.getStatus().toString() ) ) )
@@ -102,7 +103,8 @@ public class TicketControllerTests
                 .andExpect( jsonPath( "$", hasSize( 1 ) ) )
                 .andExpect( ( jsonPath( "$.[0].id" ).value( this.ticket.getId().intValue() ) ) )
                 .andExpect( ( jsonPath( "$.[0].message" ).value( this.ticket.getMessage() ) ) )
-                .andExpect( ( jsonPath( "$.[0].imageName" ).value( this.ticket.getImageName() ) ) )
+                .andExpect( ( jsonPath( "$.[0].images" ).isArray() ) )
+                .andExpect( ( jsonPath( "$.[0].images" ).isEmpty() ) )
                 .andExpect( ( jsonPath( "$.[0].latitude" ).value( this.ticket.getLatitude() ) ) )
                 .andExpect( ( jsonPath( "$.[0].longitude" ).value( this.ticket.getLongitude() ) ) )
                 .andExpect( ( jsonPath( "$.[0].status" ).value( this.ticket.getStatus().toString() ) ) )

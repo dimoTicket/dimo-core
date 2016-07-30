@@ -11,6 +11,8 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -32,7 +34,7 @@ public class TicketRepositoryTests
         ticket.setMessage( "Ticket message" );
         ticket.setLatitude( new Double( "12.345678" ) );
         ticket.setLongitude( new Double( "12.345678" ) );
-        ticket.setImageName( "imagename.jpg" );
+        ticket.setImages( new ArrayList<>() );
     }
 
     @Test

@@ -609,7 +609,7 @@ public class TaskControllerTests
         ticket = new Ticket();
         ticket.setId( 1L );
         ticket.setMessage( "Ticket message 1" );
-        ticket.setImageName( "Test image name 1" );
+        ticket.setImages( new ArrayList<>() );
         ticket.setLatitude( 12.345678 );
         ticket.setLongitude( 25.579135 );
         ticket.setStatus( TicketStatus.ASSIGNED );

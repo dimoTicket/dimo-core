@@ -55,7 +55,7 @@ public class TaskRepositoryTests
         ticket.setMessage( "Ticket message test" );
         ticket.setLatitude( new Double( "12.345678" ) );
         ticket.setLongitude( new Double( "12.345678" ) );
-        ticket.setImageName( "imagename.jpg" );
+        ticket.setImages( new ArrayList<>() );
         this.ticketRepository.save( this.ticket );
 
         this.user = new User();

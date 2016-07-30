@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
@@ -48,7 +50,7 @@ public class TicketServiceTests
         ticket = new Ticket();
         ticket.setId( 1L );
         ticket.setMessage( "Ticket message 1" );
-        ticket.setImageName( "Test image name 1" );
+        ticket.setImages( new ArrayList<>() );
         ticket.setLatitude( 12.345678 );
         ticket.setLongitude( 25.579135 );
         ticket.setStatus( TicketStatus.NEW );

@@ -81,6 +81,11 @@ public class Ticket extends BaseEntity
         return images;
     }
 
+    public void setImages ( Collection<TicketImage> images )
+    {
+        this.images = images;
+    }
+
     @Override
     public String toString ()
     {
