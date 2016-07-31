@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -51,5 +53,12 @@ public class ImageService implements app.services.Service
         {
             logger.error( "Illegal argument passed in findOne of TicketRepository" );
         }
+    }
+
+    public Collection<File> getTicketImages ( Long ticketId )
+    {
+        return this.ticketService.getById( ticketId ).getImages().stream()
+                .map( ti -> new File( IMAGES_FOLDER + "/" + ti.getImageName() ) )
+                .collect( Collectors.toList() );
     }
 }
