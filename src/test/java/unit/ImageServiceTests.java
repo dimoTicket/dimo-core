@@ -24,7 +24,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -105,9 +107,11 @@ public class ImageServiceTests
                 .anyMatch( ti -> ti.getImageName().equals( mockImage1.getOriginalFilename() ) ), is( true ) );
         assertThat( ticket.getImages().stream()
                 .anyMatch( ti -> ti.getImageName().equals( mockImage2.getOriginalFilename() ) ), is( true ) );
-        assertThat( tempFolder.getRoot().listFiles().length, is( 2 ) );
-        assertThat( tempFolder.getRoot().listFiles()[ 0 ].getName(), is( mockImage1.getOriginalFilename() ) );
-        assertThat( tempFolder.getRoot().listFiles()[ 1 ].getName(), is( mockImage2.getOriginalFilename() ) );
+        List<String> filenames = Arrays.asList( tempFolder.getRoot().list() );
+        filenames.sort( String::compareToIgnoreCase );
+        assertThat( filenames.size(), is( 2 ) );
+        assertThat( filenames.get( 0 ), is( mockImage1.getOriginalFilename() ) );
+        assertThat( filenames.get( 1 ), is( mockImage2.getOriginalFilename() ) );
     }
 
     @Test
