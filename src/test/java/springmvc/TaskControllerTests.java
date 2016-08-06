@@ -1,6 +1,5 @@
-package unit;
+package springmvc;
 
-import app.DimoApplication;
 import app.controllers.TaskController;
 import app.entities.Task;
 import app.entities.Ticket;
@@ -22,18 +21,14 @@ import org.hibernate.validator.HibernateValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.context.support.GenericWebApplicationContext;
@@ -42,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -50,15 +44,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 
-@RunWith ( SpringJUnit4ClassRunner.class )
-@SpringApplicationConfiguration ( classes = DimoApplication.class )
-@ContextConfiguration ( classes = MockServletContext.class )
-@WebAppConfiguration
+@RunWith ( MockitoJUnitRunner.class )
 public class TaskControllerTests
 {
-
-    @InjectMocks
-    private TaskController taskController;
 
     @Autowired
     private MockServletContext servletContext;
@@ -88,10 +76,11 @@ public class TaskControllerTests
         createMockTask();
 
         LocalValidatorFactoryBean validatorFactoryBean = getCustomValidatorFactoryBean();
-        mockMvc = standaloneSetup( this.taskController )
+        mockMvc = standaloneSetup( new TaskController( this.taskService ) )
                 .setValidator( validatorFactoryBean )
                 .setControllerAdvice( new RestExceptionHandler() )
                 .build();
+
     }
 
     private LocalValidatorFactoryBean getCustomValidatorFactoryBean ()

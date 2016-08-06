@@ -31,11 +31,16 @@ public class TicketController
 
     private final Log logger = LogFactory.getLog( getClass() );
 
-    @Autowired
-    private TicketService ticketService;
+    private final TicketService ticketService;
+
+    private final ImageService imageService;
 
     @Autowired
-    private ImageService imageService;
+    public TicketController ( ImageService imageService, TicketService ticketService )
+    {
+        this.imageService = imageService;
+        this.ticketService = ticketService;
+    }
 
     @RequestMapping ( value = "/api/ticket/newticket", method = RequestMethod.POST )
     public ResponseEntity submitTicket ( @Valid @RequestBody Ticket ticket )

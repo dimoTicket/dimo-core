@@ -1,23 +1,18 @@
-package unit;
+package springmvc;
 
-import app.DimoApplication;
 import app.controllers.TicketController;
 import app.entities.Ticket;
 import app.entities.enums.TicketStatus;
 import app.exceptions.service.ResourceNotFoundException;
+import app.services.ImageService;
 import app.services.TicketService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -32,16 +27,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 
-@RunWith ( SpringJUnit4ClassRunner.class )
-@SpringApplicationConfiguration ( classes = DimoApplication.class )
-@ContextConfiguration ( classes = MockServletContext.class )
-@WebAppConfiguration
-
+@RunWith ( MockitoJUnitRunner.class )
 public class TicketControllerTests
 {
 
-    @InjectMocks
-    private TicketController ticketController;
+    @Mock
+    ImageService imageService;
 
     @Mock
     TicketService ticketService;
@@ -54,7 +45,8 @@ public class TicketControllerTests
     public void setup ()
     {
         MockitoAnnotations.initMocks( this );
-        mockMvc = standaloneSetup( this.ticketController ).build();
+        mockMvc = standaloneSetup( new TicketController( imageService, ticketService ) )
+                .build();
 
         ticket = new Ticket();
         ticket.setId( 1L );
