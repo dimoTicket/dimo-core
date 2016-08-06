@@ -17,9 +17,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -33,8 +33,8 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
 
-@RunWith ( SpringJUnit4ClassRunner.class )
-@SpringApplicationConfiguration ( classes = DimoApplication.class )
+@RunWith ( SpringRunner.class )
+@SpringBootTest ( classes = DimoApplication.class )
 public class ImageServiceTests
 {
 
