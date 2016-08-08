@@ -40,8 +40,6 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.hibernate:hibernate-validator-cdi:5.1.0.Final')
     testCompile('javax.el:el-api:2.2')
-
-
 }
 
 eclipse {
@@ -49,6 +47,11 @@ eclipse {
         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
     }
+}
+
+//Example execution : gradle bootRun -Dspring.profiles.active=dev
+bootRun {
+    systemProperties = System.properties
 }
 
 task wrapper(type: Wrapper) {

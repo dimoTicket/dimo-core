@@ -1,9 +1,7 @@
 package app.security;
 
 import app.entities.Authority;
-import app.entities.User;
 import app.repositories.AuthorityRepository;
-import app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,14 +14,11 @@ public class AuthorityInitializer
 
     @Autowired
     private AuthorityRepository authorityRepository;
-    @Autowired
-    private UserService userService;
 
     @PostConstruct
     private void initialize ()
     {
         this.initializeSecurityAuthorities();
-        this.seedSampleUser();
     }
 
     /**
@@ -35,20 +30,5 @@ public class AuthorityInitializer
         Authorities.getAllAuthorities().stream()
                 .filter( auth -> !this.authorityRepository.findByAuthorityString( auth ).isPresent() )
                 .forEach( auth -> this.authorityRepository.save( new Authority( auth ) ) );
-    }
-
-    private void seedSampleUser ()
-    {
-        User user = new User();
-        user.setUsername( "pambos" );
-        user.setPassword( "12345678" );
-        user.setEmail( "pambos@pambos.gr" );
-
-        User user2 = new User();
-        user2.setUsername( "pambos2" );
-        user2.setPassword( "12345678" );
-        user2.setEmail( "pambos2@pambos.gr" );
-        this.userService.createUser( user );
-        this.userService.createUser( user2 );
     }
 }
