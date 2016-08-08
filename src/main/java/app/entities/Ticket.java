@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collection;
 
 
@@ -30,7 +31,7 @@ public class Ticket extends BaseEntity
     private TicketStatus status = TicketStatus.NEW;
 
     @ElementCollection
-    private Collection<TicketImage> images;
+    private Collection<TicketImage> images = new ArrayList<>();
 
     public Ticket ()
     {
