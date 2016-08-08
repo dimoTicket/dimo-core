@@ -20,6 +20,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith ( SpringRunner.class )
 @SpringBootTest ( classes = DimoApplication.class )
+@ActiveProfiles ("unit-tests")
 public class UserServiceTests
 {
 
