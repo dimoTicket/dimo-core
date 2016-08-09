@@ -27,6 +27,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 {
 
     public static PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @Autowired
     private UserService userService;
 

@@ -1,6 +1,7 @@
 package app.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,18 +25,17 @@ public class User extends BaseEntity implements UserDetails
     private String username;
 
     @NotNull
-    @JsonIgnore
     @Size ( min = 8 )
+    @JsonProperty ( access = JsonProperty.Access.WRITE_ONLY )
     private String password;
 
     @Email
     @NotNull
-    @JsonIgnore
     @Column ( unique = true )
+    @JsonProperty ( access = JsonProperty.Access.WRITE_ONLY )
     private String email;
 
     @ManyToMany ( fetch = FetchType.EAGER )
-    @NotNull
     @JsonIgnore
     private Collection<Authority> authorities;
 
@@ -53,6 +53,7 @@ public class User extends BaseEntity implements UserDetails
         this.password = password;
     }
 
+    @JsonIgnore
     public String getEmail ()
     {
         return email;
@@ -75,6 +76,7 @@ public class User extends BaseEntity implements UserDetails
     }
 
     @Override
+    @JsonIgnore
     public String getPassword ()
     {
         return this.password;

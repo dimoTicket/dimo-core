@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -17,18 +17,22 @@ import javax.validation.Valid;
 public class UserController
 {
 
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
-
-
-    @RequestMapping ( value = "/register", method = RequestMethod.POST )
-    public ResponseEntity registerUser ( @Valid @ModelAttribute User user )
+    public UserController ( UserService userService )
     {
-        this.userService.createUser( user );
-        return new ResponseEntity( HttpStatus.CREATED );
+        this.userService = userService;
     }
 
-    @RequestMapping ( value = "/users" )
+    @RequestMapping ( value = "/api/register", method = RequestMethod.POST )
+    public ResponseEntity registerUser ( @Valid @RequestBody User user )
+    {
+        this.userService.createUser( user );
+        return new ResponseEntity<>( HttpStatus.CREATED );
+    }
+
+    @RequestMapping ( value = "/api/users" )
     public ResponseEntity getAllUsers ()
     {
         return new ResponseEntity<>( this.userService.getAllUsers(), HttpStatus.OK );

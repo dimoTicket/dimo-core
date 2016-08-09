@@ -34,10 +34,10 @@ public class TicketControllerTests
 {
 
     @Mock
-    ImageService imageService;
+    private ImageService imageService;
 
     @Mock
-    TicketService ticketService;
+    private TicketService ticketService;
 
     private MockMvc mockMvc;
 
