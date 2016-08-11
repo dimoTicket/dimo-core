@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,5 +37,12 @@ public class UserController
     public ResponseEntity getAllUsers ()
     {
         return new ResponseEntity<>( this.userService.getAllUsers(), HttpStatus.OK );
+    }
+
+    @RequestMapping ( value = "/api/user/{id}", method = RequestMethod.GET )
+    public ResponseEntity getUserByIdRest ( @PathVariable ( "id" ) Long userId )
+    {
+        User user = this.userService.loadById( userId );
+        return new ResponseEntity<>( user, HttpStatus.OK );
     }
 }

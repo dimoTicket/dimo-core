@@ -36,9 +36,9 @@ public class TicketRelatedTests
 {
 
     @Autowired
-    WebApplicationContext wac;
+    private WebApplicationContext wac;
 
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Before
     public void setUp () throws Exception
@@ -73,6 +73,14 @@ public class TicketRelatedTests
     }
 
     @Test
+    @Sql ( "/datasets/tickets.sql" )
+    public void getSpecificTicketThatDoesNotExist () throws Exception
+    {
+        mockMvc.perform( get( "/api/ticket/4" ) )
+                .andExpect( ( status().isNotFound() ) );
+    }
+
+    @Test
     public void createTicket () throws Exception
     {
         mockMvc.perform( post( "/api/ticket/newticket" )
@@ -99,5 +107,68 @@ public class TicketRelatedTests
                 .andExpect( ( jsonPath( "latitude" ).value( 40.631756 ) ) )
                 .andExpect( ( jsonPath( "longitude" ).value( 22.951907 ) ) )
                 .andExpect( ( jsonPath( "status" ).value( TicketStatus.NEW.toString() ) ) );
+    }
+
+    @Test
+    public void createTicketMalformedRequest () throws Exception
+    {
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{" +
+                        "\"123message\": \"MockMessage\"," +
+                        "\"123latitude\": 40.631756," +
+                        "\"123longitude\": 22.951907}" ) )
+                .andExpect( status().isBadRequest() );
+
+        mockMvc.perform( get( "/api/tickets/" ) )
+                .andExpect( ( status().isOk() ) )
+                .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
+                .andExpect( jsonPath( "$", hasSize( 0 ) ) );
+    }
+
+    @Test
+    public void createTicketEmptyContent () throws Exception
+    {
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "" ) ).andExpect( status().isBadRequest() );
+
+        mockMvc.perform( get( "/api/tickets/" ) )
+                .andExpect( ( status().isOk() ) )
+                .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
+                .andExpect( jsonPath( "$", hasSize( 0 ) ) );
+    }
+
+    @Test
+    public void createTicketNullFields () throws Exception
+    {
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{" +
+                        "\"message\": \"MockMessage\"," +
+                        "\"longitude\": 14.141414}" ) )
+                .andExpect( status().isBadRequest() );
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{" +
+                        "\"message\": \"MockMessage\"," +
+                        "\"latitude\": 14.141414}" ) )
+                .andExpect( status().isBadRequest() );
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{" +
+                        "\"message\": \"MockMessage\"" ) )
+                .andExpect( status().isBadRequest() );
+        mockMvc.perform( post( "/api/ticket/newticket" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .content( "{" +
+                        "\"latitude\": 12.131313," +
+                        "\"longitude\": 14.141414}" ) )
+                .andExpect( status().isBadRequest() );
+
+        mockMvc.perform( get( "/api/tickets/" ) )
+                .andExpect( ( status().isOk() ) )
+                .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
+                .andExpect( jsonPath( "$", hasSize( 0 ) ) );
     }
 }

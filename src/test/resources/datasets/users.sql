@@ -1,0 +1,2 @@
+INSERT INTO user VALUES (1, '2016-04-17 13:10:55', 'test@dimo.com', '$2a$04$fCFfPzhS2D7bMBCOrHS.Hu6bMKEn/DhO56J4nlr5K12n6BZBa0dly', 'user1');
+INSERT INTO user VALUES (2, '2016-04-17 13:10:56', 'test2@dimo.com', '$2a$04$fCFfPzhS2D7bMBCOrHS.Hu6bMKEn/DhO56J4nlr5K12n6BZBa0dly', 'user2');

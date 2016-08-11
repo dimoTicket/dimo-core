@@ -58,7 +58,6 @@ public class TicketController
     @RequestMapping ( value = "/api/ticket/{id}", method = RequestMethod.GET )
     public ResponseEntity getTicketByIdRest ( @PathVariable ( "id" ) Long ticketId )
     {
-        this.ticketService.verifyTicketExists( ticketId );
         Ticket ticket = this.ticketService.getById( ticketId );
         return new ResponseEntity<>( ticket, HttpStatus.OK );
     }
