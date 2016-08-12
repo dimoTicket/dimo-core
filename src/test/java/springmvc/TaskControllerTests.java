@@ -70,7 +70,6 @@ public class TaskControllerTests
 
     private User user;
 
-    // TODO: 27/7/2016 Add/remove users from task TESTS
     @Before
     public void setup ()
     {

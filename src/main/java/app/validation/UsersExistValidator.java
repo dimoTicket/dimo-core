@@ -31,7 +31,7 @@ public class UsersExistValidator implements ConstraintValidator<UsersExist, Coll
         }
         //Checks if all given user ids are present in the database
         boolean valid = false;
-        valid = !users.parallelStream().anyMatch( user ->
+        valid = !users.stream().anyMatch( user ->
         {
             try
             {
