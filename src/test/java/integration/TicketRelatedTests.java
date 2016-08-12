@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -29,9 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith ( SpringRunner.class )
 @SpringBootTest ( classes = DimoApplication.class, webEnvironment = RANDOM_PORT )
 @ActiveProfiles ( "integration-tests" )
-@Rollback
 @Transactional
-@DirtiesContext ( classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD )
+@Rollback
 public class TicketRelatedTests
 {
 
@@ -47,7 +45,7 @@ public class TicketRelatedTests
     }
 
     @Test
-    @Sql ( "/datasets/tickets.sql" )
+    @Sql ( scripts = "/datasets/tickets.sql" )
     public void getAllTickets () throws Exception
     {
         mockMvc.perform( get( "/api/tickets/" ) )
@@ -83,6 +81,8 @@ public class TicketRelatedTests
     @Test
     public void createTicket () throws Exception
     {
+        // TODO: 12/8/2016 This test uses the user id to validate the creation.
+        // The id depends on the *dataset*.sql provided to other tests. Fix smell.
         mockMvc.perform( post( "/api/ticket/newticket" )
                 .contentType( MediaType.APPLICATION_JSON_UTF8 )
                 .content( "{" +
@@ -90,17 +90,17 @@ public class TicketRelatedTests
                         "\"latitude\": 40.631756," +
                         "\"longitude\": 22.951907}" ) )
                 .andExpect( status().isCreated() )
-                .andExpect( header().string( "location", "http://localhost/api/ticket/1" ) );
+                .andExpect( header().string( "location", "http://localhost/api/ticket/4" ) );
 
         mockMvc.perform( get( "/api/tickets/" ) )
                 .andExpect( ( status().isOk() ) )
                 .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
                 .andExpect( jsonPath( "$", hasSize( 1 ) ) );
 
-        mockMvc.perform( get( "/api/ticket/1" ) )
+        mockMvc.perform( get( "/api/ticket/4" ) )
                 .andExpect( ( status().isOk() ) )
                 .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
-                .andExpect( ( jsonPath( "id" ).value( 1 ) ) )
+                .andExpect( ( jsonPath( "id" ).value( 4 ) ) )
                 .andExpect( ( jsonPath( "message" ).value( "MockMessage" ) ) )
                 .andExpect( ( jsonPath( "images" ).isArray() ) )
                 .andExpect( ( jsonPath( "images" ).isEmpty() ) )

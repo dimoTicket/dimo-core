@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -31,7 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles ( "integration-tests" )
 @Rollback
 @Transactional
-@DirtiesContext ( classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD )
 public class UserRelatedTests
 {
 
@@ -92,7 +90,6 @@ public class UserRelatedTests
                 .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
                 .andExpect( jsonPath( "$", hasSize( 1 ) ) )
                 .andExpect( jsonPath( "$.[0].length()", is( 2 ) ) ) //Should contain id and username only
-                .andExpect( ( jsonPath( "$.[0].id" ).value( 1 ) ) )
                 .andExpect( ( jsonPath( "$.[0].username" ).value( "user1" ) ) );
     }
 
