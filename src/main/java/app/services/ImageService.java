@@ -1,6 +1,8 @@
 package app.services;
 
 import app.entities.Ticket;
+import app.exceptions.service.ImageAlreadyExistsException;
+import app.exceptions.service.ResourceNotFoundException;
 import app.pojo.TicketImage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,11 +35,10 @@ public class ImageService implements app.services.Service
         if ( ticket.getImages().stream()
                 .anyMatch( i -> i.getImageName().equalsIgnoreCase( image.getOriginalFilename() ) ) )
         {
-            throw new IllegalArgumentException( "Image name " + image.getOriginalFilename()
+            throw new ImageAlreadyExistsException( "Image name " + image.getOriginalFilename()
                     + " already present for ticketId " + ticketId );
         }
 
-        // TODO: 09/02/2016 : save location sto .properties
         File convFile = new File( IMAGES_FOLDER + "/" + image.getOriginalFilename() );
         try
         {
@@ -60,5 +61,15 @@ public class ImageService implements app.services.Service
         return this.ticketService.getById( ticketId ).getImages().stream()
                 .map( ti -> new File( IMAGES_FOLDER + "/" + ti.getImageName() ) )
                 .collect( Collectors.toList() );
+    }
+
+    public File getImage ( String imageName )
+    {
+        File file = new File( IMAGES_FOLDER + "/" + imageName );
+        if ( !file.exists() )
+        {
+            throw new ResourceNotFoundException( "Picture file not found. File is " + file );
+        }
+        return file;
     }
 }

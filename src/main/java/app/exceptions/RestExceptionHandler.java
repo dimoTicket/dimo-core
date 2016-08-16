@@ -2,10 +2,7 @@ package app.exceptions;
 
 import app.exceptions.pojo.ErrorDetails;
 import app.exceptions.pojo.ValidationError;
-import app.exceptions.service.BadRequestException;
-import app.exceptions.service.ResourceNotFoundException;
-import app.exceptions.service.UserIdDoesNotExistException;
-import app.exceptions.service.UserServiceException;
+import app.exceptions.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -66,6 +63,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler
         errorDetails.setTimestamp( new Date().getTime() );
         return new ResponseEntity<>( errorDetails, HttpStatus.NOT_FOUND );
     }
+
     @ExceptionHandler ( BadRequestException.class )
     public ResponseEntity handleBadRequestException ( BadRequestException ex )
     {
@@ -78,9 +76,22 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>( errorDetails, HttpStatus.BAD_REQUEST );
     }
 
+    @ExceptionHandler ( ImageAlreadyExistsException.class )
+    public ResponseEntity handleImageAlreadyExistsException ( ImageAlreadyExistsException ex )
+    {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails( ex.getMessage() );
+        errorDetails.setDeveloperMessage( ex.getClass().getName() );
+        errorDetails.setStatus( HttpStatus.CONFLICT.value() );
+        errorDetails.setTitle( "Attempted to upload that already exists in the system" );
+        errorDetails.setTimestamp( new Date().getTime() );
+        return new ResponseEntity<>( errorDetails, HttpStatus.CONFLICT );
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid ( MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request )
     {
+
         ErrorDetails errorDetails = new ErrorDetails();
         errorDetails.setDetails( "Input validation failed" );
         errorDetails.setDeveloperMessage( ex.getClass().getName() );
@@ -89,7 +100,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler
         errorDetails.setTimestamp( new Date().getTime() );
 
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-        fieldErrors.stream().forEach( fe -> {
+        fieldErrors.stream().forEach( fe ->
+        {
             List<ValidationError> validationErrorList = errorDetails.getValidationErrors().get( fe.getField() );
             if ( validationErrorList == null )
             {

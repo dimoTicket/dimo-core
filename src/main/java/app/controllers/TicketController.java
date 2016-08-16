@@ -11,16 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.imageio.ImageIO;
 import javax.validation.Valid;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 
@@ -69,23 +66,19 @@ public class TicketController
         return new ResponseEntity<>( tickets, HttpStatus.OK );
     }
 
-    @Deprecated
-    @RequestMapping ( value = "/image", method = RequestMethod.GET )
-    public ResponseEntity<byte[]> getImage ( @RequestParam ( "ticketId" ) Long ticketId )
+    @RequestMapping ( value = "/api/ticket/getimage", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE )
+    public ResponseEntity getImage ( @RequestParam ( "ticketId" ) Long ticketId,
+                                     @RequestParam ( "imageName" ) String imageName )
     {
-        // TODO: 30/7/2016 make this method work for image list
-        byte[] imageContent = null;
+        byte[] imageContent;
         try
         {
-            InputStream inputStream = null; //XXX
-            BufferedImage img = ImageIO.read( inputStream );
-            ByteArrayOutputStream bao = new ByteArrayOutputStream();
-            ImageIO.write( img, "jpg", bao );
-            imageContent = bao.toByteArray();
+            imageContent = FileCopyUtils.copyToByteArray( this.imageService.getImage( imageName ) );
         } catch ( IOException e )
         {
-            logger.error( "Picture not found. Ticket ticketId is : " + ticketId );
-            return new ResponseEntity<>( HttpStatus.NOT_FOUND );
+            logger.error( e.getMessage() );
+            e.printStackTrace();
+            return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR );
         }
 
         final HttpHeaders headers = new HttpHeaders();
@@ -94,9 +87,8 @@ public class TicketController
     }
 
     // TODO: Generate a unique "upload token" for the client to use, to avoid malicious attempts
-    @Deprecated
     @RequestMapping ( value = "/api/ticket/newimage", method = RequestMethod.POST )
-    public ResponseEntity handleImageUpload ( @RequestParam ( name = "ticketId", required = true ) Long ticketId,
+    public ResponseEntity handleImageUpload ( @RequestParam ( name = "ticketId" ) Long ticketId,
                                               @RequestPart @Valid MultipartFile image )
     {
         this.imageService.saveImage( ticketId, image );

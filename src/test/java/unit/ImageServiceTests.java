@@ -3,6 +3,7 @@ package unit;
 import app.DimoApplication;
 import app.entities.Ticket;
 import app.entities.enums.TicketStatus;
+import app.exceptions.service.ImageAlreadyExistsException;
 import app.exceptions.service.ResourceNotFoundException;
 import app.pojo.TicketImage;
 import app.services.ImageService;
@@ -135,7 +136,7 @@ public class ImageServiceTests
         ticket.getImages().add( new TicketImage( mockImage.getOriginalFilename() ) );
         when( this.ticketService.getById( 1L ) ).thenReturn( ticket );
 
-        this.thrown.expect( IllegalArgumentException.class );
+        this.thrown.expect( ImageAlreadyExistsException.class );
         this.imageService.saveImage( 1L, mockImage );
     }
 
