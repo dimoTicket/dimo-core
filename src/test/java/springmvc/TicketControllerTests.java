@@ -23,6 +23,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -247,5 +248,46 @@ public class TicketControllerTests
                 .file( mockImage1 )
                 .param( "ticketId", "1" ) )
                 .andExpect( status().isConflict() );
+    }
+
+    @Test
+    public void getImageNames () throws Exception
+    {
+        doNothing().when( ticketService ).verifyTicketExists( any() );
+        File pic1 = temporaryFolder.newFile( "pic1" );
+        File pic2 = temporaryFolder.newFile( "pic2" );
+        List<File> pics = new ArrayList<>();
+        pics.add( pic1 );
+        pics.add( pic2 );
+        when( imageService.getTicketImages( any() ) ).thenReturn( pics );
+
+        mockMvc.perform( get( "/api/ticket/getimagenames" )
+                .param( "ticketId", "1" ) )
+                .andExpect( status().isOk() )
+                .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) )
+                .andExpect( jsonPath( "$" ).isArray() )
+                .andExpect( jsonPath( "$.[0]" ).value( pic1.getName() ) )
+                .andExpect( jsonPath( "$.[1]" ).value( pic2.getName() ) );
+    }
+
+    @Test
+    public void getImageNamesWhenTicketDoesNotExist () throws Exception
+    {
+        doThrow( ResourceNotFoundException.class ).when( ticketService ).verifyTicketExists( any() );
+
+        mockMvc.perform( get( "/api/ticket/getimagenames" )
+                .param( "ticketId", "1" ) )
+                .andExpect( status().isNotFound() );
+    }
+
+    @Test
+    public void getImageNamesWhenTicketHasNoImages () throws Exception
+    {
+        doNothing().when( ticketService ).verifyTicketExists( any() );
+        when( imageService.getTicketImages( any() ) ).thenReturn( Collections.emptyList() );
+        mockMvc.perform( get( "/api/ticket/getimagenames" )
+                .param( "ticketId", "1" ) )
+                .andExpect( status().isOk() )
+                .andExpect( jsonPath( "$" ).isEmpty() );
     }
 }

@@ -17,9 +17,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -84,6 +87,16 @@ public class TicketController
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType( MediaType.IMAGE_JPEG );
         return new ResponseEntity<>( imageContent, headers, HttpStatus.OK );
+    }
+
+    @RequestMapping ( value = "/api/ticket/getimagenames" )
+    public ResponseEntity getImageNames ( @RequestParam ( "ticketId" ) Long ticketId )
+    {
+        this.ticketService.verifyTicketExists( ticketId );
+        Collection<File> ticketImagesFiles = this.imageService.getTicketImages( ticketId );
+        List<String> imageNames = ticketImagesFiles.stream()
+                .map( File::getName ).collect( Collectors.toList() );
+        return new ResponseEntity<>( imageNames, HttpStatus.OK );
     }
 
     // TODO: Generate a unique "upload token" for the client to use, to avoid malicious attempts
