@@ -10,6 +10,8 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.Rollback;
@@ -25,12 +27,10 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.net.URL;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -44,6 +44,9 @@ public class TicketRelatedTests
 
     @Autowired
     private WebApplicationContext wac;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -191,8 +194,8 @@ public class TicketRelatedTests
     {
         this.changeImageServicePathToTempFolder();
 
-        URL picUrl = this.getClass().getClassLoader().getResource( "images/thiswill.jpg" );
-        File picFile = new File( picUrl.getFile() );
+        Resource resource = resourceLoader.getResource( "file:src/test/resources/images/thiswill.jpg" );
+        File picFile = resource.getFile();
 
         MockMultipartFile mockImage =
                 new MockMultipartFile( "image", picFile.getName(), "image/jpeg",
@@ -222,8 +225,9 @@ public class TicketRelatedTests
         int lastSlashIndex = createdTicketLocation.lastIndexOf( "/" );
         String createdTicketId = createdTicketLocation.substring( lastSlashIndex + 1 );
 
-        URL picUrl = this.getClass().getClassLoader().getResource( "images/thiswill.jpg" );
-        File picFile = new File( picUrl.getFile() );
+        Resource resource = resourceLoader.getResource( "file:src/test/resources/images/thiswill.jpg" );
+        File picFile = resource.getFile();
+
         MockMultipartFile mockImage =
                 new MockMultipartFile( "image", picFile.getName(), "image/jpeg",
                         FileCopyUtils.copyToByteArray( picFile ) );
@@ -234,7 +238,6 @@ public class TicketRelatedTests
                 .andExpect( status().isCreated() );
 
         mockMvc.perform( get( "/api/tickets/" ) )
-                .andDo( print() )
                 .andExpect( ( status().isOk() ) )
                 .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
                 .andExpect( jsonPath( "$", hasSize( 1 ) ) );
