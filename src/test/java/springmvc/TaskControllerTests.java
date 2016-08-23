@@ -594,6 +594,19 @@ public class TaskControllerTests
                 .andExpect( status().isBadRequest() );
     }
 
+    @Test
+    public void changeStatus () throws Exception
+    {
+        doNothing().when( this.taskService ).changeTicketStatus( any(), any() );
+        mockMvc.perform( post( "/api/task/changestatus" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .param( "ticketId", ticket.getId().toString() )
+                .param( "status", TicketStatus.REJECTED.toString() ) )
+                .andExpect( status().isOk() );
+
+        verify( taskService ).changeTicketStatus( ticket.getId(), TicketStatus.REJECTED );
+    }
+
     private void createMockTask ()
     {
         ticket = new Ticket();

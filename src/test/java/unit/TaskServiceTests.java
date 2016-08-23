@@ -80,19 +80,12 @@ public class TaskServiceTests
         };
 
         when( this.taskRepository.saveFlushAndRefresh( any( Task.class ) ) ).thenAnswer( saveAnswer );
-        Answer<Ticket> changeStatusAnswer = invocation ->
-        {
-            task.getTicket().setStatus( TicketStatus.ASSIGNED );
-            return task.getTicket();
-        };
 
-        when( this.ticketService.changeStatus( any( Ticket.class ), any( TicketStatus.class ) ) )
-                .thenAnswer( changeStatusAnswer );
         when( this.userService.userExists( 1L ) ).thenReturn( true );
         when( this.userService.userExists( 2L ) ).thenReturn( true );
 
         Task returnTask = this.taskService.create( task );
-        assertThat( returnTask.getTicket().getStatus(), is( TicketStatus.ASSIGNED ) );
+        verify( ticketService ).changeStatus( returnTask.getTicket().getId(), TicketStatus.ASSIGNED );
     }
 
     @Test
@@ -338,21 +331,6 @@ public class TaskServiceTests
         when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
         dbTask = this.taskService.removeUsersFromTask( inTask );
         assertThat( dbTask.getUsers(), hasSize( dbTask.getUsers().size() ) );
-    }
-
-    @Test
-    public void changeTicketStatus ()
-    {
-        Task task = this.getMockTask();
-        when( this.ticketService.changeStatus( task.getTicket(), TicketStatus.ASSIGNED ) )
-                .then( answer ->
-                {
-                    task.getTicket().setStatus( TicketStatus.ASSIGNED );
-                    return task.getTicket();
-                } );
-        Task outTask = this.taskService.changeTicketStatus( task, TicketStatus.ASSIGNED );
-        assertThat( task.getTicket().getStatus(), is( TicketStatus.ASSIGNED ) );
-        assertThat( outTask.getTicket().getStatus(), is( TicketStatus.ASSIGNED ) );
     }
 
     private Task getMockTask ()

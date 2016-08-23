@@ -11,6 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -63,8 +65,12 @@ public class TicketServiceTests
     {
         when( this.ticketRepository.save( ticket ) ).thenReturn( ticket );
         when( this.ticketRepository.findOne( ticket.getId() ) ).thenReturn( ticket );
-        ticket = this.ticketService.changeStatus( ticket, TicketStatus.IN_PROGRESS );
-        assertThat( ticket.getStatus(), is( TicketStatus.IN_PROGRESS ) );
+        ArgumentCaptor<Ticket> argument = ArgumentCaptor.forClass( Ticket.class );
+
+        this.ticketService.changeStatus( ticket.getId(), TicketStatus.IN_PROGRESS );
+        verify( ticketRepository ).save( argument.capture() );
+        assertThat( argument.getValue().getStatus(), is( TicketStatus.IN_PROGRESS ) );
+
     }
 
     @Test

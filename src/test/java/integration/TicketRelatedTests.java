@@ -89,7 +89,7 @@ public class TicketRelatedTests
     @Sql ( "/datasets/tickets.sql" )
     public void getSpecificTicketThatDoesNotExist () throws Exception
     {
-        mockMvc.perform( get( "/api/ticket/4" ) )
+        mockMvc.perform( get( "/api/ticket/404" ) )
                 .andExpect( ( status().isNotFound() ) );
     }
 
@@ -205,6 +205,18 @@ public class TicketRelatedTests
                 .file( mockImage )
                 .param( "ticketId", "1" ) )
                 .andExpect( status().isCreated() );
+
+        mockMvc.perform( get( "/api/ticket/1" ) )
+                .andExpect( ( status().isOk() ) )
+                .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
+                .andExpect( ( jsonPath( "id" ).value( 1 ) ) )
+                .andExpect( ( jsonPath( "message" ).value( "Ticket Message1" ) ) )
+                .andExpect( ( jsonPath( "images" ).isArray() ) )
+                .andExpect( ( jsonPath( "images", hasSize( 1 ) ) ) )
+                .andExpect( ( jsonPath( "images.[0].imageName" ).value( picFile.getName() ) ) )
+                .andExpect( ( jsonPath( "latitude" ).value( 40.631756 ) ) )
+                .andExpect( ( jsonPath( "longitude" ).value( 22.951907 ) ) )
+                .andExpect( ( jsonPath( "status" ).value( TicketStatus.NEW.toString() ) ) );
     }
 
     @Test
@@ -242,7 +254,17 @@ public class TicketRelatedTests
                 .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
                 .andExpect( jsonPath( "$", hasSize( 1 ) ) );
 
-        // TODO: 19/8/2016 assertions more
+        mockMvc.perform( get( "/api/ticket/" + createdTicketId ) )
+                .andExpect( ( status().isOk() ) )
+                .andExpect( ( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) ) )
+                .andExpect( ( jsonPath( "id" ).value( Integer.valueOf( createdTicketId ) ) ) )
+                .andExpect( ( jsonPath( "message" ).value( "MockMessage" ) ) )
+                .andExpect( ( jsonPath( "images" ).isArray() ) )
+                .andExpect( ( jsonPath( "images", hasSize( 1 ) ) ) )
+                .andExpect( ( jsonPath( "images.[0].imageName" ).value( picFile.getName() ) ) )
+                .andExpect( ( jsonPath( "latitude" ).value( 12.131313 ) ) )
+                .andExpect( ( jsonPath( "longitude" ).value( 14.141414 ) ) )
+                .andExpect( ( jsonPath( "status" ).value( TicketStatus.NEW.toString() ) ) );
     }
 
     private void changeImageServicePathToTempFolder ()

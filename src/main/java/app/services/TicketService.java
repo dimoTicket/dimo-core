@@ -38,11 +38,12 @@ public class TicketService implements app.services.Service
         return this.ticketRepository.findAll();
     }
 
-    public Ticket changeStatus ( Ticket ticket, TicketStatus status )
+    public void changeStatus ( Long ticketId, TicketStatus status )
     {
-        this.verifyTicketExists( ticket.getId() );
+        this.verifyTicketExists( ticketId );
+        Ticket ticket = this.getById( ticketId );
         ticket.setStatus( status );
-        return this.ticketRepository.save( ticket );
+        this.ticketRepository.save( ticket );
     }
 
     public void verifyTicketExists ( Long ticketId ) throws ResourceNotFoundException

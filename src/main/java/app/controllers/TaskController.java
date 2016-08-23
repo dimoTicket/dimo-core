@@ -1,6 +1,7 @@
 package app.controllers;
 
 import app.entities.Task;
+import app.entities.enums.TicketStatus;
 import app.services.TaskService;
 import app.validation.tags.TaskDependenciesDbValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -32,7 +30,8 @@ public class TaskController
     }
 
     @RequestMapping ( value = "api/task/newtask", method = RequestMethod.POST )
-    public ResponseEntity submitTask ( @Valid @Validated ( value = TaskDependenciesDbValidation.class ) @RequestBody Task task )
+    public ResponseEntity submitTask ( @Valid @Validated ( value = TaskDependenciesDbValidation.class )
+                                       @RequestBody Task task )
     {
         task = this.taskService.create( task );
 
@@ -69,6 +68,14 @@ public class TaskController
                                                 @RequestBody Task task )
     {
         this.taskService.removeUsersFromTask( task );
+        return new ResponseEntity<>( HttpStatus.OK );
+    }
+
+    @RequestMapping ( value = "/api/task/changestatus", method = RequestMethod.POST )
+    public ResponseEntity changeStatus ( @RequestParam ( "ticketId" ) Long ticketId,
+                                         @RequestParam ( "status" ) TicketStatus status )
+    {
+        this.taskService.changeTicketStatus( ticketId, status );
         return new ResponseEntity<>( HttpStatus.OK );
     }
 

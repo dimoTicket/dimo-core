@@ -53,7 +53,7 @@ public class TaskService implements app.services.Service
         //since we only have the IDs
         task = this.taskRepository.saveFlushAndRefresh( task );
 
-        this.changeTicketStatus( task, TicketStatus.ASSIGNED );
+        this.changeTicketStatus( task.getTicket().getId(), TicketStatus.ASSIGNED );
         return task;
     }
 
@@ -96,10 +96,9 @@ public class TaskService implements app.services.Service
         return this.taskRepository.save( taskFromDb );
     }
 
-    public Task changeTicketStatus ( Task task, TicketStatus status )
+    public void changeTicketStatus ( Long ticketId, TicketStatus status )
     {
-        this.ticketService.changeStatus( task.getTicket(), status );
-        return task;
+        this.ticketService.changeStatus( ticketId, status );
     }
 
     public Task getById ( Long taskId )

@@ -402,4 +402,34 @@ public class TaskRelatedTests
                 .andExpect( ( jsonPath( "$.users[0].id" ).value( 1 ) ) )
                 .andExpect( ( jsonPath( "$.users[0].username" ).value( "user1" ) ) );
     }
+
+    @Test
+    @Sql ( scripts = {
+            "/datasets/tickets.sql",
+            "/datasets/users.sql",
+            "/datasets/tasks.sql" } )
+    public void changeStatus () throws Exception
+    {
+        mockMvc.perform( post( "/api/task/changestatus" )
+                .contentType( MediaType.APPLICATION_JSON_UTF8 )
+                .param( "ticketId", "1" )
+                .param( "status", TicketStatus.REJECTED.toString() ) )
+                .andExpect( status().isOk() );
+
+        mockMvc.perform( get( "/api/task/1" ) )
+                .andExpect( ( status().isOk() ) )
+                .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) )
+                .andExpect( ( jsonPath( "id" ).value( 1 ) ) )
+                .andExpect( ( jsonPath( "createdAt" ).isNotEmpty() ) )
+                .andExpect( ( jsonPath( "$.ticket.id" ).value( 1 ) ) )
+                .andExpect( ( jsonPath( "$.ticket.message" ).value( "Ticket Message1" ) ) )
+                .andExpect( ( jsonPath( "$.ticket.status" ).value( "REJECTED" ) ) )
+                .andExpect( ( jsonPath( "$.users" ) ).isArray() )
+                .andExpect( ( jsonPath( "$.users", hasSize( 1 ) ) ) )
+                .andExpect( ( jsonPath( "$.users[0].id" ).value( 1 ) ) )
+                .andExpect( ( jsonPath( "$.users[0].username" ).value( "user1" ) ) )
+                .andExpect( ( jsonPath( "$.users[0].password" ).doesNotExist() ) )
+                .andExpect( ( jsonPath( "$.users[0].email" ).doesNotExist() ) );
+    }
+
 }
