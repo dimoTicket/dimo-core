@@ -17,7 +17,7 @@ apply plugin: 'spring-boot'
 
 jar {
     baseName = 'dimo'
-    version = '0.3-PROTOTYPE'
+    version = '0.1.0'
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
