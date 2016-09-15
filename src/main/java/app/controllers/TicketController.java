@@ -69,9 +69,8 @@ public class TicketController
         return new ResponseEntity<>( tickets, HttpStatus.OK );
     }
 
-    @RequestMapping ( value = "/api/ticket/getimage", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE )
-    public ResponseEntity getImage ( @RequestParam ( "ticketId" ) Long ticketId,
-                                     @RequestParam ( "imageName" ) String imageName )
+    @RequestMapping ( value = "/api/ticket/getimage/{name}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE )
+    public ResponseEntity getImage ( @PathVariable ( "name" ) String imageName )
     {
         byte[] imageContent;
         try
