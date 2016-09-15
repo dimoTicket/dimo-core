@@ -2,6 +2,7 @@ package app.seeders;
 
 import app.entities.Ticket;
 import app.entities.enums.TicketStatus;
+import app.pojo.TicketImage;
 import app.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -42,6 +43,7 @@ public class SampleTicketSeeder implements ApplicationListener<ContextRefreshedE
         ticket2.setLongitude( 22.951907 );
         ticket2.setMessage( "Ticket message 2" );
         ticket2.setStatus( TicketStatus.REJECTED );
+        ticket2.getImages().add( new TicketImage( "tool.jpg" ) );
         this.ticketService.create( ticket2 );
 
         Ticket ticket3 = new Ticket();
@@ -49,6 +51,9 @@ public class SampleTicketSeeder implements ApplicationListener<ContextRefreshedE
         ticket3.setLongitude( 22.951907 );
         ticket3.setMessage( "Ticket message 3" );
         ticket3.setStatus( TicketStatus.ASSIGNED );
+        ticket3.getImages().add( new TicketImage( "tool.jpg" ) );
+        ticket3.getImages().add( new TicketImage( "lateralus.jpg" ) );
+
         this.ticketService.create( ticket3 );
     }
 }
