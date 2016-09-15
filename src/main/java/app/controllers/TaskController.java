@@ -4,6 +4,8 @@ import app.entities.Task;
 import app.entities.enums.TicketStatus;
 import app.services.TaskService;
 import app.validation.tags.TaskDependenciesDbValidation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,8 @@ public class TaskController
 {
 
     private final TaskService taskService;
+
+    private final Log logger = LogFactory.getLog( getClass() );
 
     @Autowired
     public TaskController ( TaskService taskService )
@@ -79,4 +83,10 @@ public class TaskController
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
+    @RequestMapping ( value = "/api/task/byticket/{id}", method = RequestMethod.GET )
+    public ResponseEntity getByTicketId ( @PathVariable ( "id" ) Long id )
+    {
+        Task task = this.taskService.getTaskByTicketId( id );
+        return new ResponseEntity<>( task, HttpStatus.OK );
+    }
 }

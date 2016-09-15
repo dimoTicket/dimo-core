@@ -14,7 +14,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,15 +88,7 @@ public class TaskRepositoryTests
     public void findByTicket ()
     {
         this.taskRepository.save( this.task );
-        Optional<Task> taskOptional = this.taskRepository.findByTicket( this.ticket );
+        Optional<Task> taskOptional = this.taskRepository.findByTicketId( this.ticket.getId() );
         assertThat( taskOptional.get(), is( this.task ) );
-    }
-
-    @Test
-    public void findByTicketThatDoesNotExist ()
-    {
-        this.taskRepository.save( this.task );
-        this.thrown.expect( InvalidDataAccessApiUsageException.class );
-        this.taskRepository.findByTicket( new Ticket() );
     }
 }

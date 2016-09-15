@@ -72,7 +72,7 @@ public class TaskServiceTests
     {
         Task task = this.getMockTask();
 
-        when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.empty() );
+        when( this.taskRepository.findByTicketId( any() ) ).thenReturn( Optional.empty() );
         Answer<Task> saveAnswer = invocation ->
         {
             task.setId( 1L );
@@ -102,7 +102,7 @@ public class TaskServiceTests
     public void createForTicketThatAlreadyHasATask ()
     {
         Task task = this.getMockTask();
-        when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.of( new Task() ) );
+        when( this.taskRepository.findByTicketId( any() ) ).thenReturn( Optional.of( new Task() ) );
         when( this.userService.userExists( any( String.class ) ) ).thenReturn( true );
 
         this.thrown.expect( BadRequestException.class );
@@ -114,7 +114,7 @@ public class TaskServiceTests
     {
         Task task = this.getMockTask();
         doNothing().when( ticketService ).verifyTicketExists( 1L );
-        when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.empty() );
+        when( this.taskRepository.findByTicketId( any() ) ).thenReturn( Optional.empty() );
         when( this.userService.userExists( any( Long.class ) ) ).thenReturn( false );
 
         this.thrown.expect( UserIdDoesNotExistException.class );
@@ -125,7 +125,7 @@ public class TaskServiceTests
     public void createWhenOneUserDoesNotExist ()
     {
         Task task = this.getMockTask();
-        when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.empty() );
+        when( this.taskRepository.findByTicketId( any() ) ).thenReturn( Optional.empty() );
         when( this.userService.userExists( 1L ) ).thenReturn( false );
         when( this.userService.userExists( 2L ) ).thenReturn( true );
 
@@ -136,31 +136,31 @@ public class TaskServiceTests
     @Test
     public void getTaskForTicket ()
     {
-        when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.of( new Task() ) );
-        Task taskForTicket = this.taskService.getTaskForTicket( new Ticket() );
+        when( this.taskRepository.findByTicketId( any() ) ).thenReturn( Optional.of( new Task() ) );
+        Task taskForTicket = this.taskService.getTaskByTicketId( 1L );
         assertThat( taskForTicket, is( not( nullValue() ) ) );
     }
 
     @Test
     public void getTaskForTicketThatDoesNotExist ()
     {
-        when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.empty() );
+        when( this.taskRepository.findByTicketId( any() ) ).thenReturn( Optional.empty() );
         this.thrown.expect( ResourceNotFoundException.class );
-        this.taskService.getTaskForTicket( new Ticket() );
+        this.taskService.getTaskByTicketId( 404L );
     }
 
     @Test
     public void taskExistsForTicket ()
     {
-        when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.of( new Task() ) );
-        assertThat( this.taskService.taskExistsForTicket( new Ticket() ), is( true ) );
+        when( this.taskRepository.findByTicketId( any( ) ) ).thenReturn( Optional.of( new Task() ) );
+        assertThat( this.taskService.taskExistsForTicketId( 1L ), is( true ) );
     }
 
     @Test
     public void taskExistsForTicketThatDoesNotExist ()
     {
-        when( this.taskRepository.findByTicket( any( Ticket.class ) ) ).thenReturn( Optional.empty() );
-        assertThat( this.taskService.taskExistsForTicket( new Ticket() ), is( false ) );
+        when( this.taskRepository.findByTicketId( any() ) ).thenReturn( Optional.empty() );
+        assertThat( this.taskService.taskExistsForTicketId( 404L ), is( false ) );
     }
 
     @Test

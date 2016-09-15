@@ -607,6 +607,31 @@ public class TaskControllerTests
         verify( taskService ).changeTicketStatus( ticket.getId(), TicketStatus.REJECTED );
     }
 
+    @Test
+    public void getByTicketId () throws Exception
+    {
+        when( this.taskService.getTaskByTicketId( 1L ) ).thenReturn( this.task );
+        mockMvc.perform( get( "/api/task/byticket/1" ) )
+                .andExpect( ( status().isOk() ) )
+                .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) )
+                .andExpect( ( jsonPath( "id" ).value( this.task.getId().intValue() ) ) )
+                .andExpect( ( jsonPath( "createdAt" ).isNotEmpty() ) )
+                .andExpect( ( jsonPath( "$.ticket.id" ).value( this.ticket.getId().intValue() ) ) )
+                .andExpect( ( jsonPath( "$.ticket.message" ).value( this.ticket.getMessage() ) ) )
+                .andExpect( ( jsonPath( "$.users" ) ).isArray() )
+                .andExpect( ( jsonPath( "$.users[0].id" ).value( this.user.getId().intValue() ) ) )
+                .andExpect( ( jsonPath( "$.users[0].username" ).value( this.user.getUsername() ) ) )
+                .andExpect( ( jsonPath( "$.users[0].password" ).doesNotExist() ) );
+    }
+
+    @Test
+    public void getByTicketIdWhenTaskDoesNotExist () throws Exception
+    {
+        when( this.taskService.getTaskByTicketId( 1L ) ).thenThrow( new ResourceNotFoundException() );
+        mockMvc.perform( get( "/api/task/byticket/1" ) )
+                .andExpect( status().isNotFound() );
+    }
+
     private void createMockTask ()
     {
         ticket = new Ticket();

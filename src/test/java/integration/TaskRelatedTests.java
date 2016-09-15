@@ -432,4 +432,35 @@ public class TaskRelatedTests
                 .andExpect( ( jsonPath( "$.users[0].email" ).doesNotExist() ) );
     }
 
+    @Test
+    @Sql ( scripts = {
+            "/datasets/tickets.sql",
+            "/datasets/users.sql",
+            "/datasets/tasks.sql" } )
+    public void getTaskByTicketId () throws Exception
+    {
+        mockMvc.perform( get( "/api/task/byticket/1" ) )
+                .andExpect( ( status().isOk() ) )
+                .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8 ) )
+                .andExpect( ( jsonPath( "id" ).value( 1 ) ) )
+                .andExpect( ( jsonPath( "createdAt" ).isNotEmpty() ) )
+                .andExpect( ( jsonPath( "$.ticket.id" ).value( 1 ) ) )
+                .andExpect( ( jsonPath( "$.ticket.message" ).value( "Ticket Message1" ) ) )
+                .andExpect( ( jsonPath( "$.users" ) ).isArray() )
+                .andExpect( ( jsonPath( "$.users[0].id" ).value( 1 ) ) )
+                .andExpect( ( jsonPath( "$.users[0].username" ).value( "user1" ) ) )
+                .andExpect( ( jsonPath( "$.users[0].password" ).doesNotExist() ) );
+    }
+
+    @Test
+    @Sql ( scripts = {
+            "/datasets/tickets.sql",
+            "/datasets/users.sql",
+            "/datasets/tasks.sql" } )
+    public void getTaskByTicketIdWhenTaskDoesNotExist () throws Exception
+    {
+        mockMvc.perform( get( "/api/task/byticket/404" ) )
+                .andExpect( status().isNotFound() );
+    }
+
 }

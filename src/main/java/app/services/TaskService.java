@@ -1,7 +1,6 @@
 package app.services;
 
 import app.entities.Task;
-import app.entities.Ticket;
 import app.entities.User;
 import app.entities.enums.TicketStatus;
 import app.exceptions.service.BadRequestException;
@@ -36,7 +35,7 @@ public class TaskService implements app.services.Service
     {
         this.ticketService.verifyTicketExists( task.getTicket().getId() );
 
-        if ( this.taskExistsForTicket( task.getTicket() ) )
+        if ( this.taskExistsForTicketId( task.getTicket().getId() ) )
         {
             throw new BadRequestException( "A task already exists for ticket with id : " + task.getTicket().getId() );
         }
@@ -112,15 +111,15 @@ public class TaskService implements app.services.Service
         return this.taskRepository.findAll();
     }
 
-    public Task getTaskForTicket ( Ticket ticket )
+    public Task getTaskByTicketId ( Long ticketId )
     {
-        return this.taskRepository.findByTicket( ticket )
-                .orElseThrow( () -> new ResourceNotFoundException( "There is no Task for given ticket with id : " + ticket.getId() ) );
+        return this.taskRepository.findByTicketId( ticketId )
+                .orElseThrow( () -> new ResourceNotFoundException( "There is no Task for given ticket with id : " + ticketId ) );
     }
 
-    public boolean taskExistsForTicket ( Ticket ticket )
+    public boolean taskExistsForTicketId ( Long ticketId )
     {
-        return this.taskRepository.findByTicket( ticket ).isPresent();
+        return this.taskRepository.findByTicketId( ticketId ).isPresent();
     }
 
     public void verifyTaskExists ( Long taskId ) throws ResourceNotFoundException
