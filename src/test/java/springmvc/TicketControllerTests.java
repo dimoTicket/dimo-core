@@ -193,8 +193,8 @@ public class TicketControllerTests
     @Test
     public void getImage () throws Exception
     {
-        File file = temporaryFolder.newFile( "imageName" );
-        when( imageService.getImage( "imageName" ) ).thenReturn( file );
+        File file = temporaryFolder.newFile( "imageName.jpg" );
+        when( imageService.getImage( "imageName.jpg" ) ).thenReturn( file );
 
         mockMvc.perform( get( "/api/ticket/getimage/imageName" ) )
                 .andExpect( status().isOk() )
@@ -205,7 +205,7 @@ public class TicketControllerTests
     @Test
     public void getImageWhenImageDoesNotExist () throws Exception
     {
-        when( imageService.getImage( "imageName" ) ).thenThrow( new ResourceNotFoundException() );
+        when( imageService.getImage( "imageName.jpg" ) ).thenThrow( new ResourceNotFoundException() );
         mockMvc.perform( get( "/api/ticket/getimage/imageName" ) )
                 .andExpect( status().isNotFound() );
     }
