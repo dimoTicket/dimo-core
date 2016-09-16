@@ -1,8 +1,15 @@
 language: java
-jdk:
-  - oraclejdk8
+jdk: oraclejdk8
+os: linux
+sudo: false
+cache:
+  directories:
+  - $HOME/.gradle
 services:
   - mysql
 branches:
   only:
   - dev
+before_install:
+  - mysql -e "create database IF NOT EXISTS dimotest;" -uroot
+script: gradle clean build
