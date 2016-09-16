@@ -73,7 +73,6 @@ public class TicketController
             method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE )
     public ResponseEntity getImage ( @PathVariable ( "imageName" ) String imageName )
     {
-        this.logger.info( "get image called with image name : " + imageName );
         byte[] imageContent;
         try
         {
