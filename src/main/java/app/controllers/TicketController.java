@@ -69,13 +69,15 @@ public class TicketController
         return new ResponseEntity<>( tickets, HttpStatus.OK );
     }
 
-    @RequestMapping ( value = "/api/ticket/getimage/{name}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE )
-    public ResponseEntity getImage ( @PathVariable ( "name" ) String imageName )
+    @RequestMapping ( value = "/api/ticket/getimage/{imageName}",
+            method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE )
+    public ResponseEntity getImage ( @PathVariable ( "imageName" ) String imageName )
     {
+        this.logger.info( "get image called with image name : " + imageName );
         byte[] imageContent;
         try
         {
-            imageContent = FileCopyUtils.copyToByteArray( this.imageService.getImage( imageName ) );
+            imageContent = FileCopyUtils.copyToByteArray( this.imageService.getImage( imageName + ".jpg" ) );
         } catch ( IOException e )
         {
             logger.error( e.getMessage() );
@@ -85,6 +87,7 @@ public class TicketController
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType( MediaType.IMAGE_JPEG );
+        headers.setContentLength( imageContent.length );
         return new ResponseEntity<>( imageContent, headers, HttpStatus.OK );
     }
 
