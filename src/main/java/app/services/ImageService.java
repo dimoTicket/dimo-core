@@ -22,7 +22,7 @@ public class ImageService implements app.services.Service
 
     private final Log logger = LogFactory.getLog( getClass() );
 
-    private static String IMAGES_FOLDER = "C:/Users/Alexei/Desktop/dimopics"; // TODO: 10/02/2016 move to .properties
+    private static String IMAGES_FOLDER = "C:/Users/Alex/Desktop/dimopics"; // TODO: 10/02/2016 move to .properties
 
     @Autowired
     private TicketService ticketService;
