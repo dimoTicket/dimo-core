@@ -71,7 +71,7 @@ public class TaskService implements app.services.Service
                 logger.info( "User: " + inUser.getUsername() + " was already assigned to task with id: " + taskFromDb.getId() );
             } else
             {
-                logger.info( "Adding user: " + inUser.getUsername() + " to task with id: " + taskFromDb.getId() );
+                logger.info( "Adding user: " + inUser.getId() + " to task with id: " + taskFromDb.getId() );
                 taskFromDb.getUsers().add( inUser );
             }
         } ) );
@@ -86,10 +86,11 @@ public class TaskService implements app.services.Service
         {
             if ( taskFromDb.getUsers().contains( user ) )
             {
+                logger.info( "Removing user: " + user.getId() + " from task with id: " + taskFromDb.getId() );
                 taskFromDb.getUsers().remove( user );
             } else
             {
-                logger.info( "User: " + user.getUsername() + " not found in task with id: " + taskFromDb.getId() );
+                logger.info( "User: " + user.getId() + " not found in task with id: " + taskFromDb.getId() );
             }
         } ) );
         return this.taskRepository.save( taskFromDb );

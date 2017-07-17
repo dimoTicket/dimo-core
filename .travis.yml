@@ -5,11 +5,12 @@ sudo: false
 cache:
   directories:
   - $HOME/.gradle
-services:
-  - mysql
 branches:
   only:
   - dev
+  - master
+services:
+  - mysql
 before_install:
   - mysql -e "create database IF NOT EXISTS dimotest;" -uroot
 script: gradle clean build
