@@ -11,6 +11,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -56,6 +59,7 @@ public class TaskService implements app.services.Service
         return task;
     }
 
+    @Transactional ( propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE, readOnly = false )
     public Task addUsersToTask ( Task task )
     {
         Collection<User> inUsers = task.getUsers();
@@ -75,9 +79,10 @@ public class TaskService implements app.services.Service
                 taskFromDb.getUsers().add( inUser );
             }
         } ) );
-        return this.taskRepository.save( taskFromDb );
+        return this.taskRepository.saveFlushAndRefresh( taskFromDb );
     }
 
+    @Transactional ( propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE, readOnly = false )
     public Task removeUsersFromTask ( Task task )
     {
         Collection<User> inUsers = task.getUsers();
@@ -93,7 +98,7 @@ public class TaskService implements app.services.Service
                 logger.info( "User: " + user.getId() + " not found in task with id: " + taskFromDb.getId() );
             }
         } ) );
-        return this.taskRepository.save( taskFromDb );
+        return this.taskRepository.saveFlushAndRefresh( taskFromDb );
     }
 
     public void changeTicketStatus ( Long ticketId, TicketStatus status )
