@@ -63,13 +63,7 @@ public class TaskController
     public ResponseEntity addUsersToTask ( @Validated ( value = TaskDependenciesDbValidation.class )
                                            @RequestBody Task task )
     {
-        try
-        {
-            this.taskService.addUsersToTask( task );
-        } catch ( Exception e )
-        {
-            logger.error( "exception on add: " + e.getMessage() );
-        }
+        this.taskService.addUsersToTask( task );
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
@@ -77,13 +71,7 @@ public class TaskController
     public ResponseEntity removeUsersFromTask ( @Validated ( value = TaskDependenciesDbValidation.class )
                                                 @RequestBody Task task )
     {
-        try
-        {
-            this.taskService.removeUsersFromTask( task );
-        } catch ( Exception e )
-        {
-            logger.error( "exception on remove: " + e.getMessage() );
-        }
+        this.taskService.removeUsersFromTask( task );
         return new ResponseEntity<>( HttpStatus.OK );
     }
 

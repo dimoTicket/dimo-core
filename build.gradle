@@ -37,6 +37,7 @@ dependencies {
 //    compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('mysql:mysql-connector-java:5.1.40')
     compile('com.h2database:h2:1.4.193')
+    compile('javax.xml.bind:jaxb-api:2.3.0')
     //Test dependencies
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.hibernate:hibernate-validator-cdi:5.4.0.Final')

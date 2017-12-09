@@ -59,7 +59,6 @@ public class TaskService implements app.services.Service
         return task;
     }
 
-    @Transactional ( propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE, readOnly = false )
     public Task addUsersToTask ( Task task )
     {
         Collection<User> inUsers = task.getUsers();
@@ -79,10 +78,9 @@ public class TaskService implements app.services.Service
                 taskFromDb.getUsers().add( inUser );
             }
         } ) );
-        return this.taskRepository.saveFlushAndRefresh( taskFromDb );
+        return this.taskRepository.save( taskFromDb );
     }
 
-    @Transactional ( propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE, readOnly = false )
     public Task removeUsersFromTask ( Task task )
     {
         Collection<User> inUsers = task.getUsers();
@@ -98,7 +96,7 @@ public class TaskService implements app.services.Service
                 logger.info( "User: " + user.getId() + " not found in task with id: " + taskFromDb.getId() );
             }
         } ) );
-        return this.taskRepository.saveFlushAndRefresh( taskFromDb );
+        return this.taskRepository.save( taskFromDb );
     }
 
     public void changeTicketStatus ( Long ticketId, TicketStatus status )
