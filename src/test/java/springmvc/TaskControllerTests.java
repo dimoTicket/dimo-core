@@ -35,7 +35,9 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
@@ -645,7 +647,7 @@ public class TaskControllerTests
         user = new User();
         user.setId( 1L );
         user.setUsername( "MockName" );
-        List<User> users = new ArrayList<>();
+        Set<User> users = new HashSet<>();
         users.add( user );
 
         task = new Task();

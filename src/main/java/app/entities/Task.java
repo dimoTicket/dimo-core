@@ -1,8 +1,8 @@
 package app.entities;
 
-import app.validation.tags.TaskDependenciesDbValidation;
 import app.validation.annotations.TicketExists;
 import app.validation.annotations.UsersExist;
+import app.validation.tags.TaskDependenciesDbValidation;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -10,7 +10,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Collection;
+import java.util.Set;
 
 
 @Entity
@@ -26,7 +26,7 @@ public class Task extends BaseEntity
     @NotNull
     @Size ( min = 1 )
     @UsersExist ( groups = TaskDependenciesDbValidation.class )
-    private Collection<User> users;
+    private Set<User> users;
 
     public Task ()
     {
@@ -42,13 +42,15 @@ public class Task extends BaseEntity
         this.ticket = ticket;
     }
 
-    public Collection<User> getUsers ()
+    public Set<User> getUsers ()
     {
         return users;
     }
 
-    public void setUsers ( Collection<User> users )
+    public void setUsers ( Set<User> users )
     {
         this.users = users;
     }
+
 }
+

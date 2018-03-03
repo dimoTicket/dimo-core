@@ -26,9 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -282,7 +280,7 @@ public class TaskServiceTests
     {
         Task dbTask = this.getMockTask();
         Task inTask = this.getMockTask();
-        inTask.setUsers( inTask.getUsers().stream().limit( 1 ).collect( Collectors.toList() ) );
+        inTask.setUsers( inTask.getUsers().stream().limit( 1 ).collect( Collectors.toSet() ) );
 
         when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
         when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
@@ -345,7 +343,7 @@ public class TaskServiceTests
         user2.setId( 2L );
         user2.setUsername( "MockUser2" );
 
-        List<User> users = new ArrayList<>();
+        Set<User> users = new HashSet<>();
         users.add( user );
         users.add( user2 );
 
