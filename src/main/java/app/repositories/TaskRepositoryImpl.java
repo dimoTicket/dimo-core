@@ -2,10 +2,11 @@ package app.repositories;
 
 import app.entities.Task;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 
 
 public class TaskRepositoryImpl implements TaskRepositoryCustom

@@ -41,5 +41,17 @@ public class SampleUserSeeder implements ApplicationListener<ContextRefreshedEve
         user2.setPassword( "12345678" );
         user2.setEmail( "user2@dimo.com" );
         this.userService.createUser( user2 );
+
+        User user3 = new User();
+        user3.setUsername( "User3" );
+        user3.setPassword( "12345678" );
+        user3.setEmail( "user3@dimo.com" );
+        this.userService.createUser( user3 );
+
+        User user4 = new User();
+        user4.setUsername( "User4" );
+        user4.setPassword( "12345678" );
+        user4.setEmail( "user4@dimo.com" );
+        this.userService.createUser( user4 );
     }
 }

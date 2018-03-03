@@ -11,9 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -74,7 +71,7 @@ public class TaskService implements app.services.Service
                 logger.info( "User: " + inUser.getUsername() + " was already assigned to task with id: " + taskFromDb.getId() );
             } else
             {
-                logger.info( "Adding user: " + inUser.getId() + " to task with id: " + taskFromDb.getId() );
+                logger.warn( "Adding user: " + inUser.getId() + " to task with id: " + taskFromDb.getId() );
                 taskFromDb.getUsers().add( inUser );
             }
         } ) );
@@ -90,13 +87,13 @@ public class TaskService implements app.services.Service
             if ( taskFromDb.getUsers().contains( user ) )
             {
                 logger.info( "Removing user: " + user.getId() + " from task with id: " + taskFromDb.getId() );
-                taskFromDb.getUsers().remove( user );
+                this.taskRepository.removeUserFromTask( task.getId(), user.getId() );
             } else
             {
-                logger.info( "User: " + user.getId() + " not found in task with id: " + taskFromDb.getId() );
+                logger.warn( "User: " + user.getId() + " not found in task with id: " + taskFromDb.getId() );
             }
         } ) );
-        return this.taskRepository.save( taskFromDb );
+        return this.getById( taskFromDb.getId() );
     }
 
     public void changeTicketStatus ( Long ticketId, TicketStatus status )

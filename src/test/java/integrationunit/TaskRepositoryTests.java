@@ -18,10 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -71,7 +68,7 @@ public class TaskRepositoryTests
 
         this.task = new Task();
         this.task.setTicket( this.ticket );
-        List<User> users = new ArrayList<>();
+        Set<User> users = new HashSet<>();
         users.add( this.user );
         this.task.setUsers( users );
     }
@@ -79,7 +76,7 @@ public class TaskRepositoryTests
     @Test
     public void createWithEmptyUsersList ()
     {
-        this.task.setUsers( Collections.emptyList() );
+        this.task.setUsers( Collections.emptySet() );
         this.thrown.expect( javax.validation.ConstraintViolationException.class );
         this.taskRepository.save( this.task );
     }

@@ -26,9 +26,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -152,7 +152,7 @@ public class TaskServiceTests
     @Test
     public void taskExistsForTicket ()
     {
-        when( this.taskRepository.findByTicketId( any( ) ) ).thenReturn( Optional.of( new Task() ) );
+        when( this.taskRepository.findByTicketId( any() ) ).thenReturn( Optional.of( new Task() ) );
         assertThat( this.taskService.taskExistsForTicketId( 1L ), is( true ) );
     }
 
@@ -282,12 +282,14 @@ public class TaskServiceTests
     {
         Task dbTask = this.getMockTask();
         Task inTask = this.getMockTask();
-        inTask.setUsers( inTask.getUsers().stream().limit( 1 ).collect( Collectors.toList() ) );
+        inTask.setUsers( inTask.getUsers().stream().limit( 1 ).collect( Collectors.toSet() ) );
 
         when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
-        when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
+        when( this.taskRepository.removeUserFromTask( 1L, 1L ) ).thenReturn( 1 );
         dbTask = this.taskService.removeUsersFromTask( inTask );
-        assertThat( dbTask.getUsers(), hasSize( 1 ) );
+        verify( this.taskRepository, times( 4 ) ).findOne( 1L );
+        verify( this.taskRepository, times( 1 ) ).removeUserFromTask( 1L, 1L );
+        assertThat( dbTask, is( not( nullValue() ) ) );
     }
 
     //// FIXME: 13/7/2016 Looks like javax validation doesn't work for this one. Investigate
@@ -298,9 +300,13 @@ public class TaskServiceTests
         Task inTask = this.getMockTask();
 
         when( this.taskRepository.findOne( 1L ) ).thenReturn( dbTask );
-        when( this.taskRepository.save( dbTask ) ).thenReturn( dbTask );
+        when( this.taskRepository.removeUserFromTask( 1L, 1L ) ).thenReturn( 1 );
+        when( this.taskRepository.removeUserFromTask( 1L, 2L ) ).thenReturn( 1 );
         dbTask = this.taskService.removeUsersFromTask( inTask );
-        assertThat( dbTask.getUsers(), hasSize( 0 ) );
+        verify( this.taskRepository, times( 4 ) ).findOne( 1L );
+        verify( this.taskRepository, times( 1 ) ).removeUserFromTask( 1L, 1L );
+        verify( this.taskRepository, times( 1 ) ).removeUserFromTask( 1L, 2L );
+        assertThat( dbTask, is( not( nullValue() ) ) );
     }
 
     @Test
@@ -345,7 +351,7 @@ public class TaskServiceTests
         user2.setId( 2L );
         user2.setUsername( "MockUser2" );
 
-        List<User> users = new ArrayList<>();
+        Set<User> users = new HashSet<>();
         users.add( user );
         users.add( user2 );
 
